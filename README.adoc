@@ -35,7 +35,7 @@ endif::[]
 // Images: GitHub Badges - static - language
 :image-url-github-badge-static-language-go: https://img.shields.io/badge/Go-00ADD8.svg?logo=go&logoColor=white&style=flat-square
 // VARIABLES: SPSZerone - go
-:var-SPSZerone-image-sps-go-zerone: image:{image-url-github-badge-static-SPSZerone-sps-go-zerone}[SPS Zerone, link={url-github-SPSZerone-sps-go-zerone}]
+:var-SPSZerone-image-sps-go-zerone: image:{image-url-github-badge-static-SPSZerone-sps-go-zerone}[SPS Zerone in Go, link={url-github-SPSZerone-sps-go-zerone}]
 // VARIABLES: language
 :var-language-image-go: image:{image-url-github-badge-static-language-go}[Go, link={url-language-go}]
 :var-language-image-go-with-footnote: {var-language-image-go}footnote:[{url-language-go}]

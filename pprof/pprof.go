@@ -90,11 +90,8 @@ func (p *PProf) Start() {
 		ticker := time.NewTicker(time.Duration(p.param.tickSaveInterval) * time.Minute)
 
 		go func() {
-			for {
-				select {
-				case <-ticker.C:
-					p.Save()
-				}
+			for range ticker.C {
+				p.Save()
 			}
 		}()
 
@@ -173,7 +170,7 @@ func (p *PProf) getDataByType(pprofType Type) ([]byte, error) {
 	case TypeHeap:
 		url = p.param.GetUrlForHeap()
 	default:
-		return nil, errors.New(fmt.Sprintf("Unknown PProfType %v\n", pprofType))
+		return nil, fmt.Errorf("Unknown PProfType %v\n", pprofType)
 	}
 	return p.getData(url)
 }

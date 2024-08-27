@@ -2,7 +2,6 @@ package io
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 
@@ -12,7 +11,7 @@ import (
 func WriteBytes(dataBytes []byte, fileName string, overwriteFile bool) error {
 	if !overwriteFile {
 		if spsos.FileExist(fileName) {
-			return errors.New(fmt.Sprintf("FileExist %s", fileName))
+			return fmt.Errorf("FileExist %s", fileName)
 		}
 	}
 
@@ -23,7 +22,7 @@ func WriteBytes(dataBytes []byte, fileName string, overwriteFile bool) error {
 	defer func(file *os.File) {
 		err = file.Close()
 		if err != nil {
-
+			fmt.Printf("Error closing file %s err:%+v", fileName, err)
 		}
 	}(file)
 

@@ -11,6 +11,6 @@ const FormatYYYYMMDDHHMMSSNsZNameZZNum = "2006-01-02 15:04:05.000000000 MST Z07:
 
 const FormatDefault = FormatYYYYMMDDHHMMSSNsZNameZSNum
 
-func LocalFormatDefault(t *time.Time) string {
+func LocalFormatDefault(t time.Time) string {
 	return t.Local().Format(FormatDefault)
 }

@@ -55,5 +55,5 @@ const (
 // 	CSI n m	SGR	Select Graphic Rendition	Sets colors and style of the characters following this code
 
 const (
-	CSInmSGRReset = C0CCsESC + "[0m"
+	CSI = C0CCsESC + "["
 )

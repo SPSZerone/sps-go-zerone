@@ -41,7 +41,7 @@ func (p *Page) Overflow() []component.OverflowAction {
 func (p *Page) NavItem() component.NavItem {
 	return component.NavItem{
 		Name: "About",
-		Icon: icon.ActHelp,
+		Icon: icon.ActionHelp,
 	}
 }
 

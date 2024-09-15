@@ -41,7 +41,7 @@ func NewPages(pref *pref.Preferences) Pages {
 	modalNav := component.ModalNavFrom(&nav, modal)
 
 	bar := component.NewAppBar(modal)
-	bar.NavigationIcon = icon.NavMenu
+	bar.NavigationIcon = icon.NavigationMenu
 
 	na := component.VisibilityAnimation{
 		State:    component.Invisible,
@@ -117,7 +117,7 @@ func (p *Pages) Layout(gtx layout.Context, w *app.Window, th *material.Theme, de
 		colorBar := color.DynamicColor(3)
 		thBar.ContrastBg = colorBar
 		thBar.Palette.Bg = colorBar
-		return p.AppBar.Layout(gtx, &thBar, "NavMenu", "Actions")
+		return p.AppBar.Layout(gtx, &thBar, "NavigationMenu", "Actions")
 	})
 
 	// => content

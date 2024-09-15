@@ -166,6 +166,12 @@ func SGRoBold() SGROption {
 	}
 }
 
+func SGRoItalic() SGROption {
+	return func(o *SGROptions) {
+		o.opts = append(o.opts, fmt.Sprintf("%v", SGROptItalic))
+	}
+}
+
 func SGRoUnderline() SGROption {
 	return func(o *SGROptions) {
 		o.opts = append(o.opts, fmt.Sprintf("%v", SGROptUnderline))

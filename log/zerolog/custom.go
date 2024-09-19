@@ -42,15 +42,15 @@ func TimestampFunc() time.Time {
 }
 
 func CallerMarshalFunc(pc uintptr, file string, line int) string {
-	return Caller("", "")
+	return Caller()
 }
 
-func Caller(prefix, suffix string) string {
+func Caller() string {
 	caller := "UNKNOWN CALLER"
 
 	pc := make([]uintptr, 8)
 	bingo := false
-	skip := 2
+	skip := 5
 
 	for {
 		n := runtime.Callers(skip, pc)
@@ -61,17 +61,14 @@ func Caller(prefix, suffix string) string {
 		for more {
 			skip++
 			frame, more = frames.Next()
-			if strings.HasSuffix(frame.Function, "log/zerolog.Caller") ||
-				strings.HasSuffix(frame.Function, "log/zerolog.CallerMarshalFunc") ||
-				strings.HasSuffix(frame.Function, "log/zerolog.FormatCaller") ||
-				strings.HasPrefix(frame.Function, "github.com/rs/zerolog") {
+			if strings.HasPrefix(frame.Function, "github.com/rs/zerolog") {
 				continue
 			}
 
 			frameFile := frame.File
 			frameFunc := frame.Function[strings.LastIndex(frame.Function, ".")+1:]
 
-			caller = fmt.Sprintf("%s%v:%v:%v%s", prefix, frameFile, frame.Line, frameFunc, suffix)
+			caller = fmt.Sprintf("%v:%v:%v", frameFile, frame.Line, frameFunc)
 			bingo = true
 			break
 		}

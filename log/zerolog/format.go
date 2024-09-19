@@ -24,7 +24,7 @@ func FormatCaller(caller any) string {
 	if caller != nil {
 		return sgr.Output(caller, true)
 	}
-	return sgr.Output(Caller("", ""), true)
+	return sgr.Output(Caller(), true)
 }
 
 func FormatMessage(msg any) string {

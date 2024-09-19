@@ -13,8 +13,6 @@ import (
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page"
-	pageabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
-	pagepref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 )
 
@@ -66,15 +64,8 @@ func (a *Application) Run() {
 	}
 
 	pages := page.NewPages(&a.Pref)
-
-	if a.Opts.RegisterPage == nil {
-		pages.Register(0, pageabout.New(&pages))
-		pages.Register(1, pagepref.New(&pages))
-	} else {
-		a.Opts.RegisterPage(&pages)
-	}
-
 	a.NewWindow(a.Opts.Title, &pages, app.Decorated(a.Pref.Settings.Decorated))
+
 	a.Wait()
 
 	if a.Opts.OnEnd != nil {

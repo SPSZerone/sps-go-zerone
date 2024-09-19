@@ -43,14 +43,14 @@ func SGRCaller() ansi.SGR {
 
 func SGRMessage() ansi.SGR {
 	var sgr ansi.SGR
-	opts := []ansi.SGROption{ansi.SGRoColor(ansi.SGROptFGColorWhite)}
+	opts := []ansi.SGROption{ansi.SGRoColor(ansi.SGROptBrightFGColorWhite), ansi.SGRoColor(ansi.SGROptBGColorBlack)}
 	sgr.Options.Opts(opts...)
 	return sgr
 }
 
 func SGRFieldName() ansi.SGR {
 	var sgr ansi.SGR
-	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorGreen)}
+	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoItalic(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorGreen)}
 	sgr.Options.Opts(opts...)
 	return sgr
 }
@@ -64,14 +64,14 @@ func SGRFieldSeparator() ansi.SGR {
 
 func SGRFieldValue() ansi.SGR {
 	var sgr ansi.SGR
-	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorGreen)}
+	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoItalic(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorGreen)}
 	sgr.Options.Opts(opts...)
 	return sgr
 }
 
 func SGRErrFieldName() ansi.SGR {
 	var sgr ansi.SGR
-	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorRed)}
+	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoItalic(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorRed)}
 	sgr.Options.Opts(opts...)
 	return sgr
 }
@@ -85,7 +85,7 @@ func SGRErrFieldSeparator() ansi.SGR {
 
 func SGRErrFieldValue() ansi.SGR {
 	var sgr ansi.SGR
-	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorRed)}
+	opts := []ansi.SGROption{ansi.SGRoBold(), ansi.SGRoItalic(), ansi.SGRoColor(ansi.SGROptFGColorBlack), ansi.SGRoColor(ansi.SGROptBrightBGColorRed)}
 	sgr.Options.Opts(opts...)
 	return sgr
 }

@@ -1,18 +1,16 @@
 package gio
 
-import "github.com/SPSZerone/sps-go-zerone/graphics/gio/page"
-
 type Option func(o *Options)
 
-type RegisterPage func(pages *page.Pages)
 type OnStart func(app *Application)
 type OnEnd func(app *Application)
+type OnWindowInit func(win *Window)
 
 type Options struct {
 	Title        string
 	OnStart      OnStart
 	OnEnd        OnEnd
-	RegisterPage RegisterPage
+	OnWindowInit OnWindowInit
 }
 
 func OptTitle(value string) Option {
@@ -33,8 +31,8 @@ func OptOnEnd(value OnEnd) Option {
 	}
 }
 
-func OptRegisterPage(value RegisterPage) Option {
+func OptOnWindowInit(value OnWindowInit) Option {
 	return func(o *Options) {
-		o.RegisterPage = value
+		o.OnWindowInit = value
 	}
 }

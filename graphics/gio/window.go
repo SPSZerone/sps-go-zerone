@@ -11,6 +11,8 @@ import (
 	"gioui.org/widget/material"
 
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page"
+	pageabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
+	pagepref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
 )
 
 type Window struct {
@@ -32,6 +34,14 @@ func NewWindow(a *Application, title string, pages *page.Pages, opts ...app.Opti
 		Window: new(app.Window),
 	}
 	w.Init(title, pages, opts...)
+
+	if a.Opts.OnWindowInit == nil {
+		pages.Register(0, pageabout.New(pages))
+		pages.Register(1, pagepref.New(pages))
+	} else {
+		a.Opts.OnWindowInit(w)
+	}
+
 	return w
 }
 

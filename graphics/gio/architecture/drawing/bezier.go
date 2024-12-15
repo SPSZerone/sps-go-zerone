@@ -15,13 +15,14 @@ import (
 //
 // [WIKI-EN]: https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Quadratic_B%C3%A9zier_curves
 // [WIKI-CN]: https://zh.wikipedia.org/zh-cn/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A#%E4%BA%8C%E6%AC%A1%E6%9B%B2%E7%B7%9A
-func DrawBezierQuadratic(ops *op.Ops, opts BezierOptions) {
+func DrawBezierQuadratic(ops *op.Ops, opts ...BezierOption) {
+	options := NewBezierOptions(opts...)
 	var path clip.Path
 	path.Begin(ops)
-	path.MoveTo(opts.Move.Add(opts.Pos))                           // P0
-	path.QuadTo(opts.Ctrl[0].Add(opts.Pos), opts.To.Add(opts.Pos)) // P1, P2
+	path.MoveTo(options.Move.Add(options.Pos))                                 // P0
+	path.QuadTo(options.Ctrl[0].Add(options.Pos), options.To.Add(options.Pos)) // P1, P2
 	defer clip.Outline{Path: path.End()}.Op().Push(ops).Pop()
-	DrawRect(ops, opts.Size, opts.Color, F32Pt2ImagePt(opts.Pos))
+	DrawRect(ops, options.Size, options.Color, F32Pt2ImagePt(options.Pos))
 }
 
 // DrawBezierCubic
@@ -30,13 +31,20 @@ func DrawBezierQuadratic(ops *op.Ops, opts BezierOptions) {
 //
 // [WIKI-EN]: https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
 // [WIKI-CN]: https://zh.wikipedia.org/zh-cn/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A#%E9%AB%98%E9%9A%8E%E6%9B%B2%E7%B7%9A
-func DrawBezierCubic(ops *op.Ops, opts BezierOptions) {
+func DrawBezierCubic(ops *op.Ops, opts ...BezierOption) {
+	options := NewBezierOptions(opts...)
 	var path clip.Path
 	path.Begin(ops)
-	path.MoveTo(opts.Move.Add(opts.Pos))                                                       // P0
-	path.CubeTo(opts.Ctrl[0].Add(opts.Pos), opts.Ctrl[1].Add(opts.Pos), opts.To.Add(opts.Pos)) // P1, P2, P3
+	path.MoveTo(options.Move.Add(options.Pos))                                                                   // P0
+	path.CubeTo(options.Ctrl[0].Add(options.Pos), options.Ctrl[1].Add(options.Pos), options.To.Add(options.Pos)) // P1, P2, P3
 	defer clip.Outline{Path: path.End()}.Op().Push(ops).Pop()
-	DrawRect(ops, opts.Size, opts.Color, F32Pt2ImagePt(opts.Pos))
+	DrawRect(ops, options.Size, options.Color, F32Pt2ImagePt(options.Pos))
+}
+
+func NewBezierOptions(opts ...BezierOption) BezierOptions {
+	o := BezierOptions{}
+	o.Update(opts...)
+	return o
 }
 
 type BezierOption func(*BezierOptions)
@@ -48,6 +56,12 @@ type BezierOptions struct {
 	Move  f32.Point
 	To    f32.Point
 	Ctrl  []f32.Point
+}
+
+func (o *BezierOptions) Update(opts ...BezierOption) {
+	for _, opt := range opts {
+		opt(o)
+	}
 }
 
 func BZOptSize(value image.Point) BezierOption {

@@ -27,26 +27,45 @@ func drawRectSC2(ops *op.Ops, size image.Point, color color.NRGBA) {
 	stack.Pop()
 }
 
-func DrawRect(ops *op.Ops, size image.Point, color color.NRGBA, position image.Point) {
+func DrawRect(
+	ops *op.Ops,
+	size image.Point, color color.NRGBA, position image.Point,
+) {
 	defer op.Offset(position).Push(ops).Pop()
 	DrawRectSC(ops, size, color)
 }
 
-func DrawRRectR(ops *op.Ops, size image.Point, color color.NRGBA, position image.Point, roundness int) {
+func DrawRRectR(
+	ops *op.Ops,
+	size image.Point, color color.NRGBA, position image.Point,
+	roundness int,
+) {
 	DrawRRect(ops, size, color, position, roundness, roundness, roundness, roundness)
 }
 
-func DrawRRect(ops *op.Ops, size image.Point, color color.NRGBA, position image.Point, se, sw, nw, ne int) {
+func DrawRRect(
+	ops *op.Ops,
+	size image.Point, color color.NRGBA, position image.Point,
+	se, sw, nw, ne int,
+) {
 	bounds := image.Rect(position.X, position.Y, position.X+size.X, position.Y+size.Y)
 	defer clip.RRect{Rect: bounds, SE: se, SW: sw, NW: nw, NE: ne}.Push(ops).Pop()
 	DrawRect(ops, size, color, position)
 }
 
-func DrawStrokeRectR(ops *op.Ops, size image.Point, color color.NRGBA, position image.Point, width float32, roundness int) {
+func DrawStrokeRectR(
+	ops *op.Ops,
+	size image.Point, color color.NRGBA, position image.Point,
+	width float32, roundness int,
+) {
 	DrawStrokeRect(ops, size, color, position, width, roundness, roundness, roundness, roundness)
 }
 
-func DrawStrokeRect(ops *op.Ops, size image.Point, color color.NRGBA, position image.Point, width float32, se, sw, nw, ne int) {
+func DrawStrokeRect(
+	ops *op.Ops,
+	size image.Point, color color.NRGBA, position image.Point,
+	width float32, se, sw, nw, ne int,
+) {
 	bounds := image.Rect(position.X, position.Y, position.X+size.X, position.Y+size.Y)
 	rRect := clip.RRect{Rect: bounds, SE: se, SW: sw, NW: nw, NE: ne}
 	stroke := clip.Stroke{Path: rRect.Path(ops), Width: width}.Op()

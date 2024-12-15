@@ -9,7 +9,11 @@ import (
 	"gioui.org/op/paint"
 )
 
-func DrawTriangle(ops *op.Ops, color color.NRGBA, point1 f32.Point, point2 f32.Point, point3 f32.Point) {
+func DrawTriangle(
+	ops *op.Ops,
+	color color.NRGBA,
+	point1 f32.Point, point2 f32.Point, point3 f32.Point,
+) {
 	var path clip.Path
 	path.Begin(ops)
 	path.MoveTo(point1)
@@ -21,7 +25,12 @@ func DrawTriangle(ops *op.Ops, color color.NRGBA, point1 f32.Point, point2 f32.P
 	paint.FillShape(ops, color, shape)
 }
 
-func DrawStrokeTriangle(ops *op.Ops, color color.NRGBA, point1 f32.Point, point2 f32.Point, point3 f32.Point, width float32) {
+func DrawStrokeTriangle(
+	ops *op.Ops,
+	color color.NRGBA,
+	point1 f32.Point, point2 f32.Point, point3 f32.Point,
+	width float32,
+) {
 	var path clip.Path
 	path.Begin(ops)
 	path.MoveTo(point1)

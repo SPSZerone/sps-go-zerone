@@ -20,12 +20,21 @@ import (
 //
 // Note that image.NRGBA and image.Uniform images are efficient and treated specially.
 // Other Image implementations will undergo a more expensive copy and conversion to the underlying image model.
-func DrawImage(ops *op.Ops, img image.Image, filter paint.ImageFilter, scale f32.Point, position image.Point) {
+func DrawImage(
+	ops *op.Ops,
+	img image.Image, filter paint.ImageFilter,
+	scale f32.Point,
+	position image.Point,
+) {
 	defer op.Offset(position).Push(ops).Pop()
 	drawImage(ops, img, filter, scale)
 }
 
-func drawImage(ops *op.Ops, img image.Image, filter paint.ImageFilter, scale f32.Point) {
+func drawImage(
+	ops *op.Ops,
+	img image.Image, filter paint.ImageFilter,
+	scale f32.Point,
+) {
 	imageOp := paint.NewImageOp(img)
 	imageOp.Filter = filter
 	imageOp.Add(ops)

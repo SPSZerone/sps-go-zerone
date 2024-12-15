@@ -9,7 +9,10 @@ import (
 	"gioui.org/op/paint"
 )
 
-func DrawRecordRect(ops *op.Ops, size image.Point, color color.NRGBA, position image.Point) {
+func DrawRecordRect(
+	ops *op.Ops,
+	size image.Point, color color.NRGBA, position image.Point,
+) {
 	macroOp := op.Record(ops)
 	DrawRectSC(ops, size, color)
 	callOp := macroOp.Stop()

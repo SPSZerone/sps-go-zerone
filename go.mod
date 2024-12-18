@@ -7,6 +7,7 @@ require (
 	gioui.org/x v0.7.1
 	github.com/rs/zerolog v1.33.0
 	golang.org/x/exp/shiny v0.0.0-20240909161429-701f63a606c0
+	google.golang.org/protobuf v1.36.0
 )
 
 require (

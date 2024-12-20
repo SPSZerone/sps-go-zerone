@@ -30,8 +30,3 @@ func SetContentType(w http.ResponseWriter, value []string) {
 		header[ContentType] = value
 	}
 }
-
-func WriteJsonUtf8(w http.ResponseWriter, jsonBytes []byte) (int, error) {
-	SetContentTypeJsonUtf8(w)
-	return w.Write(jsonBytes)
-}

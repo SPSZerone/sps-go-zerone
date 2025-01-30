@@ -56,11 +56,11 @@ func NewImageNRGBARandColor(bounds image.Rectangle) *image.NRGBA {
 	return img
 }
 
-func NewImageNRGBADynamicColor(bounds image.Rectangle) *image.NRGBA {
+func NewImageNRGBADynamicColor(bounds image.Rectangle, xColor, yColor int) *image.NRGBA {
 	img := image.NewNRGBA(bounds)
 	for x := bounds.Min.X; x < bounds.Max.X; x++ {
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			img.SetNRGBA(x, y, spscolor.DynamicColor(x/20+y/10))
+			img.SetNRGBA(x, y, spscolor.DynamicColor(x/xColor+y/yColor))
 		}
 	}
 	return img

@@ -1,0 +1,225 @@
+package layout
+
+import (
+	"image"
+	"image/color"
+
+	"gioui.org/f32"
+	"gioui.org/io/event"
+	"gioui.org/io/pointer"
+	"gioui.org/layout"
+	"gioui.org/op"
+	"gioui.org/op/clip"
+	"gioui.org/op/paint"
+	"gioui.org/unit"
+
+	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
+	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
+)
+
+type Direction byte
+type ValueType byte
+
+const (
+	DirectionHorizontal Direction = iota
+	DirectionVertical
+)
+
+const (
+	ValueTypeRatio ValueType = iota
+	ValueTypeAbsolute
+)
+
+type Split struct {
+	Direction Direction
+
+	Ratio   float32
+	Bar     unit.Dp
+	BarDraw func(gtx layout.Context)
+
+	drag    bool
+	dragID  pointer.ID
+	dragPos float32
+}
+
+const defaultBarWidth = unit.Dp(10)
+
+func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layout.Dimensions {
+	bar := gtx.Dp(s.Bar)
+	if bar <= 1 {
+		bar = gtx.Dp(defaultBarWidth)
+	}
+	halfBar := bar >> 1
+
+	// = aWidgetSize
+	proportion := (s.Ratio + 1) / 2
+	aWidgetSize := 0
+	bWidgetSize := 0
+	aWidgetMaxSize := 0
+	switch s.Direction {
+	case DirectionVertical:
+		aWidgetSize = int(proportion*float32(gtx.Constraints.Max.Y) - float32(halfBar))
+		aWidgetMaxSize = gtx.Constraints.Max.Y - bar
+	default:
+		aWidgetSize = int(proportion*float32(gtx.Constraints.Max.X) - float32(halfBar))
+		aWidgetMaxSize = gtx.Constraints.Max.X - bar
+	}
+	if aWidgetSize < 0 {
+		aWidgetSize = 0
+	}
+	if aWidgetSize > aWidgetMaxSize {
+		aWidgetSize = aWidgetMaxSize
+	}
+
+	// = bWidgetOffset
+	bWidgetOffset := aWidgetSize + bar
+
+	// = bWidgetSize
+	switch s.Direction {
+	case DirectionVertical:
+		bWidgetSize = gtx.Constraints.Max.Y - bWidgetOffset
+	default:
+		bWidgetSize = gtx.Constraints.Max.X - bWidgetOffset
+	}
+
+	{ // = handle input
+		// = barRect
+		var barRect image.Rectangle
+		switch s.Direction {
+		case DirectionVertical:
+			barRect = image.Rect(0, aWidgetSize, gtx.Constraints.Max.X, bWidgetOffset)
+		default:
+			barRect = image.Rect(aWidgetSize, 0, bWidgetOffset, gtx.Constraints.Max.X)
+		}
+
+		area := clip.Rect(barRect).Push(gtx.Ops)
+		if s.BarDraw == nil {
+			switch s.Direction {
+			case DirectionVertical:
+				BarPretty(gtx, barRect, image.Pt(barRect.Min.X, barRect.Min.Y), 20, 10)
+			default:
+				BarPretty(gtx, barRect, image.Pt(barRect.Min.X, barRect.Min.Y), 10, 20)
+			}
+		} else {
+			s.BarDraw(gtx)
+		}
+
+		// = register for input
+		event.Op(gtx.Ops, s)
+		switch s.Direction {
+		case DirectionVertical:
+			pointer.CursorRowResize.Add(gtx.Ops)
+		default:
+			pointer.CursorColResize.Add(gtx.Ops)
+		}
+
+		for {
+			ev, ok := gtx.Event(pointer.Filter{
+				Target: s,
+				Kinds:  pointer.Press | pointer.Drag | pointer.Release | pointer.Cancel,
+			})
+			if !ok {
+				break
+			}
+
+			e, ok := ev.(pointer.Event)
+			if !ok {
+				continue
+			}
+
+			switch e.Kind {
+			case pointer.Press:
+				if s.drag {
+					break
+				}
+
+				s.dragID = e.PointerID
+				switch s.Direction {
+				case DirectionVertical:
+					s.dragPos = e.Position.Y
+				default:
+					s.dragPos = e.Position.X
+				}
+				s.drag = true
+
+			case pointer.Drag:
+				if s.dragID != e.PointerID {
+					break
+				}
+
+				var posCur, posMax float32
+				switch s.Direction {
+				case DirectionVertical:
+					posCur = e.Position.Y
+					posMax = float32(gtx.Constraints.Max.Y)
+				default:
+					posCur = e.Position.X
+					posMax = float32(gtx.Constraints.Max.X)
+				}
+				deltaPos := posCur - s.dragPos
+				s.dragPos = posCur
+
+				deltaRatio := deltaPos * 2 / posMax
+				s.Ratio += deltaRatio
+
+				if e.Priority < pointer.Grabbed {
+					gtx.Execute(pointer.GrabCmd{
+						Tag: s,
+						ID:  s.dragID,
+					})
+				}
+
+			case pointer.Release:
+				fallthrough
+			case pointer.Cancel:
+				s.drag = false
+			default:
+
+			}
+		}
+
+		area.Pop()
+	}
+
+	{
+		gtx := gtx
+		switch s.Direction {
+		case DirectionVertical:
+			gtx.Constraints = layout.Exact(image.Pt(gtx.Constraints.Max.X, aWidgetSize))
+		default:
+			gtx.Constraints = layout.Exact(image.Pt(aWidgetSize, gtx.Constraints.Max.Y))
+		}
+		aWidget(gtx)
+	}
+
+	{
+		var opOffset op.TransformStack
+		bGtx := gtx
+		switch s.Direction {
+		case DirectionVertical:
+			opOffset = op.Offset(image.Pt(0, bWidgetOffset)).Push(gtx.Ops)
+			bGtx.Constraints = layout.Exact(image.Pt(bGtx.Constraints.Max.X, bWidgetSize))
+		default:
+			opOffset = op.Offset(image.Pt(bWidgetOffset, 0)).Push(gtx.Ops)
+			bGtx.Constraints = layout.Exact(image.Pt(bWidgetSize, bGtx.Constraints.Max.Y))
+		}
+		bWidget(bGtx)
+		opOffset.Pop()
+	}
+
+	return layout.Dimensions{Size: gtx.Constraints.Max}
+}
+
+func BarPretty(gtx layout.Context, bounds image.Rectangle, position image.Point, xColor, yColor int) {
+	img := spsdrawing.NewImageNRGBADynamicColor(bounds, xColor, yColor)
+	spsdrawing.DrawImage(gtx.Ops, img, paint.FilterNearest, f32.Pt(1, 1), position)
+}
+
+func BarDynamicColor(gtx layout.Context, color1, color2 int) {
+	spscolor.Fill(gtx, spscolor.DynamicColor(color1), spscolor.DynamicColor(color2))
+}
+
+func BarSimple(gtx layout.Context, color color.NRGBA) {
+	paint.ColorOp{Color: color}.Add(gtx.Ops)
+	paint.PaintOp{}.Add(gtx.Ops)
+}

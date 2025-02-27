@@ -12,10 +12,7 @@ import (
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page"
 )
 
-type (
-	C = layout.Context
-	D = layout.Dimensions
-)
+var _ page.Page = (*Page)(nil)
 
 type Page struct {
 	widget.List
@@ -32,8 +29,6 @@ func New(pages *page.Pages) *Page {
 	}
 }
 
-var _ page.Page = &Page{}
-
 func (p *Page) Actions() []component.AppBarAction {
 	return []component.AppBarAction{}
 }
@@ -49,9 +44,9 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) Layout(gtx C, w *app.Window, th *material.Theme) D {
+func (p *Page) Layout(gtx layout.Context, w *app.Window, th *material.Theme) layout.Dimensions {
 	p.List.Axis = layout.Vertical
-	return material.List(th, &p.List).Layout(gtx, 1, func(gtx C, _ int) D {
+	return material.List(th, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
@@ -62,7 +57,7 @@ func (p *Page) Layout(gtx C, w *app.Window, th *material.Theme) D {
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				return spslayout.Setting{}.Layout(gtx,
 					material.Body1(th, "  * Decorated").Layout,
-					func(gtx C) D {
+					func(gtx layout.Context) layout.Dimensions {
 						if p.decorated.Update(gtx) {
 							p.Pages.Pref.Settings.Decorated = p.decorated.Value
 							w.Option(app.Decorated(p.decorated.Value))
@@ -73,7 +68,7 @@ func (p *Page) Layout(gtx C, w *app.Window, th *material.Theme) D {
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				return spslayout.Setting{}.Layout(gtx,
 					material.Body1(th, "  * Use non-modal drawer").Layout,
-					func(gtx C) D {
+					func(gtx layout.Context) layout.Dimensions {
 						if p.nonModalDrawer.Update(gtx) {
 							p.Pages.Pref.Settings.NonModalDrawer = p.nonModalDrawer.Value
 							if p.nonModalDrawer.Value {
@@ -85,10 +80,10 @@ func (p *Page) Layout(gtx C, w *app.Window, th *material.Theme) D {
 						return material.Switch(th, &p.nonModalDrawer, "Use Non-Modal Navigation Drawer").Layout(gtx)
 					})
 			}),
-			layout.Rigid(func(gtx C) D {
+			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				return spslayout.Setting{}.Layout(gtx,
 					material.Body1(th, "  * Bottom App Bar").Layout,
-					func(gtx C) D {
+					func(gtx layout.Context) layout.Dimensions {
 						if p.bottomBar.Update(gtx) {
 							if p.bottomBar.Value {
 								p.Pages.ModalNavDrawer.Anchor = component.Bottom

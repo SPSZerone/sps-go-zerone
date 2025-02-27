@@ -5,19 +5,14 @@ import (
 	"gioui.org/unit"
 )
 
-type (
-	C = layout.Context
-	D = layout.Dimensions
-)
+var DefaultInset = layout.UniformInset(unit.Dp(8))
 
 type Setting struct {
 	Key float32
 	layout.Inset
 }
 
-var DefaultInset = layout.UniformInset(unit.Dp(8))
-
-func (d Setting) Layout(gtx C, key, value layout.Widget) D {
+func (d Setting) Layout(gtx layout.Context, key, value layout.Widget) layout.Dimensions {
 	if d.Key == 0 {
 		d.Key = 0.333
 	}
@@ -25,10 +20,10 @@ func (d Setting) Layout(gtx C, key, value layout.Widget) D {
 		d.Inset = DefaultInset
 	}
 	return layout.Flex{Alignment: layout.Middle}.Layout(gtx,
-		layout.Flexed(d.Key, func(gtx C) D {
+		layout.Flexed(d.Key, func(gtx layout.Context) layout.Dimensions {
 			return d.Inset.Layout(gtx, key)
 		}),
-		layout.Flexed(1-d.Key, func(gtx C) D {
+		layout.Flexed(1-d.Key, func(gtx layout.Context) layout.Dimensions {
 			return d.Inset.Layout(gtx, value)
 		}),
 	)

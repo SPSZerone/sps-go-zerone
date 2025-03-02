@@ -55,7 +55,7 @@ func (p *Page) Layout(application *gio.Application, gtx layout.Context, w *app.W
 				return spslayout.DefaultInset.Layout(gtx, material.Body1(th, `Settings...`).Layout)
 			}),
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.FlexInset{}.Layout(gtx,
+				return spslayout.FlexInset{}.LayoutABWidget(gtx,
 					material.Body1(th, "  * Decorated").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.decorated.Update(gtx) {
@@ -66,7 +66,7 @@ func (p *Page) Layout(application *gio.Application, gtx layout.Context, w *app.W
 					})
 			}),
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.FlexInset{}.Layout(gtx,
+				return spslayout.FlexInset{}.LayoutABWidget(gtx,
 					material.Body1(th, "  * Use non-modal drawer").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.nonModalDrawer.Update(gtx) {
@@ -81,7 +81,7 @@ func (p *Page) Layout(application *gio.Application, gtx layout.Context, w *app.W
 					})
 			}),
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.FlexInset{}.Layout(gtx,
+				return spslayout.FlexInset{}.LayoutABWidget(gtx,
 					material.Body1(th, "  * Bottom App Bar").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.bottomBar.Update(gtx) {

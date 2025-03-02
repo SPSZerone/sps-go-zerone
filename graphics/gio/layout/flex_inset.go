@@ -14,19 +14,37 @@ type FlexInset struct {
 	Ratio float32
 }
 
-func (i FlexInset) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layout.Dimensions {
-	if i.Ratio == 0 {
-		i.Ratio = 0.333
+func (f FlexInset) LayoutABWidget(gtx layout.Context, aWidget, bWidget layout.Widget) layout.Dimensions {
+	if f.Ratio == 0 {
+		f.Ratio = 0.333
 	}
-	if i.Inset == (layout.Inset{}) {
-		i.Inset = DefaultInset
+	if f.Inset == (layout.Inset{}) {
+		f.Inset = DefaultInset
 	}
-	return i.Flex.Layout(gtx,
-		layout.Flexed(i.Ratio, func(gtx layout.Context) layout.Dimensions {
-			return i.Inset.Layout(gtx, aWidget)
+	return f.Flex.Layout(
+		gtx,
+		layout.Flexed(f.Ratio, func(gtx layout.Context) layout.Dimensions {
+			return f.Inset.Layout(gtx, aWidget)
 		}),
-		layout.Flexed(1-i.Ratio, func(gtx layout.Context) layout.Dimensions {
-			return i.Inset.Layout(gtx, bWidget)
+		layout.Flexed(1-f.Ratio, func(gtx layout.Context) layout.Dimensions {
+			return f.Inset.Layout(gtx, bWidget)
 		}),
 	)
+}
+
+func (f FlexInset) LayoutWidgets(gtx layout.Context, widgets ...func() (float32, layout.Widget)) layout.Dimensions {
+	if f.Inset == (layout.Inset{}) {
+		f.Inset = DefaultInset
+	}
+	flexChildren := make([]layout.FlexChild, len(widgets))
+	for i, customWidget := range widgets {
+		ratio, widget := customWidget()
+		flexChildren[i] = layout.Flexed(
+			ratio,
+			func(gtx layout.Context) layout.Dimensions {
+				return f.Inset.Layout(gtx, widget)
+			},
+		)
+	}
+	return f.Flex.Layout(gtx, flexChildren...)
 }

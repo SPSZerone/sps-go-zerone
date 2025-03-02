@@ -40,11 +40,11 @@ type Split struct {
 
 const defaultBarWidth = unit.Dp(10)
 
-func (s *Split) GetBar() (int, int) {
+func (s Split) GetBar() (int, int) {
 	return s.bar, s.halfBar
 }
 
-func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layout.Dimensions {
+func (s Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layout.Dimensions {
 	bar := gtx.Dp(s.Bar)
 	if bar <= 1 {
 		bar = gtx.Dp(defaultBarWidth)
@@ -98,12 +98,12 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 		if s.BarDraw == nil {
 			switch s.Flex.Axis {
 			case layout.Vertical:
-				BarPretty(gtx, s, barRect, barPos, 20, 10)
+				BarPretty(gtx, &s, barRect, barPos, 20, 10)
 			default:
-				BarPretty(gtx, s, barRect, barPos, 10, 20)
+				BarPretty(gtx, &s, barRect, barPos, 10, 20)
 			}
 		} else {
-			s.BarDraw(gtx, s)
+			s.BarDraw(gtx, &s)
 		}
 
 		// = register for input

@@ -55,7 +55,7 @@ func (p *Page) Layout(gtx layout.Context, w *app.Window, th *material.Theme) lay
 				return spslayout.DefaultInset.Layout(gtx, material.Body1(th, `Settings...`).Layout)
 			}),
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.Setting{}.Layout(gtx,
+				return spslayout.FlexInset{}.Layout(gtx,
 					material.Body1(th, "  * Decorated").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.decorated.Update(gtx) {
@@ -66,7 +66,7 @@ func (p *Page) Layout(gtx layout.Context, w *app.Window, th *material.Theme) lay
 					})
 			}),
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.Setting{}.Layout(gtx,
+				return spslayout.FlexInset{}.Layout(gtx,
 					material.Body1(th, "  * Use non-modal drawer").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.nonModalDrawer.Update(gtx) {
@@ -81,7 +81,7 @@ func (p *Page) Layout(gtx layout.Context, w *app.Window, th *material.Theme) lay
 					})
 			}),
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.Setting{}.Layout(gtx,
+				return spslayout.FlexInset{}.Layout(gtx,
 					material.Body1(th, "  * Bottom App Bar").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.bottomBar.Update(gtx) {

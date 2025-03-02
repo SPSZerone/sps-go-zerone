@@ -17,13 +17,7 @@ import (
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
-type Direction byte
 type ValueType byte
-
-const (
-	DirectionHorizontal Direction = iota
-	DirectionVertical
-)
 
 const (
 	ValueTypeRatio ValueType = iota
@@ -31,7 +25,7 @@ const (
 )
 
 type Split struct {
-	Direction Direction
+	Flex layout.Flex
 
 	Ratio   float32
 	Bar     unit.Dp
@@ -56,8 +50,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 	aWidgetSize := 0
 	bWidgetSize := 0
 	aWidgetMaxSize := 0
-	switch s.Direction {
-	case DirectionVertical:
+	switch s.Flex.Axis {
+	case layout.Vertical:
 		aWidgetSize = int(proportion*float32(gtx.Constraints.Max.Y) - float32(halfBar))
 		aWidgetMaxSize = gtx.Constraints.Max.Y - bar
 	default:
@@ -75,8 +69,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 	bWidgetOffset := aWidgetSize + bar
 
 	// = bWidgetSize
-	switch s.Direction {
-	case DirectionVertical:
+	switch s.Flex.Axis {
+	case layout.Vertical:
 		bWidgetSize = gtx.Constraints.Max.Y - bWidgetOffset
 	default:
 		bWidgetSize = gtx.Constraints.Max.X - bWidgetOffset
@@ -85,8 +79,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 	{ // = handle input
 		// = barRect
 		var barRect image.Rectangle
-		switch s.Direction {
-		case DirectionVertical:
+		switch s.Flex.Axis {
+		case layout.Vertical:
 			barRect = image.Rect(0, aWidgetSize, gtx.Constraints.Max.X, bWidgetOffset)
 		default:
 			barRect = image.Rect(aWidgetSize, 0, bWidgetOffset, gtx.Constraints.Max.X)
@@ -94,8 +88,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 
 		area := clip.Rect(barRect).Push(gtx.Ops)
 		if s.BarDraw == nil {
-			switch s.Direction {
-			case DirectionVertical:
+			switch s.Flex.Axis {
+			case layout.Vertical:
 				BarPretty(gtx, barRect, image.Pt(barRect.Min.X, barRect.Min.Y), 20, 10)
 			default:
 				BarPretty(gtx, barRect, image.Pt(barRect.Min.X, barRect.Min.Y), 10, 20)
@@ -106,8 +100,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 
 		// = register for input
 		event.Op(gtx.Ops, s)
-		switch s.Direction {
-		case DirectionVertical:
+		switch s.Flex.Axis {
+		case layout.Vertical:
 			pointer.CursorRowResize.Add(gtx.Ops)
 		default:
 			pointer.CursorColResize.Add(gtx.Ops)
@@ -134,8 +128,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 				}
 
 				s.dragID = e.PointerID
-				switch s.Direction {
-				case DirectionVertical:
+				switch s.Flex.Axis {
+				case layout.Vertical:
 					s.dragPos = e.Position.Y
 				default:
 					s.dragPos = e.Position.X
@@ -148,8 +142,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 				}
 
 				var posCur, posMax float32
-				switch s.Direction {
-				case DirectionVertical:
+				switch s.Flex.Axis {
+				case layout.Vertical:
 					posCur = e.Position.Y
 					posMax = float32(gtx.Constraints.Max.Y)
 				default:
@@ -183,8 +177,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 
 	{
 		gtx := gtx
-		switch s.Direction {
-		case DirectionVertical:
+		switch s.Flex.Axis {
+		case layout.Vertical:
 			gtx.Constraints = layout.Exact(image.Pt(gtx.Constraints.Max.X, aWidgetSize))
 		default:
 			gtx.Constraints = layout.Exact(image.Pt(aWidgetSize, gtx.Constraints.Max.Y))
@@ -195,8 +189,8 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 	{
 		var opOffset op.TransformStack
 		bGtx := gtx
-		switch s.Direction {
-		case DirectionVertical:
+		switch s.Flex.Axis {
+		case layout.Vertical:
 			opOffset = op.Offset(image.Pt(0, bWidgetOffset)).Push(gtx.Ops)
 			bGtx.Constraints = layout.Exact(image.Pt(bGtx.Constraints.Max.X, bWidgetSize))
 		default:

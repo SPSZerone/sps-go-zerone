@@ -12,7 +12,6 @@ import (
 
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page"
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 )
 
@@ -63,7 +62,7 @@ func (a *Application) Run() {
 		a.Opts.OnStart(a)
 	}
 
-	pages := page.NewPages(&a.Pref)
+	pages := NewPages(&a.Pref)
 	a.NewWindow(a.Opts.Title, &pages, app.Decorated(a.Pref.Settings.Decorated))
 
 	a.Wait()
@@ -78,7 +77,7 @@ func (a *Application) Wait() {
 	a.active.Wait()
 }
 
-func (a *Application) NewWindow(title string, pages *page.Pages, opts ...app.Option) {
+func (a *Application) NewWindow(title string, pages *Pages, opts ...app.Option) {
 	opts = append(opts, app.Title(title))
 	a.active.Add(1)
 

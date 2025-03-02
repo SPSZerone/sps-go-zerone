@@ -1,4 +1,4 @@
-package page
+package gio
 
 import (
 	"log"
@@ -18,7 +18,7 @@ import (
 type Page interface {
 	Actions() []component.AppBarAction
 	Overflow() []component.OverflowAction
-	Layout(gtx layout.Context, w *app.Window, th *material.Theme) layout.Dimensions
+	Layout(app *Application, gtx layout.Context, w *app.Window, th *material.Theme) layout.Dimensions
 	NavItem() component.NavItem
 }
 
@@ -80,7 +80,7 @@ func (p *Pages) SwitchTo(tag any) {
 	p.AppBar.SetActions(page.Actions(), page.Overflow())
 }
 
-func (p *Pages) Layout(gtx layout.Context, w *app.Window, th *material.Theme, deco func() layout.FlexChild) layout.Dimensions {
+func (p *Pages) Layout(app *Application, gtx layout.Context, w *app.Window, th *material.Theme, deco func() layout.FlexChild) layout.Dimensions {
 	// => AppBar
 	for _, event := range p.AppBar.Events(gtx) {
 		switch event := event.(type) {
@@ -130,7 +130,7 @@ func (p *Pages) Layout(gtx layout.Context, w *app.Window, th *material.Theme, de
 		}
 		if p.current != nil {
 			children = append(children, layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-				return p.pages[p.current].Layout(gtx, w, th)
+				return p.pages[p.current].Layout(app, gtx, w, th)
 			}))
 		}
 		return layout.Flex{}.Layout(gtx, children...)

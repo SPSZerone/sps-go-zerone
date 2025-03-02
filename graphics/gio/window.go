@@ -9,10 +9,6 @@ import (
 	"gioui.org/text"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
-
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page"
-	pageabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
-	pagepref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
 )
 
 type Window struct {
@@ -21,31 +17,28 @@ type Window struct {
 
 	Title string
 
-	Pages *page.Pages
+	Pages *Pages
 
 	ops   op.Ops
 	theme *material.Theme
 	deco  widget.Decorations
 }
 
-func NewWindow(a *Application, title string, pages *page.Pages, opts ...app.Option) *Window {
+func NewWindow(a *Application, title string, pages *Pages, opts ...app.Option) *Window {
 	w := &Window{
 		App:    a,
 		Window: new(app.Window),
 	}
 	w.Init(title, pages, opts...)
 
-	if a.Opts.OnWindowInit == nil {
-		pages.Register(0, pageabout.New(pages))
-		pages.Register(1, pagepref.New(pages))
-	} else {
+	if a.Opts.OnWindowInit != nil {
 		a.Opts.OnWindowInit(w)
 	}
 
 	return w
 }
 
-func (w *Window) Init(title string, pages *page.Pages, opts ...app.Option) {
+func (w *Window) Init(title string, pages *Pages, opts ...app.Option) {
 	w.Title = title
 
 	w.Pages = pages
@@ -75,7 +68,7 @@ func (w *Window) Run(opts ...app.Option) error {
 		case app.FrameEvent:
 			gtx := app.NewContext(&w.ops, e)
 
-			w.Pages.Layout(gtx, w.Window, w.theme, func() layout.FlexChild {
+			w.Pages.Layout(w.App, gtx, w.Window, w.theme, func() layout.FlexChild {
 				w.Window.Perform(w.deco.Update(gtx))
 				return w.decorationsFlexChild()
 			})

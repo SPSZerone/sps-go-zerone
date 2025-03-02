@@ -5,7 +5,7 @@ import (
 	"gioui.org/unit"
 )
 
-var DefaultInset = layout.UniformInset(unit.Dp(8))
+var DefaultInset = layout.UniformInset(unit.Dp(4))
 
 type FlexInset struct {
 	Flex  layout.Flex

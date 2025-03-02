@@ -29,8 +29,10 @@ type Split struct {
 
 	Ratio   float32
 	Bar     unit.Dp
-	BarDraw func(gtx layout.Context)
+	BarDraw func(gtx layout.Context, split *Split)
 
+	bar     int
+	halfBar int
 	drag    bool
 	dragID  pointer.ID
 	dragPos float32
@@ -38,12 +40,17 @@ type Split struct {
 
 const defaultBarWidth = unit.Dp(10)
 
+func (s *Split) GetBar() (int, int) {
+	return s.bar, s.halfBar
+}
+
 func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layout.Dimensions {
 	bar := gtx.Dp(s.Bar)
 	if bar <= 1 {
 		bar = gtx.Dp(defaultBarWidth)
 	}
 	halfBar := bar >> 1
+	s.bar, s.halfBar = bar, halfBar
 
 	// = aWidgetSize
 	proportion := (s.Ratio + 1) / 2
@@ -85,17 +92,18 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 		default:
 			barRect = image.Rect(aWidgetSize, 0, bWidgetOffset, gtx.Constraints.Max.X)
 		}
+		barPos := image.Pt(barRect.Min.X, barRect.Min.Y)
 
 		area := clip.Rect(barRect).Push(gtx.Ops)
 		if s.BarDraw == nil {
 			switch s.Flex.Axis {
 			case layout.Vertical:
-				BarPretty(gtx, barRect, image.Pt(barRect.Min.X, barRect.Min.Y), 20, 10)
+				BarPretty(gtx, s, barRect, barPos, 20, 10)
 			default:
-				BarPretty(gtx, barRect, image.Pt(barRect.Min.X, barRect.Min.Y), 10, 20)
+				BarPretty(gtx, s, barRect, barPos, 10, 20)
 			}
 		} else {
-			s.BarDraw(gtx)
+			s.BarDraw(gtx, s)
 		}
 
 		// = register for input
@@ -204,9 +212,23 @@ func (s *Split) Layout(gtx layout.Context, aWidget, bWidget layout.Widget) layou
 	return layout.Dimensions{Size: gtx.Constraints.Max}
 }
 
-func BarPretty(gtx layout.Context, bounds image.Rectangle, position image.Point, xColor, yColor int) {
+func BarPretty(gtx layout.Context, split *Split, bounds image.Rectangle, position image.Point, xColor, yColor int) {
 	img := spsdrawing.NewImageNRGBADynamicColor(bounds, xColor, yColor)
 	spsdrawing.DrawImage(gtx.Ops, img, paint.FilterNearest, f32.Pt(1, 1), position)
+
+	bar, _ := split.GetBar()
+	borderWidth := bar / 5
+	borderHalfWidth := borderWidth >> 1
+	borderSize := image.Pt(bounds.Max.X-bounds.Min.X-borderWidth, bounds.Max.Y-bounds.Min.Y-borderWidth)
+	borderPos := image.Pt(position.X+borderHalfWidth, position.Y+borderHalfWidth)
+	spsdrawing.DrawStrokeRectR(
+		gtx.Ops,
+		borderSize,
+		color.NRGBA{A: 255, R: 161, G: 66, B: 244},
+		borderPos,
+		float32(borderWidth),
+		0,
+	)
 }
 
 func BarDynamicColor(gtx layout.Context, color1, color2 int) {

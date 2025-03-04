@@ -12,7 +12,6 @@ import (
 
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 )
 
 type Page interface {
@@ -30,11 +29,9 @@ type Pages struct {
 	NavAnim component.VisibilityAnimation
 	*component.AppBar
 	*component.ModalLayer
-
-	Pref *pref.Preferences
 }
 
-func NewPages(pref *pref.Preferences) Pages {
+func NewPages() Pages {
 	modal := component.NewModal()
 
 	nav := component.NewNav("Navigation", "Enjoy!!")
@@ -53,7 +50,6 @@ func NewPages(pref *pref.Preferences) Pages {
 		ModalNavDrawer: modalNav,
 		AppBar:         bar,
 		NavAnim:        na,
-		Pref:           pref,
 	}
 }
 
@@ -85,7 +81,7 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, w *app.Window, th *
 	for _, event := range p.AppBar.Events(gtx) {
 		switch event := event.(type) {
 		case component.AppBarNavigationClicked:
-			if p.Pref.Settings.NonModalDrawer {
+			if app.Pref.Settings.NonModalDrawer {
 				p.NavAnim.ToggleVisibility(gtx.Now)
 			} else {
 				p.ModalNavDrawer.Appear(gtx.Now)
@@ -139,15 +135,15 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, w *app.Window, th *
 	// => Final
 	flex := layout.Flex{Axis: layout.Vertical}
 
-	if p.Pref.Settings.Decorated {
-		if p.Pref.Settings.BottomBar {
+	if app.Pref.Settings.Decorated {
+		if app.Pref.Settings.BottomBar {
 			flex.Layout(gtx, content, bar)
 		} else {
 			flex.Layout(gtx, bar, content)
 		}
 	} else {
 		decorations := deco()
-		if p.Pref.Settings.BottomBar {
+		if app.Pref.Settings.BottomBar {
 			flex.Layout(gtx, decorations, content, bar)
 		} else {
 			flex.Layout(gtx, decorations, bar, content)

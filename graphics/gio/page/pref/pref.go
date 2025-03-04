@@ -59,7 +59,7 @@ func (p *Page) Layout(application *spsgio.Application, gtx layout.Context, w *ap
 					material.Body1(th, "  * Decorated").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.decorated.Update(gtx) {
-							p.Pages.Pref.Settings.Decorated = p.decorated.Value
+							application.Pref.Settings.Decorated = p.decorated.Value
 							w.Option(app.Decorated(p.decorated.Value))
 						}
 						return material.Switch(th, &p.decorated, "Use decorated").Layout(gtx)
@@ -70,7 +70,7 @@ func (p *Page) Layout(application *spsgio.Application, gtx layout.Context, w *ap
 					material.Body1(th, "  * Use non-modal drawer").Layout,
 					func(gtx layout.Context) layout.Dimensions {
 						if p.nonModalDrawer.Update(gtx) {
-							p.Pages.Pref.Settings.NonModalDrawer = p.nonModalDrawer.Value
+							application.Pref.Settings.NonModalDrawer = p.nonModalDrawer.Value
 							if p.nonModalDrawer.Value {
 								p.Pages.NavAnim.Appear(gtx.Now)
 							} else {
@@ -92,7 +92,7 @@ func (p *Page) Layout(application *spsgio.Application, gtx layout.Context, w *ap
 								p.Pages.ModalNavDrawer.Anchor = component.Top
 								p.Pages.AppBar.Anchor = component.Top
 							}
-							p.Pages.Pref.Settings.BottomBar = p.bottomBar.Value
+							application.Pref.Settings.BottomBar = p.bottomBar.Value
 						}
 						return material.Switch(th, &p.bottomBar, "Use Bottom App Bar").Layout(gtx)
 					})

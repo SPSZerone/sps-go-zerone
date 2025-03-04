@@ -62,7 +62,7 @@ func (a *Application) Run() {
 		a.Opts.OnStart(a)
 	}
 
-	pages := NewPages(&a.Pref)
+	pages := NewPages()
 	a.NewWindow(a.Opts.Title, &pages, app.Decorated(a.Pref.Settings.Decorated))
 
 	a.Wait()

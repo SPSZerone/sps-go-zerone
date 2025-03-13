@@ -13,3 +13,18 @@ func SafeGet[T any](slice []T, idx int) (t T, ok bool) {
 	}
 	return slice[idx], true
 }
+
+func RemoveByKeepOrder[T any](slice []T, i int) []T {
+	if i < 0 || i >= len(slice) {
+		return slice
+	}
+	return append(slice[:i], slice[i+1:]...)
+}
+
+func RemoveFast[T any](slice []T, i int) []T {
+	if i < 0 || i >= len(slice) {
+		return slice
+	}
+	slice[i] = slice[len(slice)-1]
+	return slice[:len(slice)-1]
+}

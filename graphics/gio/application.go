@@ -9,6 +9,7 @@ import (
 
 	"gioui.org/app"
 	"gioui.org/font/gofont"
+	"gioui.org/io/event"
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
@@ -76,6 +77,10 @@ func (a *Application) Init(opts ...Option) {
 	a.Window = new(app.Window)
 
 	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated))
+
+	if a.Opts.OnInit != nil {
+		a.Opts.OnInit(a)
+	}
 }
 
 func (a *Application) Run() {
@@ -87,17 +92,11 @@ func (a *Application) Run() {
 
 	a.run()
 
-	a.wait()
-
-	// OnEnd
-	if a.Opts.OnEnd != nil {
-		a.Opts.OnEnd(a)
+	// OnStop
+	if a.Opts.OnStop != nil {
+		a.Opts.OnStop(a)
 	}
 	a.Logger.Info().Msg("Bye!!")
-}
-
-func (a *Application) wait() {
-	a.active.Wait()
 }
 
 func (a *Application) run() {
@@ -106,39 +105,53 @@ func (a *Application) run() {
 	go func() {
 		defer a.active.Done()
 
-		if a.Opts.OnWindowInit != nil {
-			a.Opts.OnWindowInit(a)
-		}
-
-		if err := a.runLogic(); err != nil {
-			a.Logger.Info().Msgf("window %s err: %+v", a.Opts.Title, err)
+		if err := a.loop(); err != nil {
+			a.Logger.Info().Msgf("App %s err: %+v", a.Opts.Title, err)
 		}
 	}()
+
+	a.active.Wait()
 }
 
-func (a *Application) runLogic() error {
+func (a *Application) loop() error {
 	go func() {
 		<-a.Context.Done()
 		a.Logger.Info().Msg("close by signal ...")
 		a.Window.Perform(system.ActionClose)
 	}()
 
+	if a.Opts.OnLoop != nil {
+		return a.Opts.OnLoop(a)
+	}
+
 	for {
-		switch e := a.Window.Event().(type) {
-		case app.DestroyEvent:
-			a.Logger.Info().Msg("app.DestroyEvent ...")
-			return e.Err
-		case app.FrameEvent:
-			gtx := app.NewContext(&a.Ops, e)
-
-			a.Tabs.Layout(a, gtx, func() layout.FlexChild {
-				a.Window.Perform(a.Deco.Update(gtx))
-				return a.decorationsFlexChild()
-			})
-
-			e.Frame(gtx.Ops)
+		destroy, err := a.OnEvent(a.Window.Event())
+		if destroy {
+			return err
 		}
 	}
+}
+
+func (a *Application) OnEvent(evt event.Event) (destroy bool, err error) {
+	switch e := evt.(type) {
+	case app.DestroyEvent:
+		a.Logger.Info().Msg("app.DestroyEvent ...")
+		return true, e.Err
+	case app.FrameEvent:
+		a.OnFrameEvent(e)
+	}
+	return
+}
+
+func (a *Application) OnFrameEvent(e app.FrameEvent) {
+	gtx := app.NewContext(&a.Ops, e)
+
+	a.Tabs.Layout(a, gtx, func() layout.FlexChild {
+		a.Window.Perform(a.Deco.Update(gtx))
+		return a.decorationsFlexChild()
+	})
+
+	e.Frame(gtx.Ops)
 }
 
 func (a *Application) decorationsFlexChild() layout.FlexChild {

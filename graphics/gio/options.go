@@ -2,20 +2,28 @@ package gio
 
 type Option func(o *Options)
 
+type OnInit func(app *Application)
 type OnStart func(app *Application)
-type OnEnd func(app *Application)
-type OnWindowInit func(app *Application)
+type OnLoop func(app *Application) error
+type OnStop func(app *Application)
 
 type Options struct {
-	Title        string
-	OnStart      OnStart
-	OnEnd        OnEnd
-	OnWindowInit OnWindowInit
+	Title   string
+	OnInit  OnInit
+	OnStart OnStart
+	OnLoop  OnLoop
+	OnStop  OnStop
 }
 
 func OptTitle(value string) Option {
 	return func(o *Options) {
 		o.Title = value
+	}
+}
+
+func OptOnInit(value OnInit) Option {
+	return func(o *Options) {
+		o.OnInit = value
 	}
 }
 
@@ -25,14 +33,14 @@ func OptOnStart(value OnStart) Option {
 	}
 }
 
-func OptOnEnd(value OnEnd) Option {
+func OptOnLoop(value OnLoop) Option {
 	return func(o *Options) {
-		o.OnEnd = value
+		o.OnLoop = value
 	}
 }
 
-func OptOnWindowInit(value OnWindowInit) Option {
+func OptOnStop(value OnStop) Option {
 	return func(o *Options) {
-		o.OnWindowInit = value
+		o.OnStop = value
 	}
 }

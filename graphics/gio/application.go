@@ -43,11 +43,11 @@ type Application struct {
 	Opts Options
 
 	Window *app.Window
-	Pages  Pages
+	Tabs   Tabs
 
-	ops   op.Ops
-	theme *material.Theme
-	deco  widget.Decorations
+	Ops   op.Ops
+	Theme *material.Theme
+	Deco  widget.Decorations
 
 	Logger zerolog.Logger
 }
@@ -70,9 +70,9 @@ func (a *Application) Init(opts ...Option) {
 
 	th := material.NewTheme()
 	th.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
-	a.theme = th
+	a.Theme = th
 
-	a.Pages = NewPages()
+	a.Tabs = NewTabs()
 	a.Window = new(app.Window)
 
 	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated))
@@ -129,10 +129,10 @@ func (a *Application) runLogic() error {
 			a.Logger.Info().Msg("app.DestroyEvent ...")
 			return e.Err
 		case app.FrameEvent:
-			gtx := app.NewContext(&a.ops, e)
+			gtx := app.NewContext(&a.Ops, e)
 
-			a.Pages.Layout(a, gtx, a.Window, a.theme, func() layout.FlexChild {
-				a.Window.Perform(a.deco.Update(gtx))
+			a.Tabs.Layout(a, gtx, a.Window, a.Theme, func() layout.FlexChild {
+				a.Window.Perform(a.Deco.Update(gtx))
 				return a.decorationsFlexChild()
 			})
 
@@ -143,6 +143,6 @@ func (a *Application) runLogic() error {
 
 func (a *Application) decorationsFlexChild() layout.FlexChild {
 	return layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		return material.Decorations(a.theme, &a.deco, ^system.Action(0), a.Opts.Title).Layout(gtx)
+		return material.Decorations(a.Theme, &a.Deco, ^system.Action(0), a.Opts.Title).Layout(gtx)
 	})
 }

@@ -1,7 +1,6 @@
 package about
 
 import (
-	"gioui.org/app"
 	"gioui.org/layout"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
@@ -12,43 +11,43 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
-var _ spsgio.Page = (*Page)(nil)
+var _ spsgio.Tab = (*Tab)(nil)
 
-type Page struct {
+type Tab struct {
 	widget.List
-	*spsgio.Pages
+	*spsgio.Tabs
 }
 
-func New(pages *spsgio.Pages) *Page {
-	return &Page{
-		Pages: pages,
+func New(tabs *spsgio.Tabs) *Tab {
+	return &Tab{
+		Tabs: tabs,
 	}
 }
 
-func (p *Page) Actions() []component.AppBarAction {
+func (p *Tab) Actions() []component.AppBarAction {
 	return []component.AppBarAction{}
 }
 
-func (p *Page) Overflow() []component.OverflowAction {
+func (p *Tab) Overflow() []component.OverflowAction {
 	return []component.OverflowAction{}
 }
 
-func (p *Page) NavItem() component.NavItem {
+func (p *Tab) NavItem() component.NavItem {
 	return component.NavItem{
 		Name: "About",
 		Icon: spsicon.ActionHelp,
 	}
 }
 
-func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, w *app.Window, th *material.Theme) layout.Dimensions {
+func (p *Tab) Layout(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	p.List.Axis = layout.Vertical
-	return material.List(th, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+	return material.List(app.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
 		}.Layout(gtx,
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.DefaultInset.Layout(gtx, material.Body1(th, `Enjoy!!`).Layout)
+				return spslayout.DefaultInset.Layout(gtx, material.Body1(app.Theme, `Enjoy!!`).Layout)
 			}),
 		)
 	})

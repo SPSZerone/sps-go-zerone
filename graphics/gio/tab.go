@@ -14,15 +14,15 @@ import (
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 )
 
-type Page interface {
+type Tab interface {
 	Actions() []component.AppBarAction
 	Overflow() []component.OverflowAction
-	Layout(app *Application, gtx layout.Context, w *app.Window, th *material.Theme) layout.Dimensions
+	Layout(app *Application, gtx layout.Context) layout.Dimensions
 	NavItem() component.NavItem
 }
 
-type Pages struct {
-	pages   map[any]Page
+type Tabs struct {
+	tabs    map[any]Tab
 	current any
 
 	*component.ModalNavDrawer
@@ -31,7 +31,7 @@ type Pages struct {
 	*component.ModalLayer
 }
 
-func NewPages() Pages {
+func NewTabs() Tabs {
 	modal := component.NewModal()
 
 	nav := component.NewNav("Navigation", "Enjoy!!")
@@ -44,8 +44,8 @@ func NewPages() Pages {
 		State:    component.Invisible,
 		Duration: time.Millisecond * 250,
 	}
-	return Pages{
-		pages:          make(map[any]Page),
+	return Tabs{
+		tabs:           make(map[any]Tab),
 		ModalLayer:     modal,
 		ModalNavDrawer: modalNav,
 		AppBar:         bar,
@@ -53,20 +53,20 @@ func NewPages() Pages {
 	}
 }
 
-func (p *Pages) Register(tag any, page Page) {
-	p.pages[tag] = page
-	navItem := page.NavItem()
+func (p *Tabs) Register(tag any, tab Tab) {
+	p.tabs[tag] = tab
+	navItem := tab.NavItem()
 	navItem.Tag = tag
 	if p.current == nil {
 		p.current = tag
 		p.AppBar.Title = navItem.Name
-		p.AppBar.SetActions(page.Actions(), page.Overflow())
+		p.AppBar.SetActions(tab.Actions(), tab.Overflow())
 	}
 	p.ModalNavDrawer.AddNavItem(navItem)
 }
 
-func (p *Pages) SwitchTo(tag any) {
-	page, ok := p.pages[tag]
+func (p *Tabs) SwitchTo(tag any) {
+	page, ok := p.tabs[tag]
 	if !ok {
 		return
 	}
@@ -76,7 +76,7 @@ func (p *Pages) SwitchTo(tag any) {
 	p.AppBar.SetActions(page.Actions(), page.Overflow())
 }
 
-func (p *Pages) Layout(app *Application, gtx layout.Context, w *app.Window, th *material.Theme, deco func() layout.FlexChild) layout.Dimensions {
+func (p *Tabs) Layout(app *Application, gtx layout.Context, w *app.Window, th *material.Theme, deco func() layout.FlexChild) layout.Dimensions {
 	// => AppBar
 	for _, event := range p.AppBar.Events(gtx) {
 		switch event := event.(type) {
@@ -126,7 +126,7 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, w *app.Window, th *
 		}
 		if p.current != nil {
 			children = append(children, layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-				return p.pages[p.current].Layout(app, gtx, w, th)
+				return p.tabs[p.current].Layout(app, gtx)
 			}))
 		}
 		return layout.Flex{}.Layout(gtx, children...)

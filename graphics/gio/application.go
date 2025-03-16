@@ -8,11 +8,17 @@ import (
 	"syscall"
 
 	"gioui.org/app"
+	"gioui.org/font/gofont"
+	"gioui.org/io/system"
+	"gioui.org/layout"
+	"gioui.org/op"
+	"gioui.org/text"
+	"gioui.org/widget"
+	"gioui.org/widget/material"
 	"github.com/rs/zerolog"
 
+	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
-
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 )
 
 func Run(opts ...Option) {
@@ -33,8 +39,15 @@ type Application struct {
 	Shutdown func()
 	active   sync.WaitGroup
 
-	Pref pref.Preferences
+	Pref spspref.Preferences
 	Opts Options
+
+	Window *app.Window
+	Pages  Pages
+
+	ops   op.Ops
+	theme *material.Theme
+	deco  widget.Decorations
 
 	Logger zerolog.Logger
 }
@@ -54,40 +67,82 @@ func (a *Application) Init(opts ...Option) {
 	for _, opt := range opts {
 		opt(&a.Opts)
 	}
+
+	th := material.NewTheme()
+	th.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
+	a.theme = th
+
+	a.Pages = NewPages()
+	a.Window = new(app.Window)
+
+	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated))
 }
 
 func (a *Application) Run() {
+	// OnStart
 	a.Logger.Info().Msg("Hello!!")
 	if a.Opts.OnStart != nil {
 		a.Opts.OnStart(a)
 	}
 
-	pages := NewPages()
-	a.NewWindow(a.Opts.Title, &pages, app.Decorated(a.Pref.Settings.Decorated))
+	a.run()
 
-	a.Wait()
+	a.wait()
 
+	// OnEnd
 	if a.Opts.OnEnd != nil {
 		a.Opts.OnEnd(a)
 	}
 	a.Logger.Info().Msg("Bye!!")
 }
 
-func (a *Application) Wait() {
+func (a *Application) wait() {
 	a.active.Wait()
 }
 
-func (a *Application) NewWindow(title string, pages *Pages, opts ...app.Option) {
-	opts = append(opts, app.Title(title))
+func (a *Application) run() {
 	a.active.Add(1)
 
 	go func() {
 		defer a.active.Done()
 
-		w := NewWindow(a, title, pages, opts...)
+		if a.Opts.OnWindowInit != nil {
+			a.Opts.OnWindowInit(a)
+		}
 
-		if err := w.Run(); err != nil {
-			a.Logger.Info().Msgf("window %s err: %+v", title, err)
+		if err := a.runLogic(); err != nil {
+			a.Logger.Info().Msgf("window %s err: %+v", a.Opts.Title, err)
 		}
 	}()
+}
+
+func (a *Application) runLogic() error {
+	go func() {
+		<-a.Context.Done()
+		a.Logger.Info().Msg("close by signal ...")
+		a.Window.Perform(system.ActionClose)
+	}()
+
+	for {
+		switch e := a.Window.Event().(type) {
+		case app.DestroyEvent:
+			a.Logger.Info().Msg("app.DestroyEvent ...")
+			return e.Err
+		case app.FrameEvent:
+			gtx := app.NewContext(&a.ops, e)
+
+			a.Pages.Layout(a, gtx, a.Window, a.theme, func() layout.FlexChild {
+				a.Window.Perform(a.deco.Update(gtx))
+				return a.decorationsFlexChild()
+			})
+
+			e.Frame(gtx.Ops)
+		}
+	}
+}
+
+func (a *Application) decorationsFlexChild() layout.FlexChild {
+	return layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+		return material.Decorations(a.theme, &a.deco, ^system.Action(0), a.Opts.Title).Layout(gtx)
+	})
 }

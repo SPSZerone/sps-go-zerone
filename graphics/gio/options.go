@@ -4,7 +4,7 @@ type Option func(o *Options)
 
 type OnStart func(app *Application)
 type OnEnd func(app *Application)
-type OnWindowInit func(win *Window)
+type OnWindowInit func(app *Application)
 
 type Options struct {
 	Title        string

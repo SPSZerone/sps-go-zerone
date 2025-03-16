@@ -131,7 +131,7 @@ func (a *Application) runLogic() error {
 		case app.FrameEvent:
 			gtx := app.NewContext(&a.Ops, e)
 
-			a.Tabs.Layout(a, gtx, a.Window, a.Theme, func() layout.FlexChild {
+			a.Tabs.Layout(a, gtx, func() layout.FlexChild {
 				a.Window.Perform(a.Deco.Update(gtx))
 				return a.decorationsFlexChild()
 			})

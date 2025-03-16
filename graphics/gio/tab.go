@@ -4,10 +4,8 @@ import (
 	"log"
 	"time"
 
-	"gioui.org/app"
 	"gioui.org/layout"
 	"gioui.org/op/paint"
-	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
@@ -76,7 +74,7 @@ func (p *Tabs) SwitchTo(tag any) {
 	p.AppBar.SetActions(page.Actions(), page.Overflow())
 }
 
-func (p *Tabs) Layout(app *Application, gtx layout.Context, w *app.Window, th *material.Theme, deco func() layout.FlexChild) layout.Dimensions {
+func (p *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.FlexChild) layout.Dimensions {
 	// => AppBar
 	for _, event := range p.AppBar.Events(gtx) {
 		switch event := event.(type) {
@@ -104,12 +102,12 @@ func (p *Tabs) Layout(app *Application, gtx layout.Context, w *app.Window, th *m
 	if ok {
 		color.Fill(gtx, color.DynamicColor(curIdx), color.DynamicColor(curIdx+1))
 	} else {
-		paint.Fill(gtx.Ops, th.Palette.Bg)
+		paint.Fill(gtx.Ops, app.Theme.Palette.Bg)
 	}
 
 	// => bar
 	bar := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		thBar := *th
+		thBar := *app.Theme
 		colorBar := color.DynamicColor(3)
 		thBar.ContrastBg = colorBar
 		thBar.Palette.Bg = colorBar
@@ -121,7 +119,7 @@ func (p *Tabs) Layout(app *Application, gtx layout.Context, w *app.Window, th *m
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				gtx.Constraints.Max.X /= 5
-				return p.NavDrawer.Layout(gtx, th, &p.NavAnim)
+				return p.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
 			}),
 		}
 		if p.current != nil {
@@ -150,6 +148,6 @@ func (p *Tabs) Layout(app *Application, gtx layout.Context, w *app.Window, th *m
 		}
 	}
 
-	p.ModalLayer.Layout(gtx, th)
+	p.ModalLayer.Layout(gtx, app.Theme)
 	return layout.Dimensions{Size: gtx.Constraints.Max}
 }

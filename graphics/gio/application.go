@@ -36,9 +36,9 @@ func Run(opts ...Option) {
 }
 
 type Application struct {
-	Context  context.Context
-	Shutdown func()
-	active   sync.WaitGroup
+	Context   context.Context
+	Shutdown  func()
+	waitGroup sync.WaitGroup
 
 	Pref spspref.Preferences
 	Opts Options
@@ -99,18 +99,28 @@ func (a *Application) Run() {
 	a.Logger.Info().Msg("Bye!!")
 }
 
-func (a *Application) run() {
-	a.active.Add(1)
+func (a *Application) GoRun(run func()) {
+	if run == nil {
+		return
+	}
+
+	a.waitGroup.Add(1)
 
 	go func() {
-		defer a.active.Done()
+		defer a.waitGroup.Done()
 
+		run()
+	}()
+}
+
+func (a *Application) run() {
+	a.GoRun(func() {
 		if err := a.loop(); err != nil {
 			a.Logger.Info().Msgf("App %s err: %+v", a.Opts.Title, err)
 		}
-	}()
+	})
 
-	a.active.Wait()
+	a.waitGroup.Wait()
 }
 
 func (a *Application) loop() error {

@@ -1,6 +1,7 @@
 package about
 
 import (
+	"gioui.org/io/event"
 	"gioui.org/layout"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
@@ -37,6 +38,14 @@ func (t *Tab) NavItem() component.NavItem {
 		Name: "About",
 		Icon: spsicon.ActionHelp,
 	}
+}
+
+func (t *Tab) OnEventPre(app *spsgio.Application, evt event.Event) {
+
+}
+
+func (t *Tab) OnEventPost(app *spsgio.Application, evt event.Event) {
+
 }
 
 func (t *Tab) Layout(app *spsgio.Application, gtx layout.Context) layout.Dimensions {

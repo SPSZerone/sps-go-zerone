@@ -143,13 +143,19 @@ func (a *Application) loop() error {
 }
 
 func (a *Application) OnEvent(evt event.Event) (destroy bool, err error) {
+	a.Tabs.OnEventPre(a, evt)
+
 	switch e := evt.(type) {
 	case app.DestroyEvent:
+		destroy = true
+		err = e.Err
 		a.Logger.Info().Msg("app.DestroyEvent ...")
-		return true, e.Err
 	case app.FrameEvent:
 		a.OnFrameEvent(e)
 	}
+
+	a.Tabs.OnEventPost(a, evt)
+
 	return
 }
 

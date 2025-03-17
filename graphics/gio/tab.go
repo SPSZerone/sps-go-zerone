@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"gioui.org/io/event"
 	"gioui.org/layout"
 	"gioui.org/op/paint"
 	"gioui.org/x/component"
@@ -15,8 +16,11 @@ import (
 type Tab interface {
 	Actions() []component.AppBarAction
 	Overflow() []component.OverflowAction
-	Layout(app *Application, gtx layout.Context) layout.Dimensions
 	NavItem() component.NavItem
+
+	OnEventPre(app *Application, evt event.Event)
+	OnEventPost(app *Application, evt event.Event)
+	Layout(app *Application, gtx layout.Context) layout.Dimensions
 }
 
 type Tabs struct {
@@ -51,54 +55,68 @@ func NewTabs() Tabs {
 	}
 }
 
-func (p *Tabs) Register(tag any, tab Tab) {
-	p.tabs[tag] = tab
+func (t *Tabs) Register(tag any, tab Tab) {
+	t.tabs[tag] = tab
 	navItem := tab.NavItem()
 	navItem.Tag = tag
-	if p.current == nil {
-		p.current = tag
-		p.AppBar.Title = navItem.Name
-		p.AppBar.SetActions(tab.Actions(), tab.Overflow())
+	if t.current == nil {
+		t.current = tag
+		t.AppBar.Title = navItem.Name
+		t.AppBar.SetActions(tab.Actions(), tab.Overflow())
 	}
-	p.ModalNavDrawer.AddNavItem(navItem)
+	t.ModalNavDrawer.AddNavItem(navItem)
 }
 
-func (p *Tabs) SwitchTo(tag any) {
-	page, ok := p.tabs[tag]
+func (t *Tabs) SwitchTo(tag any) {
+	page, ok := t.tabs[tag]
 	if !ok {
 		return
 	}
 	navItem := page.NavItem()
-	p.current = tag
-	p.AppBar.Title = navItem.Name
-	p.AppBar.SetActions(page.Actions(), page.Overflow())
+	t.current = tag
+	t.AppBar.Title = navItem.Name
+	t.AppBar.SetActions(page.Actions(), page.Overflow())
 }
 
-func (p *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.FlexChild) layout.Dimensions {
+func (t *Tabs) OnEventPre(app *Application, evt event.Event) {
+	if t.current == nil {
+		return
+	}
+	t.tabs[t.current].OnEventPre(app, evt)
+}
+
+func (t *Tabs) OnEventPost(app *Application, evt event.Event) {
+	if t.current == nil {
+		return
+	}
+	t.tabs[t.current].OnEventPost(app, evt)
+}
+
+func (t *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.FlexChild) layout.Dimensions {
 	// => AppBar
-	for _, event := range p.AppBar.Events(gtx) {
-		switch event := event.(type) {
+	for _, evt := range t.AppBar.Events(gtx) {
+		switch e := evt.(type) {
 		case component.AppBarNavigationClicked:
 			if app.Pref.Settings.NonModalDrawer {
-				p.NavAnim.ToggleVisibility(gtx.Now)
+				t.NavAnim.ToggleVisibility(gtx.Now)
 			} else {
-				p.ModalNavDrawer.Appear(gtx.Now)
-				p.NavAnim.Disappear(gtx.Now)
+				t.ModalNavDrawer.Appear(gtx.Now)
+				t.NavAnim.Disappear(gtx.Now)
 			}
 		case component.AppBarContextMenuDismissed:
-			log.Printf("Context menu dismissed: %v", event)
+			log.Printf("Context menu dismissed: %v", e)
 		case component.AppBarOverflowActionClicked:
-			log.Printf("Overflow action selected: %v", event)
+			log.Printf("Overflow action selected: %v", e)
 		}
 	}
 
 	// => ModalNav
-	if p.ModalNavDrawer.NavDestinationChanged() {
-		p.SwitchTo(p.ModalNavDrawer.CurrentNavDestination())
+	if t.ModalNavDrawer.NavDestinationChanged() {
+		t.SwitchTo(t.ModalNavDrawer.CurrentNavDestination())
 	}
 
 	// => BG
-	curIdx, ok := p.current.(int)
+	curIdx, ok := t.current.(int)
 	if ok {
 		color.Fill(gtx, color.DynamicColor(curIdx), color.DynamicColor(curIdx+1))
 	} else {
@@ -111,7 +129,7 @@ func (p *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.F
 		colorBar := color.DynamicColor(3)
 		thBar.ContrastBg = colorBar
 		thBar.Palette.Bg = colorBar
-		return p.AppBar.Layout(gtx, &thBar, "NavigationMenu", "Actions")
+		return t.AppBar.Layout(gtx, &thBar, "NavigationMenu", "Actions")
 	})
 
 	// => content
@@ -119,12 +137,12 @@ func (p *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.F
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				gtx.Constraints.Max.X /= 5
-				return p.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
+				return t.NavDrawer.Layout(gtx, app.Theme, &t.NavAnim)
 			}),
 		}
-		if p.current != nil {
+		if t.current != nil {
 			children = append(children, layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-				return p.tabs[p.current].Layout(app, gtx)
+				return t.tabs[t.current].Layout(app, gtx)
 			}))
 		}
 		return layout.Flex{}.Layout(gtx, children...)
@@ -148,6 +166,6 @@ func (p *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.F
 		}
 	}
 
-	p.ModalLayer.Layout(gtx, app.Theme)
+	t.ModalLayer.Layout(gtx, app.Theme)
 	return layout.Dimensions{Size: gtx.Constraints.Max}
 }

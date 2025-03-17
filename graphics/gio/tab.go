@@ -18,9 +18,9 @@ type Tab interface {
 	Overflow() []component.OverflowAction
 	NavItem() component.NavItem
 
-	OnEventPre(app *Application, evt event.Event)
-	OnEventPost(app *Application, evt event.Event)
-	Layout(app *Application, gtx layout.Context) layout.Dimensions
+	OnEventPre(app *Application, evt event.Event, param any)
+	OnEventPost(app *Application, evt event.Event, param any)
+	Layout(app *Application, gtx layout.Context, param any) layout.Dimensions
 }
 
 type Tabs struct {
@@ -78,21 +78,21 @@ func (t *Tabs) SwitchTo(tag any) {
 	t.AppBar.SetActions(page.Actions(), page.Overflow())
 }
 
-func (t *Tabs) OnEventPre(app *Application, evt event.Event) {
+func (t *Tabs) OnEventPre(app *Application, evt event.Event, param any) {
 	if t.current == nil {
 		return
 	}
-	t.tabs[t.current].OnEventPre(app, evt)
+	t.tabs[t.current].OnEventPre(app, evt, param)
 }
 
-func (t *Tabs) OnEventPost(app *Application, evt event.Event) {
+func (t *Tabs) OnEventPost(app *Application, evt event.Event, param any) {
 	if t.current == nil {
 		return
 	}
-	t.tabs[t.current].OnEventPost(app, evt)
+	t.tabs[t.current].OnEventPost(app, evt, param)
 }
 
-func (t *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.FlexChild) layout.Dimensions {
+func (t *Tabs) Layout(app *Application, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
 	// => AppBar
 	for _, evt := range t.AppBar.Events(gtx) {
 		switch e := evt.(type) {
@@ -142,7 +142,7 @@ func (t *Tabs) Layout(app *Application, gtx layout.Context, deco func() layout.F
 		}
 		if t.current != nil {
 			children = append(children, layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-				return t.tabs[t.current].Layout(app, gtx)
+				return t.tabs[t.current].Layout(app, gtx, param)
 			}))
 		}
 		return layout.Flex{}.Layout(gtx, children...)

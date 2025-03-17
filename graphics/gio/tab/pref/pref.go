@@ -45,15 +45,15 @@ func (t *Tab) NavItem() component.NavItem {
 	}
 }
 
-func (t *Tab) OnEventPre(app *spsgio.Application, evt event.Event) {
+func (t *Tab) OnEventPre(app *spsgio.Application, evt event.Event, param any) {
 
 }
 
-func (t *Tab) OnEventPost(app *spsgio.Application, evt event.Event) {
+func (t *Tab) OnEventPost(app *spsgio.Application, evt event.Event, param any) {
 
 }
 
-func (t *Tab) Layout(application *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (t *Tab) Layout(application *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
 	t.List.Axis = layout.Vertical
 	return material.List(application.Theme, &t.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return layout.Flex{

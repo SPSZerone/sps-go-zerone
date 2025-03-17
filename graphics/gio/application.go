@@ -35,6 +35,14 @@ func Run(opts ...Option) {
 	app.Main()
 }
 
+type LoopMode int
+
+const (
+	LoopModeSimple LoopMode = iota
+	LoopModeParam
+	LoopModeCustom
+)
+
 type Application struct {
 	Context   context.Context
 	Shutdown  func()
@@ -49,6 +57,8 @@ type Application struct {
 	Ops   op.Ops
 	Theme *material.Theme
 	Deco  widget.Decorations
+
+	ChanParam chan any
 
 	Logger zerolog.Logger
 }
@@ -130,39 +140,86 @@ func (a *Application) loop() error {
 		a.Window.Perform(system.ActionClose)
 	}()
 
-	if a.Opts.OnLoop != nil {
+	if a.Opts.LoopMode == LoopModeCustom && a.Opts.OnLoop != nil {
+		a.Logger.Info().Msg("loopCustom...")
 		return a.Opts.OnLoop(a)
 	}
 
+	if a.Opts.LoopMode == LoopModeParam {
+		return a.loopParam()
+	}
+
+	return a.loopSimple()
+}
+
+func (a *Application) loopSimple() error {
+	a.Logger.Info().Msg("loopSimple...")
+
 	for {
-		destroy, err := a.OnEvent(a.Window.Event())
-		if destroy {
-			return err
+		evt := a.Window.Event()
+
+		a.Tabs.OnEventPre(a, evt, nil)
+
+		switch e := evt.(type) {
+		case app.DestroyEvent:
+			a.Logger.Info().Msg("loopSimple app.DestroyEvent ...")
+			a.Tabs.OnEventPost(a, evt, nil)
+			return e.Err
+		case app.FrameEvent:
+			a.OnFrameEvent(e, nil)
+		}
+
+		a.Tabs.OnEventPost(a, evt, nil)
+	}
+}
+
+func (a *Application) loopParam() error {
+	a.Logger.Info().Msg("loopParam...")
+
+	a.ChanParam = make(chan any)
+	chanEvent := make(chan event.Event)
+	chanEventDone := make(chan struct{})
+
+	a.GoRun(func() {
+		for {
+			evt := a.Window.Event()
+			chanEvent <- evt
+			<-chanEventDone
+			if _, ok := evt.(app.DestroyEvent); ok {
+				a.Logger.Info().Msg("loopParam Window.Event app.DestroyEvent ...")
+				return
+			}
+		}
+	})
+
+	var param any
+	for {
+		select {
+		case param = <-a.ChanParam:
+			a.Window.Invalidate()
+		case evt := <-chanEvent:
+			a.Tabs.OnEventPre(a, evt, param)
+
+			switch e := evt.(type) {
+			case app.DestroyEvent:
+				a.Logger.Info().Msg("loopParam app.DestroyEvent ...")
+				a.Tabs.OnEventPost(a, evt, param)
+				chanEventDone <- struct{}{}
+				return e.Err
+			case app.FrameEvent:
+				a.OnFrameEvent(e, param)
+			}
+
+			a.Tabs.OnEventPost(a, evt, param)
+			chanEventDone <- struct{}{}
 		}
 	}
 }
 
-func (a *Application) OnEvent(evt event.Event) (destroy bool, err error) {
-	a.Tabs.OnEventPre(a, evt)
-
-	switch e := evt.(type) {
-	case app.DestroyEvent:
-		destroy = true
-		err = e.Err
-		a.Logger.Info().Msg("app.DestroyEvent ...")
-	case app.FrameEvent:
-		a.OnFrameEvent(e)
-	}
-
-	a.Tabs.OnEventPost(a, evt)
-
-	return
-}
-
-func (a *Application) OnFrameEvent(e app.FrameEvent) {
+func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
 	gtx := app.NewContext(&a.Ops, e)
 
-	a.Tabs.Layout(a, gtx, func() layout.FlexChild {
+	a.Tabs.Layout(a, gtx, param, func() layout.FlexChild {
 		a.Window.Perform(a.Deco.Update(gtx))
 		return a.decorationsFlexChild()
 	})

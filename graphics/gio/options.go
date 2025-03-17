@@ -8,11 +8,18 @@ type OnLoop func(app *Application) error
 type OnStop func(app *Application)
 
 type Options struct {
-	Title   string
-	OnInit  OnInit
-	OnStart OnStart
-	OnLoop  OnLoop
-	OnStop  OnStop
+	LoopMode LoopMode
+	Title    string
+	OnInit   OnInit
+	OnStart  OnStart
+	OnLoop   OnLoop
+	OnStop   OnStop
+}
+
+func OptLoopMode(value LoopMode) Option {
+	return func(o *Options) {
+		o.LoopMode = value
+	}
 }
 
 func OptTitle(value string) Option {

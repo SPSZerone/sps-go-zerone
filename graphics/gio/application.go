@@ -232,3 +232,10 @@ func (a *Application) decorationsFlexChild() layout.FlexChild {
 		return material.Decorations(a.Theme, &a.Deco, ^system.Action(0), a.Opts.Title).Layout(gtx)
 	})
 }
+
+func (a *Application) SendParam(param any) {
+	if a.ChanParam == nil || param == nil {
+		return
+	}
+	a.ChanParam <- param
+}

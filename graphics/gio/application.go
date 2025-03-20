@@ -52,7 +52,7 @@ type Application struct {
 	Opts Options
 
 	Window *app.Window
-	Tabs   Tabs
+	Pages  Pages
 
 	Ops   op.Ops
 	Theme *material.Theme
@@ -83,7 +83,7 @@ func (a *Application) Init(opts ...Option) {
 	th.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
 	a.Theme = th
 
-	a.Tabs = NewTabs()
+	a.Pages = NewPages()
 	a.Window = new(app.Window)
 
 	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated))
@@ -158,18 +158,18 @@ func (a *Application) loopSimple() error {
 	for {
 		evt := a.Window.Event()
 
-		a.Tabs.OnEventPre(a, evt, nil)
+		a.Pages.OnEventPre(a, evt, nil)
 
 		switch e := evt.(type) {
 		case app.DestroyEvent:
 			a.Logger.Info().Msg("loopSimple app.DestroyEvent ...")
-			a.Tabs.OnEventPost(a, evt, nil)
+			a.Pages.OnEventPost(a, evt, nil)
 			return e.Err
 		case app.FrameEvent:
 			a.OnFrameEvent(e, nil)
 		}
 
-		a.Tabs.OnEventPost(a, evt, nil)
+		a.Pages.OnEventPost(a, evt, nil)
 	}
 }
 
@@ -198,19 +198,19 @@ func (a *Application) loopParam() error {
 		case param = <-a.ChanParam:
 			a.Window.Invalidate()
 		case evt := <-chanEvent:
-			a.Tabs.OnEventPre(a, evt, param)
+			a.Pages.OnEventPre(a, evt, param)
 
 			switch e := evt.(type) {
 			case app.DestroyEvent:
 				a.Logger.Info().Msg("loopParam app.DestroyEvent ...")
-				a.Tabs.OnEventPost(a, evt, param)
+				a.Pages.OnEventPost(a, evt, param)
 				chanEventDone <- struct{}{}
 				return e.Err
 			case app.FrameEvent:
 				a.OnFrameEvent(e, param)
 			}
 
-			a.Tabs.OnEventPost(a, evt, param)
+			a.Pages.OnEventPost(a, evt, param)
 			chanEventDone <- struct{}{}
 		}
 	}
@@ -219,7 +219,7 @@ func (a *Application) loopParam() error {
 func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
 	gtx := app.NewContext(&a.Ops, e)
 
-	a.Tabs.Layout(a, gtx, param, func() layout.FlexChild {
+	a.Pages.Layout(a, gtx, param, func() layout.FlexChild {
 		a.Window.Perform(a.Deco.Update(gtx))
 		return a.decorationsFlexChild()
 	})

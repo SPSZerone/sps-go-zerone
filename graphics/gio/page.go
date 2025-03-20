@@ -13,27 +13,7 @@ import (
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 )
 
-type Tab interface {
-	Actions() []component.AppBarAction
-	Overflow() []component.OverflowAction
-	NavItem() component.NavItem
-
-	OnEventPre(app *Application, evt event.Event, param any)
-	OnEventPost(app *Application, evt event.Event, param any)
-	Layout(app *Application, gtx layout.Context, param any) layout.Dimensions
-}
-
-type Tabs struct {
-	tabs    map[any]Tab
-	current any
-
-	*component.ModalNavDrawer
-	NavAnim component.VisibilityAnimation
-	*component.AppBar
-	*component.ModalLayer
-}
-
-func NewTabs() Tabs {
+func NewPages() Pages {
 	modal := component.NewModal()
 
 	nav := component.NewNav("Navigation", "Enjoy!!")
@@ -46,8 +26,8 @@ func NewTabs() Tabs {
 		State:    component.Invisible,
 		Duration: time.Millisecond * 250,
 	}
-	return Tabs{
-		tabs:           make(map[any]Tab),
+	return Pages{
+		pages:          make(map[any]Page),
 		ModalLayer:     modal,
 		ModalNavDrawer: modalNav,
 		AppBar:         bar,
@@ -55,53 +35,73 @@ func NewTabs() Tabs {
 	}
 }
 
-func (t *Tabs) Register(tag any, tab Tab) {
-	t.tabs[tag] = tab
-	navItem := tab.NavItem()
-	navItem.Tag = tag
-	if t.current == nil {
-		t.current = tag
-		t.AppBar.Title = navItem.Name
-		t.AppBar.SetActions(tab.Actions(), tab.Overflow())
-	}
-	t.ModalNavDrawer.AddNavItem(navItem)
+type Page interface {
+	Actions() []component.AppBarAction
+	Overflow() []component.OverflowAction
+	NavItem() component.NavItem
+
+	OnEventPre(app *Application, evt event.Event, param any)
+	OnEventPost(app *Application, evt event.Event, param any)
+	Layout(app *Application, gtx layout.Context, param any) layout.Dimensions
 }
 
-func (t *Tabs) SwitchTo(tag any) {
-	page, ok := t.tabs[tag]
+type Pages struct {
+	pages   map[any]Page
+	current any
+
+	*component.ModalNavDrawer
+	NavAnim component.VisibilityAnimation
+	*component.AppBar
+	*component.ModalLayer
+}
+
+func (p *Pages) Register(tag any, tab Page) {
+	p.pages[tag] = tab
+	navItem := tab.NavItem()
+	navItem.Tag = tag
+	if p.current == nil {
+		p.current = tag
+		p.AppBar.Title = navItem.Name
+		p.AppBar.SetActions(tab.Actions(), tab.Overflow())
+	}
+	p.ModalNavDrawer.AddNavItem(navItem)
+}
+
+func (p *Pages) SwitchTo(tag any) {
+	page, ok := p.pages[tag]
 	if !ok {
 		return
 	}
 	navItem := page.NavItem()
-	t.current = tag
-	t.AppBar.Title = navItem.Name
-	t.AppBar.SetActions(page.Actions(), page.Overflow())
+	p.current = tag
+	p.AppBar.Title = navItem.Name
+	p.AppBar.SetActions(page.Actions(), page.Overflow())
 }
 
-func (t *Tabs) OnEventPre(app *Application, evt event.Event, param any) {
-	if t.current == nil {
+func (p *Pages) OnEventPre(app *Application, evt event.Event, param any) {
+	if p.current == nil {
 		return
 	}
-	t.tabs[t.current].OnEventPre(app, evt, param)
+	p.pages[p.current].OnEventPre(app, evt, param)
 }
 
-func (t *Tabs) OnEventPost(app *Application, evt event.Event, param any) {
-	if t.current == nil {
+func (p *Pages) OnEventPost(app *Application, evt event.Event, param any) {
+	if p.current == nil {
 		return
 	}
-	t.tabs[t.current].OnEventPost(app, evt, param)
+	p.pages[p.current].OnEventPost(app, evt, param)
 }
 
-func (t *Tabs) Layout(app *Application, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
+func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
 	// => AppBar
-	for _, evt := range t.AppBar.Events(gtx) {
+	for _, evt := range p.AppBar.Events(gtx) {
 		switch e := evt.(type) {
 		case component.AppBarNavigationClicked:
 			if app.Pref.Settings.NonModalDrawer {
-				t.NavAnim.ToggleVisibility(gtx.Now)
+				p.NavAnim.ToggleVisibility(gtx.Now)
 			} else {
-				t.ModalNavDrawer.Appear(gtx.Now)
-				t.NavAnim.Disappear(gtx.Now)
+				p.ModalNavDrawer.Appear(gtx.Now)
+				p.NavAnim.Disappear(gtx.Now)
 			}
 		case component.AppBarContextMenuDismissed:
 			log.Printf("Context menu dismissed: %v", e)
@@ -111,12 +111,12 @@ func (t *Tabs) Layout(app *Application, gtx layout.Context, param any, deco func
 	}
 
 	// => ModalNav
-	if t.ModalNavDrawer.NavDestinationChanged() {
-		t.SwitchTo(t.ModalNavDrawer.CurrentNavDestination())
+	if p.ModalNavDrawer.NavDestinationChanged() {
+		p.SwitchTo(p.ModalNavDrawer.CurrentNavDestination())
 	}
 
 	// => BG
-	curIdx, ok := t.current.(int)
+	curIdx, ok := p.current.(int)
 	if ok {
 		color.Fill(gtx, color.DynamicColor(curIdx), color.DynamicColor(curIdx+1))
 	} else {
@@ -129,7 +129,7 @@ func (t *Tabs) Layout(app *Application, gtx layout.Context, param any, deco func
 		colorBar := color.DynamicColor(3)
 		thBar.ContrastBg = colorBar
 		thBar.Palette.Bg = colorBar
-		return t.AppBar.Layout(gtx, &thBar, "NavigationMenu", "Actions")
+		return p.AppBar.Layout(gtx, &thBar, "NavigationMenu", "Actions")
 	})
 
 	// => content
@@ -137,12 +137,12 @@ func (t *Tabs) Layout(app *Application, gtx layout.Context, param any, deco func
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				gtx.Constraints.Max.X /= 5
-				return t.NavDrawer.Layout(gtx, app.Theme, &t.NavAnim)
+				return p.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
 			}),
 		}
-		if t.current != nil {
+		if p.current != nil {
 			children = append(children, layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-				return t.tabs[t.current].Layout(app, gtx, param)
+				return p.pages[p.current].Layout(app, gtx, param)
 			}))
 		}
 		return layout.Flex{}.Layout(gtx, children...)
@@ -166,6 +166,6 @@ func (t *Tabs) Layout(app *Application, gtx layout.Context, param any, deco func
 		}
 	}
 
-	t.ModalLayer.Layout(gtx, app.Theme)
+	p.ModalLayer.Layout(gtx, app.Theme)
 	return layout.Dimensions{Size: gtx.Constraints.Max}
 }

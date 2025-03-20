@@ -35,6 +35,17 @@ func Run(opts ...Option) {
 	app.Main()
 }
 
+func NewApplication(ctx context.Context, opts ...Option) *Application {
+	ctx, cancel := context.WithCancel(ctx)
+	a := &Application{
+		Context:  ctx,
+		Shutdown: cancel,
+		Logger:   spslog.NewLogger(),
+	}
+	a.Init(opts...)
+	return a
+}
+
 type LoopMode int
 
 const (
@@ -63,17 +74,6 @@ type Application struct {
 	Logger zerolog.Logger
 }
 
-func NewApplication(ctx context.Context, opts ...Option) *Application {
-	ctx, cancel := context.WithCancel(ctx)
-	a := &Application{
-		Context:  ctx,
-		Shutdown: cancel,
-		Logger:   spslog.NewLogger(),
-	}
-	a.Init(opts...)
-	return a
-}
-
 func (a *Application) Init(opts ...Option) {
 	for _, opt := range opts {
 		opt(&a.Opts)
@@ -91,6 +91,10 @@ func (a *Application) Init(opts ...Option) {
 	if a.Opts.OnInit != nil {
 		a.Opts.OnInit(a)
 	}
+}
+
+func (a *Application) Register(tag any, page Page) {
+	a.Pages.Register(tag, page)
 }
 
 func (a *Application) Run() {

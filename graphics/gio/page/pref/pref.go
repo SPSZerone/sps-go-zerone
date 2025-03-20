@@ -13,9 +13,9 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
-func New(tabs *spsgio.Pages) *Page {
+func New(pages *spsgio.Pages) *Page {
 	return &Page{
-		Pages: tabs,
+		Pages: pages,
 	}
 }
 

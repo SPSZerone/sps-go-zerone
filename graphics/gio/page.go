@@ -55,14 +55,14 @@ type Pages struct {
 	*component.ModalLayer
 }
 
-func (p *Pages) Register(tag any, tab Page) {
-	p.pages[tag] = tab
-	navItem := tab.NavItem()
+func (p *Pages) Register(tag any, page Page) {
+	p.pages[tag] = page
+	navItem := page.NavItem()
 	navItem.Tag = tag
 	if p.current == nil {
 		p.current = tag
 		p.AppBar.Title = navItem.Name
-		p.AppBar.SetActions(tab.Actions(), tab.Overflow())
+		p.AppBar.SetActions(page.Actions(), page.Overflow())
 	}
 	p.ModalNavDrawer.AddNavItem(navItem)
 }

@@ -97,6 +97,10 @@ func (a *Application) Register(tag any, page Page) {
 	a.Pages.Register(tag, page)
 }
 
+func (a *Application) SwitchTo(tag any) {
+	a.Pages.SwitchTo(tag)
+}
+
 func (a *Application) Run() {
 	// OnStart
 	a.Logger.Info().Msg("Hello!!")

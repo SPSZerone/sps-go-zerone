@@ -4,6 +4,7 @@ import (
 	"gioui.org/app"
 	"gioui.org/io/event"
 	"gioui.org/layout"
+	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
@@ -19,17 +20,24 @@ func New(app *spsgio.Application) *Page {
 	p := &Page{
 		Pages: &app.Pages,
 
+		Tabs:  spstab.NewTabs(TabNameDecorated, TabNameSettings),
+		Table: spstable.NewTable(),
+
 		decorated:      NewDecorated(),
 		nonModalDrawer: NewNonModalDrawer(),
 		bottomBar:      NewBottomBar(),
 	}
-	p.Tabs.AddTab("Decorated", "Settings")
 	return p
 }
 
 const (
-	TabDecorated = iota
-	TabSettings
+	TabIdxDecorated = iota
+	TabIdxSettings
+)
+
+const (
+	TabNameDecorated = "Decorated"
+	TabNameSettings  = "Settings"
 )
 
 var _ spsgio.Page = (*Page)(nil)
@@ -73,39 +81,55 @@ func (p *Page) Layout(application *spsgio.Application, gtx layout.Context, param
 	p.List.Axis = layout.Vertical
 	return material.List(application.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return p.Tabs.Layout(application, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
-			if selected == TabDecorated {
+			if selected == TabIdxDecorated {
 				return layout.Flex{
 					Alignment: layout.Middle,
 					Axis:      layout.Vertical,
 				}.Layout(gtx, p.PrefDecorated(application, gtx, param)...)
 			}
 
-			return layout.Flex{
-				Alignment: layout.Middle,
-				Axis:      layout.Vertical,
-			}.Layout(gtx, p.PrefSettings(application, gtx, param)...)
 			/*
-				p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))
-				cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-					switch row {
+				return layout.Flex{
+						Alignment: layout.Middle,
+						Axis:      layout.Vertical,
+					}.Layout(gtx, p.PrefSettings(application, gtx, param)...)
+			//*/
+
+			p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))
+			dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
+				switch axis {
+				case layout.Horizontal:
+					var widthUnit int
+					switch index {
 					case 0:
-						switch col {
-						case 1:
-							return p.NonModalDrawer(application, gtx)
-						}
-						labelStyle.Text = p.nonModalDrawer.Name
-						return labelStyle.Layout(gtx)
-					default:
-						switch col {
-						case 1:
-							return p.BottomBar(application, gtx)
-						}
-						labelStyle.Text = p.bottomBar.Name
-						return labelStyle.Layout(gtx)
+						widthUnit = gtx.Dp(unit.Dp(220))
+					case 1:
+						widthUnit = gtx.Dp(unit.Dp(64))
 					}
+					return widthUnit
+				default:
+					return height
 				}
-				return p.Table.Layout(application.Theme, gtx, 2, nil, cell)
-				//*/
+			}
+			cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+				switch row {
+				case 0:
+					switch col {
+					case 1:
+						return p.NonModalDrawer(application, gtx)
+					}
+					labelStyle.Text = p.nonModalDrawer.Name
+					return labelStyle.Layout(gtx)
+				default:
+					switch col {
+					case 1:
+						return p.BottomBar(application, gtx)
+					}
+					labelStyle.Text = p.bottomBar.Name
+					return labelStyle.Layout(gtx)
+				}
+			}
+			return p.Table.Layout(application.Theme, gtx, 2, dimensioner, cell)
 		})
 	})
 }

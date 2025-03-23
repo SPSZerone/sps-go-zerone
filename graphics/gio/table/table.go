@@ -30,7 +30,7 @@ func NewTable(opts ...Option) Table {
 
 type (
 	LabelStyle  func(theme *material.Theme) material.LabelStyle
-	Dimensioner func(axis layout.Axis, index, constraint, minSize int) int
+	Dimensioner func(axis layout.Axis, index, constraint, minSize, height int) int
 	Cell        func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions
 )
 
@@ -85,7 +85,7 @@ func (t *Table) Layout(
 	var finalDimensioner outlay.Dimensioner
 	if dimensioner != nil {
 		finalDimensioner = func(axis layout.Axis, index, constraint int) int {
-			return dimensioner(axis, index, constraint, minSize)
+			return dimensioner(axis, index, constraint, minSize, dims.Size.Y)
 		}
 	} else {
 		finalDimensioner = func(axis layout.Axis, index, constraint int) int {

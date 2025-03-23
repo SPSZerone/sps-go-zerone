@@ -14,6 +14,12 @@ import (
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
+func NewTabs(titles ...string) Tabs {
+	t := Tabs{}
+	t.AddTab(titles...)
+	return t
+}
+
 type Tabs struct {
 	list     layout.List
 	tabs     []Tab

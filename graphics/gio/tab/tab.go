@@ -26,8 +26,10 @@ type Tab struct {
 	Title string
 }
 
-func (t *Tabs) AddTab(title string) {
-	t.tabs = append(t.tabs, Tab{Title: title})
+func (t *Tabs) AddTab(titles ...string) {
+	for _, title := range titles {
+		t.tabs = append(t.tabs, Tab{Title: title})
+	}
 }
 
 func (t *Tabs) Layout(

@@ -1,7 +1,6 @@
 package tab
 
 import (
-	"fmt"
 	"image"
 
 	"gioui.org/layout"
@@ -11,6 +10,7 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
@@ -30,7 +30,10 @@ func (t *Tabs) AddTab(title string) {
 	t.tabs = append(t.tabs, Tab{Title: title})
 }
 
-func (t *Tabs) Layout(gtx layout.Context, theme *material.Theme) layout.Dimensions {
+func (t *Tabs) Layout(
+	application *spsgio.Application, gtx layout.Context, param any,
+	content func(gtx layout.Context, selected int) layout.Dimensions,
+) layout.Dimensions {
 	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return t.list.Layout(gtx, len(t.tabs), func(gtx layout.Context, tabIdx int) layout.Dimensions {
@@ -48,7 +51,7 @@ func (t *Tabs) Layout(gtx layout.Context, theme *material.Theme) layout.Dimensio
 					layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 						dims := material.Clickable(gtx, &tab.btn, func(gtx layout.Context) layout.Dimensions {
 							return layout.UniformInset(unit.Dp(12)).Layout(gtx,
-								material.H6(theme, tab.Title).Layout,
+								material.H6(application.Theme, tab.Title).Layout,
 							)
 						})
 						tabWidth = dims.Size.X
@@ -60,7 +63,7 @@ func (t *Tabs) Layout(gtx layout.Context, theme *material.Theme) layout.Dimensio
 						}
 						tabHeight := gtx.Dp(unit.Dp(4))
 						tabRect := image.Rect(0, 0, tabWidth, tabHeight)
-						paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(tabRect).Op())
+						paint.FillShape(gtx.Ops, application.Theme.Palette.ContrastBg, clip.Rect(tabRect).Op())
 						return layout.Dimensions{
 							Size: image.Point{X: tabWidth, Y: tabHeight},
 						}
@@ -71,9 +74,7 @@ func (t *Tabs) Layout(gtx layout.Context, theme *material.Theme) layout.Dimensio
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 			return t.slider.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 				spscolor.Fill(gtx, spscolor.DynamicColor(t.selected), spscolor.DynamicColor(t.selected+1))
-				return layout.Center.Layout(gtx,
-					material.H1(theme, fmt.Sprintf("Tab content #%d", t.selected+1)).Layout,
-				)
+				return content(gtx, t.selected)
 			})
 		}),
 	)

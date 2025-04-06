@@ -27,6 +27,9 @@ func New(app *spsgio.Application) *Page {
 		nonModalDrawer: NewNonModalDrawer(),
 		bottomBar:      NewBottomBar(),
 	}
+	p.decorated.Widget.Value = app.Pref.Settings.Decorated
+	p.nonModalDrawer.Widget.Value = app.Pref.Settings.NonModalDrawer
+	p.bottomBar.Widget.Value = app.Pref.Settings.BottomBar
 	return p
 }
 

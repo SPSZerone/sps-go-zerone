@@ -75,19 +75,19 @@ type Application struct {
 }
 
 func (a *Application) Init(opts ...Option) {
-	if a.Opts.OnInitPre != nil {
-		a.Opts.OnInitPre(a)
-	}
-
 	for _, opt := range opts {
 		opt(&a.Opts)
 	}
 
-	th := material.NewTheme()
-	th.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
-	a.Theme = th
+	if a.Opts.OnInitPre != nil {
+		a.Opts.OnInitPre(a)
+	}
 
-	a.Pages = NewPages()
+	theme := material.NewTheme()
+	theme.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
+	a.Theme = theme
+
+	a.Pages = NewPages(a)
 	a.Window = new(app.Window)
 
 	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated))
@@ -97,12 +97,16 @@ func (a *Application) Init(opts ...Option) {
 	}
 }
 
-func (a *Application) Register(tag any, page Page) {
+func (a *Application) PageRegister(tag any, page Page) {
 	a.Pages.Register(tag, page)
 }
 
-func (a *Application) SwitchTo(tag any) {
+func (a *Application) PageSwitchTo(tag any) {
 	a.Pages.SwitchTo(tag)
+}
+
+func (a *Application) PageStart(tag any) {
+	a.Pages.Start(tag)
 }
 
 func (a *Application) Run() {

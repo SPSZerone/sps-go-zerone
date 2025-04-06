@@ -13,7 +13,7 @@ import (
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 )
 
-func NewPages() Pages {
+func NewPages(app *Application) Pages {
 	modal := component.NewModal()
 
 	nav := component.NewNav("Navigation", "Enjoy!!")
@@ -28,9 +28,10 @@ func NewPages() Pages {
 	}
 	return Pages{
 		pages:          make(map[any]Page),
+		App:            app,
+		AppBar:         bar,
 		ModalLayer:     modal,
 		ModalNavDrawer: modalNav,
-		AppBar:         bar,
 		NavAnim:        na,
 	}
 }
@@ -49,10 +50,12 @@ type Pages struct {
 	pages   map[any]Page
 	current any
 
-	*component.ModalNavDrawer
-	NavAnim component.VisibilityAnimation
-	*component.AppBar
-	*component.ModalLayer
+	App *Application
+
+	AppBar         *component.AppBar
+	ModalNavDrawer *component.ModalNavDrawer
+	ModalLayer     *component.ModalLayer
+	NavAnim        component.VisibilityAnimation
 }
 
 func (p *Pages) Register(tag any, page Page) {
@@ -67,15 +70,29 @@ func (p *Pages) Register(tag any, page Page) {
 	p.ModalNavDrawer.AddNavItem(navItem)
 }
 
-func (p *Pages) SwitchTo(tag any) {
+func (p *Pages) SwitchTo(tag any) Page {
 	page, ok := p.pages[tag]
 	if !ok {
-		return
+		return nil
 	}
 	navItem := page.NavItem()
 	p.current = tag
 	p.AppBar.Title = navItem.Name
 	p.AppBar.SetActions(page.Actions(), page.Overflow())
+	return page
+}
+
+func (p *Pages) Start(tag any) {
+	p.SwitchTo(tag)
+
+	timeNow := time.Now()
+	if p.App.Pref.Settings.NonModalDrawer {
+		p.NavAnim.ToggleVisibility(timeNow)
+	} else {
+		p.ModalNavDrawer.Appear(timeNow)
+		p.NavAnim.Disappear(timeNow)
+	}
+	p.ModalNavDrawer.SetNavDestination(tag)
 }
 
 func (p *Pages) OnEventPre(app *Application, evt event.Event, param any) {
@@ -137,7 +154,7 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				gtx.Constraints.Max.X /= 5
-				return p.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
+				return p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
 			}),
 		}
 		if p.current != nil {

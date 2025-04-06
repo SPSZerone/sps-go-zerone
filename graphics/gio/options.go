@@ -4,7 +4,8 @@ import "gioui.org/io/event"
 
 type Option func(o *Options)
 
-type OnInit func(app *Application)
+type OnInitPre func(app *Application)
+type OnInitPost func(app *Application)
 type OnStart func(app *Application)
 type OnLoop func(app *Application) error
 type OnStop func(app *Application)
@@ -15,7 +16,8 @@ type OnEventPost func(app *Application, evt event.Event, param any)
 type Options struct {
 	LoopMode    LoopMode
 	Title       string
-	OnInit      OnInit
+	OnInitPre   OnInitPre
+	OnInitPost  OnInitPost
 	OnStart     OnStart
 	OnLoop      OnLoop
 	OnStop      OnStop
@@ -35,9 +37,15 @@ func OptTitle(value string) Option {
 	}
 }
 
-func OptOnInit(value OnInit) Option {
+func OptOnInitPre(value OnInitPre) Option {
 	return func(o *Options) {
-		o.OnInit = value
+		o.OnInitPre = value
+	}
+}
+
+func OptOnInitPost(value OnInitPost) Option {
+	return func(o *Options) {
+		o.OnInitPost = value
 	}
 }
 

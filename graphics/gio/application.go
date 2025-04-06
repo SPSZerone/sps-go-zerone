@@ -75,6 +75,10 @@ type Application struct {
 }
 
 func (a *Application) Init(opts ...Option) {
+	if a.Opts.OnInitPre != nil {
+		a.Opts.OnInitPre(a)
+	}
+
 	for _, opt := range opts {
 		opt(&a.Opts)
 	}
@@ -88,8 +92,8 @@ func (a *Application) Init(opts ...Option) {
 
 	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated))
 
-	if a.Opts.OnInit != nil {
-		a.Opts.OnInit(a)
+	if a.Opts.OnInitPost != nil {
+		a.Opts.OnInitPost(a)
 	}
 }
 

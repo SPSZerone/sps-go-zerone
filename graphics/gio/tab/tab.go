@@ -38,6 +38,13 @@ func (t *Tabs) AddTab(titles ...string) {
 	}
 }
 
+func (t *Tabs) UpdateTabTitle(index int, title string) {
+	if index < 0 || index >= len(t.tabs) {
+		return
+	}
+	t.tabs[index].Title = title
+}
+
 func (t *Tabs) Layout(
 	application *spsgio.Application, gtx layout.Context, param any,
 	content func(gtx layout.Context, selected int) layout.Dimensions,

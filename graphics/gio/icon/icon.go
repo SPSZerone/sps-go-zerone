@@ -281,6 +281,26 @@ var ContentCreate = func() *widget.Icon {
 	return icon
 }()
 
+var ContentAdd = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.ContentAdd)
+	return icon
+}()
+
+var ContentAddBox = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.ContentAddBox)
+	return icon
+}()
+
+var ContentAddCircle = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.ContentAddCircle)
+	return icon
+}()
+
+var ContentAddCircleOutline = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.ContentAddCircleOutline)
+	return icon
+}()
+
 var ContentSave = func() *widget.Icon {
 	icon, _ := widget.NewIcon(icons.ContentSave)
 	return icon

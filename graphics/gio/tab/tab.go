@@ -45,6 +45,10 @@ func (t *Tabs) UpdateTabTitle(index int, title string) {
 	t.tabs[index].Title = title
 }
 
+func (t *Tabs) Count() int {
+	return len(t.tabs)
+}
+
 func (t *Tabs) Selected() int {
 	return t.selected
 }
@@ -54,6 +58,20 @@ func (t *Tabs) SetSelected(index int) {
 		return
 	}
 	t.selected = index
+}
+
+func (t *Tabs) SetFirstSelected() int {
+	t.selected = 0
+	return t.selected
+}
+
+func (t *Tabs) SetLastSelected() int {
+	count := t.Count()
+	if count <= 0 {
+		return t.selected
+	}
+	t.selected = count - 1
+	return t.selected
 }
 
 func (t *Tabs) Layout(

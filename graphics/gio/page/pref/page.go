@@ -20,7 +20,7 @@ func New(app *spsgio.Application) *Page {
 	p := &Page{
 		Pages: &app.Pages,
 
-		Tabs:  spstab.NewTabs(TabNameDecorated, TabNameSettings),
+		Tabs:  spstab.NewTabs(TabNameSettings, TabNameDecorated),
 		Table: spstable.NewTable(),
 
 		decorated:      NewDecorated(),
@@ -34,13 +34,13 @@ func New(app *spsgio.Application) *Page {
 }
 
 const (
-	TabIdxDecorated = iota
-	TabIdxSettings
+	TabIdxSettings = iota
+	TabIdxDecorated
 )
 
 const (
-	TabNameDecorated = "Decorated"
 	TabNameSettings  = "Settings"
+	TabNameDecorated = "Decorated"
 )
 
 var _ spsgio.Page = (*Page)(nil)

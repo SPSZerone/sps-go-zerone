@@ -45,6 +45,17 @@ func (t *Tabs) UpdateTabTitle(index int, title string) {
 	t.tabs[index].Title = title
 }
 
+func (t *Tabs) Selected() int {
+	return t.selected
+}
+
+func (t *Tabs) SetSelected(index int) {
+	if index < 0 || index >= len(t.tabs) {
+		return
+	}
+	t.selected = index
+}
+
 func (t *Tabs) Layout(
 	application *spsgio.Application, gtx layout.Context, param any,
 	content func(gtx layout.Context, selected int) layout.Dimensions,

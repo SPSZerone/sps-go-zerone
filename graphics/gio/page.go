@@ -82,8 +82,8 @@ func (p *Pages) SwitchTo(tag any) Page {
 	return page
 }
 
-func (p *Pages) Start(tag any) {
-	p.SwitchTo(tag)
+func (p *Pages) Start(tag any) Page {
+	page := p.SwitchTo(tag)
 
 	timeNow := time.Now()
 	if p.App.Pref.Settings.NonModalDrawer {
@@ -93,6 +93,8 @@ func (p *Pages) Start(tag any) {
 		p.NavAnim.Disappear(timeNow)
 	}
 	p.ModalNavDrawer.SetNavDestination(tag)
+
+	return page
 }
 
 func (p *Pages) OnEventPre(app *Application, evt event.Event, param any) {

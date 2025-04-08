@@ -101,12 +101,12 @@ func (a *Application) PageRegister(tag any, page Page) {
 	a.Pages.Register(tag, page)
 }
 
-func (a *Application) PageSwitchTo(tag any) {
-	a.Pages.SwitchTo(tag)
+func (a *Application) PageSwitchTo(tag any) Page {
+	return a.Pages.SwitchTo(tag)
 }
 
-func (a *Application) PageStart(tag any) {
-	a.Pages.Start(tag)
+func (a *Application) PageStart(tag any) Page {
+	return a.Pages.Start(tag)
 }
 
 func (a *Application) Run() {

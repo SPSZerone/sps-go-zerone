@@ -43,6 +43,26 @@ func (t *Tabs) AddTab(tabs ...Tab) {
 	t.tabs = append(t.tabs, tabs...)
 }
 
+func (t *Tabs) UpdateTabs(cb func(idx int, tab *Tab) (stop bool)) {
+	if cb == nil {
+		return
+	}
+	for i := 0; i < len(t.tabs); i++ {
+		if cb(i, &t.tabs[i]) {
+			break
+		}
+	}
+}
+
+func (t *Tabs) GetTab(cb func(idx int, tab Tab) (ok bool)) *Tab {
+	for i := 0; i < len(t.tabs); i++ {
+		if cb(i, t.tabs[i]) {
+			return &t.tabs[i]
+		}
+	}
+	return nil
+}
+
 func (t *Tabs) GetTabByIdx(index int) *Tab {
 	if index < 0 || index >= len(t.tabs) {
 		return nil
@@ -50,10 +70,10 @@ func (t *Tabs) GetTabByIdx(index int) *Tab {
 	return &t.tabs[index]
 }
 
-func (t *Tabs) DelTab(del func(Tab) bool) {
+func (t *Tabs) DelTab(cb func(idx int, tab Tab) (del bool)) {
 	delIdx := -1
 	for i, tab := range t.tabs {
-		if del(tab) {
+		if cb(i, tab) {
 			delIdx = i
 			break
 		}

@@ -9,7 +9,7 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget/material"
 
-	"github.com/SPSZerone/sps-go-zerone/generic/slice"
+	spsslice "github.com/SPSZerone/sps-go-zerone/generic/slice"
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
@@ -82,7 +82,7 @@ func (t *Tabs) DelTab(cb func(idx int, tab Tab) (del bool)) {
 }
 
 func (t *Tabs) DelTabByIndex(index int) {
-	t.tabs = slice.RemoveFast(t.tabs, index)
+	t.tabs = spsslice.RemoveFast(t.tabs, index)
 	if t.selected >= len(t.tabs) {
 		t.SetFirstSelected()
 	}
@@ -93,6 +93,13 @@ func (t *Tabs) UpdateTabName(index int, name string) {
 		return
 	}
 	t.tabs[index].Name = name
+}
+
+func (t *Tabs) UpdateTabData(index int, data any) {
+	if index < 0 || index >= len(t.tabs) {
+		return
+	}
+	t.tabs[index].Data = data
 }
 
 func (t *Tabs) Count() int {

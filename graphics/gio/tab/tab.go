@@ -5,6 +5,7 @@ import (
 )
 
 type Tab struct {
-	btn   widget.Clickable
-	Title string
+	Name string
+	Btn  widget.Clickable
+	Data any
 }

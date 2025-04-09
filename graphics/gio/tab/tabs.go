@@ -14,9 +14,15 @@ import (
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
-func NewTabs(titles ...string) Tabs {
+func NewTabsByNames(names ...string) Tabs {
 	t := Tabs{}
-	t.AddTab(titles...)
+	t.AddTabByNames(names...)
+	return t
+}
+
+func NewTabs(tabs ...Tab) Tabs {
+	t := Tabs{}
+	t.AddTab(tabs...)
 	return t
 }
 
@@ -27,10 +33,21 @@ type Tabs struct {
 	slider   Slider
 }
 
-func (t *Tabs) AddTab(titles ...string) {
-	for _, title := range titles {
-		t.tabs = append(t.tabs, Tab{Title: title})
+func (t *Tabs) AddTabByNames(names ...string) {
+	for _, title := range names {
+		t.tabs = append(t.tabs, Tab{Name: title})
 	}
+}
+
+func (t *Tabs) AddTab(tabs ...Tab) {
+	t.tabs = append(t.tabs, tabs...)
+}
+
+func (t *Tabs) GetTabByIdx(index int) *Tab {
+	if index < 0 || index >= len(t.tabs) {
+		return nil
+	}
+	return &t.tabs[index]
 }
 
 func (t *Tabs) DelTab(del func(Tab) bool) {
@@ -51,11 +68,11 @@ func (t *Tabs) DelTabByIndex(index int) {
 	}
 }
 
-func (t *Tabs) UpdateTabTitle(index int, title string) {
+func (t *Tabs) UpdateTabName(index int, name string) {
 	if index < 0 || index >= len(t.tabs) {
 		return
 	}
-	t.tabs[index].Title = title
+	t.tabs[index].Name = name
 }
 
 func (t *Tabs) Count() int {
@@ -93,9 +110,9 @@ func (t *Tabs) Layout(
 ) layout.Dimensions {
 	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return t.list.Layout(gtx, len(t.tabs), func(gtx layout.Context, tabIdx int) layout.Dimensions {
-				tab := &t.tabs[tabIdx]
-				if tab.btn.Clicked(gtx) {
+			return t.list.Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
+				tab := t.GetTabByIdx(tabIdx)
+				if tab.Btn.Clicked(gtx) {
 					if t.selected < tabIdx {
 						t.slider.PushLeft()
 					} else if t.selected > tabIdx {
@@ -106,9 +123,9 @@ func (t *Tabs) Layout(
 				var tabWidth int
 				return layout.Stack{Alignment: layout.S}.Layout(gtx,
 					layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-						dims := material.Clickable(gtx, &tab.btn, func(gtx layout.Context) layout.Dimensions {
+						dims := material.Clickable(gtx, &tab.Btn, func(gtx layout.Context) layout.Dimensions {
 							return layout.UniformInset(unit.Dp(12)).Layout(gtx,
-								material.H6(application.Theme, tab.Title).Layout,
+								material.H6(application.Theme, tab.Name).Layout,
 							)
 						})
 						tabWidth = dims.Size.X

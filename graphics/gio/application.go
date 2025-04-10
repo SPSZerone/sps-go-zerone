@@ -77,14 +77,19 @@ type Application struct {
 }
 
 func (a *Application) Init(opts ...Option) {
+	// default init
+	a.Opts.StartAction = system.ActionMaximize
+	a.Pref.Settings.NonModalDrawer = true
+
 	for _, opt := range opts {
 		opt(&a.Opts)
 	}
-	a.startAction = a.Opts.StartAction
 
 	if a.Opts.OnInitPre != nil {
 		a.Opts.OnInitPre(a)
 	}
+
+	a.startAction = a.Opts.StartAction
 
 	theme := material.NewTheme()
 	theme.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))

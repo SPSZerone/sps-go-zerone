@@ -72,12 +72,15 @@ type Application struct {
 	ChanParam chan any
 
 	Logger zerolog.Logger
+
+	startAction system.Action
 }
 
 func (a *Application) Init(opts ...Option) {
 	for _, opt := range opts {
 		opt(&a.Opts)
 	}
+	a.startAction = a.Opts.StartAction
 
 	if a.Opts.OnInitPre != nil {
 		a.Opts.OnInitPre(a)
@@ -236,6 +239,14 @@ func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
 	gtx := app.NewContext(&a.Ops, e)
 
 	a.Pages.Layout(a, gtx, param, func() layout.FlexChild {
+		if a.startAction != 0 {
+			clickable := a.Deco.Clickable(a.startAction)
+			if clickable != nil {
+				clickable.Click()
+			}
+			a.startAction = 0
+		}
+
 		a.Window.Perform(a.Deco.Update(gtx))
 		return a.decorationsFlexChild()
 	})

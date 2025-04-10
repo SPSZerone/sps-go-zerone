@@ -1,6 +1,9 @@
 package gio
 
-import "gioui.org/io/event"
+import (
+	"gioui.org/io/event"
+	"gioui.org/io/system"
+)
 
 type Option func(o *Options)
 
@@ -14,8 +17,10 @@ type OnEventPre func(app *Application, evt event.Event, param any)
 type OnEventPost func(app *Application, evt event.Event, param any)
 
 type Options struct {
-	LoopMode    LoopMode
 	Title       string
+	StartAction system.Action
+	LoopMode    LoopMode
+
 	OnInitPre   OnInitPre
 	OnInitPost  OnInitPost
 	OnStart     OnStart
@@ -25,15 +30,21 @@ type Options struct {
 	OnEventPost OnEventPost
 }
 
-func OptLoopMode(value LoopMode) Option {
-	return func(o *Options) {
-		o.LoopMode = value
-	}
-}
-
 func OptTitle(value string) Option {
 	return func(o *Options) {
 		o.Title = value
+	}
+}
+
+func OptStartAction(value system.Action) Option {
+	return func(o *Options) {
+		o.StartAction = value
+	}
+}
+
+func OptLoopMode(value LoopMode) Option {
+	return func(o *Options) {
+		o.LoopMode = value
 	}
 }
 

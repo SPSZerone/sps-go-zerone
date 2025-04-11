@@ -1,6 +1,8 @@
 package pref
 
 import (
+	"image/color"
+
 	"gioui.org/app"
 	"gioui.org/io/event"
 	"gioui.org/layout"
@@ -16,6 +18,17 @@ import (
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/table"
 )
 
+const (
+	SettingsColIdxKey = iota
+	SettingsColIdxValue
+)
+
+const (
+	SettingsRowIdxNonModalDrawer = iota
+	SettingsRowIdxBottomBar
+	SettingsRowIdxTableStyle
+)
+
 func New(app *spsgio.Application) *Page {
 	p := &Page{
 		Pages: &app.Pages,
@@ -26,10 +39,12 @@ func New(app *spsgio.Application) *Page {
 		decorated:      NewDecorated(),
 		nonModalDrawer: NewNonModalDrawer(),
 		bottomBar:      NewBottomBar(),
+		prefTableStyle: NewPrefTableStyle(),
 	}
 	p.decorated.Widget.Value = app.Pref.Settings.Decorated
 	p.nonModalDrawer.Widget.Value = app.Pref.Settings.NonModalDrawer
 	p.bottomBar.Widget.Value = app.Pref.Settings.BottomBar
+	p.prefTableStyle.Widget.Value = app.Pref.Settings.PrefTableStyle
 	return p
 }
 
@@ -55,6 +70,7 @@ type Page struct {
 	decorated      SettingBool
 	nonModalDrawer SettingBool
 	bottomBar      SettingBool
+	prefTableStyle SettingBool
 }
 
 func (p *Page) Actions() []component.AppBarAction {
@@ -91,48 +107,21 @@ func (p *Page) Layout(application *spsgio.Application, gtx layout.Context, param
 				}.Layout(gtx, p.PrefDecorated(application, gtx, param)...)
 			}
 
-			/*
-				return layout.Flex{
-						Alignment: layout.Middle,
-						Axis:      layout.Vertical,
-					}.Layout(gtx, p.PrefSettings(application, gtx, param)...)
-			//*/
+			if application.Pref.Settings.PrefTableStyle {
+				p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))
+				dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
+					return settingsDimension(gtx, axis, index, constraint, minSize, height)
+				}
+				cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+					return settingsCell(p, application, gtx, row, col, labelStyle)
+				}
+				return p.Table.Layout(application.Theme, gtx, 3, dimensioner, cell)
+			}
 
-			p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))
-			dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
-				switch axis {
-				case layout.Horizontal:
-					var widthUnit int
-					switch index {
-					case 0:
-						widthUnit = gtx.Dp(unit.Dp(220))
-					case 1:
-						widthUnit = gtx.Dp(unit.Dp(64))
-					}
-					return widthUnit
-				default:
-					return height
-				}
-			}
-			cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-				switch row {
-				case 0:
-					switch col {
-					case 1:
-						return p.NonModalDrawer(application, gtx)
-					}
-					labelStyle.Text = p.nonModalDrawer.Name
-					return labelStyle.Layout(gtx)
-				default:
-					switch col {
-					case 1:
-						return p.BottomBar(application, gtx)
-					}
-					labelStyle.Text = p.bottomBar.Name
-					return labelStyle.Layout(gtx)
-				}
-			}
-			return p.Table.Layout(application.Theme, gtx, 2, dimensioner, cell)
+			return layout.Flex{
+				Alignment: layout.Middle,
+				Axis:      layout.Vertical,
+			}.Layout(gtx, p.PrefSettings(application, gtx, param)...)
 		})
 	})
 }
@@ -163,6 +152,13 @@ func (p *Page) PrefSettings(application *spsgio.Application, gtx layout.Context,
 				material.Body1(application.Theme, p.bottomBar.Name).Layout,
 				func(gtx layout.Context) layout.Dimensions {
 					return p.BottomBar(application, gtx)
+				})
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return spslayout.FlexInset{}.LayoutABWidget(gtx,
+				material.Body1(application.Theme, p.prefTableStyle.Name).Layout,
+				func(gtx layout.Context) layout.Dimensions {
+					return p.PrefTableStyle(application, gtx)
 				})
 		}),
 	}
@@ -200,4 +196,60 @@ func (p *Page) BottomBar(application *spsgio.Application, gtx layout.Context) la
 		application.Pref.Settings.BottomBar = p.bottomBar.Widget.Value
 	}
 	return material.Switch(application.Theme, &p.bottomBar.Widget, p.bottomBar.Desc).Layout(gtx)
+}
+
+func (p *Page) PrefTableStyle(application *spsgio.Application, gtx layout.Context) layout.Dimensions {
+	if p.prefTableStyle.Widget.Update(gtx) {
+		application.Pref.Settings.PrefTableStyle = p.prefTableStyle.Widget.Value
+	}
+	return material.Switch(application.Theme, &p.prefTableStyle.Widget, p.prefTableStyle.Desc).Layout(gtx)
+}
+
+func settingsDimension(gtx layout.Context, axis layout.Axis, index, constraint, minSize, height int) int {
+	switch axis {
+	case layout.Horizontal:
+		var widthUnit int
+		switch index {
+		case SettingsColIdxKey:
+			widthUnit = gtx.Dp(unit.Dp(220))
+		case SettingsColIdxValue:
+			widthUnit = gtx.Dp(unit.Dp(64))
+		}
+		return widthUnit
+	default:
+		return height
+	}
+}
+
+func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+	switch row {
+	case SettingsRowIdxNonModalDrawer:
+		switch col {
+		case SettingsColIdxValue:
+			return p.NonModalDrawer(app, gtx)
+		default:
+			labelStyle.Text = p.nonModalDrawer.Name
+		}
+		return labelStyle.Layout(gtx)
+	case SettingsRowIdxBottomBar:
+		switch col {
+		case SettingsColIdxValue:
+			return p.BottomBar(app, gtx)
+		default:
+			labelStyle.Text = p.bottomBar.Name
+		}
+		return labelStyle.Layout(gtx)
+	case SettingsRowIdxTableStyle:
+		switch col {
+		case SettingsColIdxValue:
+			return p.PrefTableStyle(app, gtx)
+		default:
+			labelStyle.Text = p.prefTableStyle.Name
+		}
+		return labelStyle.Layout(gtx)
+	default:
+		labelStyle.Text = "Unknown"
+		labelStyle.Color = color.NRGBA{A: 0xff, R: 0xff, G: 0x00, B: 0x00}
+		return labelStyle.Layout(gtx)
+	}
 }

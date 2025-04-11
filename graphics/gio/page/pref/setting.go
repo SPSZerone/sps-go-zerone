@@ -28,3 +28,10 @@ func NewBottomBar() SettingBool {
 		Desc: "Use Bottom Bar",
 	}
 }
+
+func NewPrefTableStyle() SettingBool {
+	return SettingBool{
+		Name: "Pref Table Style",
+		Desc: "Use Pref Table Style",
+	}
+}

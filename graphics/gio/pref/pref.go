@@ -8,4 +8,5 @@ type Settings struct {
 	Decorated      bool
 	NonModalDrawer bool
 	BottomBar      bool
+	PrefTableStyle bool
 }

@@ -35,3 +35,10 @@ func NewPrefTableStyle() SettingBool {
 		Desc: "Use Pref Table Style",
 	}
 }
+
+func NewSwitchInFront() SettingBool {
+	return SettingBool{
+		Name: "Switch In Front",
+		Desc: "Use Switch In Front",
+	}
+}

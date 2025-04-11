@@ -63,6 +63,10 @@ func (t *Tabs) GetTab(cb func(idx int, tab Tab) (ok bool)) *Tab {
 	return nil
 }
 
+func (t *Tabs) GetTabs() []Tab {
+	return t.tabs
+}
+
 func (t *Tabs) GetTabByIdx(index int) *Tab {
 	if index < 0 || index >= len(t.tabs) {
 		return nil
@@ -71,14 +75,20 @@ func (t *Tabs) GetTabByIdx(index int) *Tab {
 }
 
 func (t *Tabs) DelTab(cb func(idx int, tab Tab) (del bool)) {
-	delIdx := -1
+	if len(t.tabs) == 0 {
+		return
+	}
+
+	delIndexes := make([]int, len(t.tabs))
 	for i, tab := range t.tabs {
 		if cb(i, tab) {
-			delIdx = i
-			break
+			delIndexes = append(delIndexes, i)
 		}
 	}
-	t.DelTabByIndex(delIdx)
+
+	for _, index := range delIndexes {
+		t.DelTabByIndex(index)
+	}
 }
 
 func (t *Tabs) DelTabByIndex(index int) {
@@ -136,6 +146,7 @@ func (t *Tabs) Layout(
 	content func(gtx layout.Context, selected int) layout.Dimensions,
 ) layout.Dimensions {
 	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
+		// tabs
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return t.list.Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 				tab := t.GetTabByIdx(tabIdx)
@@ -149,6 +160,7 @@ func (t *Tabs) Layout(
 				}
 				var tabWidth int
 				return layout.Stack{Alignment: layout.S}.Layout(gtx,
+					// click area
 					layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 						dims := material.Clickable(gtx, &tab.Btn, func(gtx layout.Context) layout.Dimensions {
 							return layout.UniformInset(unit.Dp(12)).Layout(gtx,
@@ -158,20 +170,23 @@ func (t *Tabs) Layout(
 						tabWidth = dims.Size.X
 						return dims
 					}),
+					// highlight
 					layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 						if t.selected != tabIdx {
 							return layout.Dimensions{}
 						}
-						tabHeight := gtx.Dp(unit.Dp(4))
-						tabRect := image.Rect(0, 0, tabWidth, tabHeight)
-						paint.FillShape(gtx.Ops, application.Theme.Palette.ContrastBg, clip.Rect(tabRect).Op())
+
+						highlightHeight := gtx.Dp(unit.Dp(4))
+						highlightRect := image.Rect(0, 0, tabWidth, highlightHeight)
+						paint.FillShape(gtx.Ops, application.Theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
 						return layout.Dimensions{
-							Size: image.Point{X: tabWidth, Y: tabHeight},
+							Size: image.Point{X: tabWidth, Y: highlightHeight},
 						}
 					}),
 				)
 			})
 		}),
+		// content
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 			return t.slider.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 				spscolor.Fill(gtx, spscolor.DynamicColor(t.selected), spscolor.DynamicColor(t.selected+1))

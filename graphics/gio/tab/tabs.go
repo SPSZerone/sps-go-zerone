@@ -7,6 +7,7 @@ import (
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/unit"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
 
 	spsslice "github.com/SPSZerone/sps-go-zerone/generic/slice"
@@ -15,19 +16,29 @@ import (
 )
 
 func NewTabsByNames(names ...string) Tabs {
-	t := Tabs{}
+	t := newTabs()
 	t.AddTabByNames(names...)
 	return t
 }
 
 func NewTabs(tabs ...Tab) Tabs {
-	t := Tabs{}
+	t := newTabs()
 	t.AddTab(tabs...)
 	return t
 }
 
+func newTabs() Tabs {
+	return Tabs{
+		list: widget.List{
+			List: layout.List{
+				Axis: layout.Horizontal,
+			},
+		},
+	}
+}
+
 type Tabs struct {
-	list layout.List
+	list widget.List
 	Tabs []Tab
 
 	selected int
@@ -149,43 +160,7 @@ func (t *Tabs) Layout(
 	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 		// Tabs
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return t.list.Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
-				tab := t.GetTabByIdx(tabIdx)
-				if tab.Btn.Clicked(gtx) {
-					if t.selected < tabIdx {
-						t.slider.PushLeft()
-					} else if t.selected > tabIdx {
-						t.slider.PushRight()
-					}
-					t.selected = tabIdx
-				}
-				var tabWidth int
-				return layout.Stack{Alignment: layout.S}.Layout(gtx,
-					// click area
-					layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-						dims := material.Clickable(gtx, &tab.Btn, func(gtx layout.Context) layout.Dimensions {
-							return layout.UniformInset(unit.Dp(12)).Layout(gtx,
-								material.H6(app.Theme, tab.Name).Layout,
-							)
-						})
-						tabWidth = dims.Size.X
-						return dims
-					}),
-					// highlight
-					layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-						if t.selected != tabIdx {
-							return layout.Dimensions{}
-						}
-
-						highlightHeight := gtx.Dp(unit.Dp(4))
-						highlightRect := image.Rect(0, 0, tabWidth, highlightHeight)
-						paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
-						return layout.Dimensions{
-							Size: image.Point{X: tabWidth, Y: highlightHeight},
-						}
-					}),
-				)
-			})
+			return t.LayoutTabs(app, gtx, param)
 		}),
 		// content
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
@@ -195,4 +170,46 @@ func (t *Tabs) Layout(
 			})
 		}),
 	)
+}
+
+func (t *Tabs) LayoutTabs(
+	app *spsgio.Application, gtx layout.Context, param any,
+) layout.Dimensions {
+	return material.List(app.Theme, &t.list).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
+		tab := t.GetTabByIdx(tabIdx)
+		if tab.Btn.Clicked(gtx) {
+			if t.selected < tabIdx {
+				t.slider.PushLeft()
+			} else if t.selected > tabIdx {
+				t.slider.PushRight()
+			}
+			t.selected = tabIdx
+		}
+		var tabWidth int
+		return layout.Stack{Alignment: layout.S}.Layout(gtx,
+			// click area
+			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+				dims := material.Clickable(gtx, &tab.Btn, func(gtx layout.Context) layout.Dimensions {
+					return layout.UniformInset(unit.Dp(12)).Layout(gtx,
+						material.H6(app.Theme, tab.Name).Layout,
+					)
+				})
+				tabWidth = dims.Size.X
+				return dims
+			}),
+			// highlight
+			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+				if t.selected != tabIdx {
+					return layout.Dimensions{}
+				}
+
+				highlightHeight := gtx.Dp(unit.Dp(4))
+				highlightRect := image.Rect(0, 0, tabWidth, highlightHeight)
+				paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
+				return layout.Dimensions{
+					Size: image.Point{X: tabWidth, Y: highlightHeight},
+				}
+			}),
+		)
+	})
 }

@@ -9,5 +9,5 @@ type Settings struct {
 	NonModalDrawer bool
 	BottomBar      bool
 	PrefTableStyle bool
-	SwitchInFront  bool
+	ValueInFront   bool
 }

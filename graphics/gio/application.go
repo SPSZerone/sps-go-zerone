@@ -80,7 +80,7 @@ func (a *Application) Init(opts ...Option) {
 	// default init
 	a.Opts.StartAction = system.ActionMaximize
 	a.Pref.Settings.NonModalDrawer = true
-	a.Pref.Settings.SwitchInFront = true
+	a.Pref.Settings.ValueInFront = true
 
 	for _, opt := range opts {
 		opt(&a.Opts)

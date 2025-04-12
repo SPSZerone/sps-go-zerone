@@ -142,7 +142,7 @@ func (t *Tabs) SetLastSelected() int {
 }
 
 func (t *Tabs) Layout(
-	application *spsgio.Application, gtx layout.Context, param any,
+	app *spsgio.Application, gtx layout.Context, param any,
 	content func(gtx layout.Context, selected int) layout.Dimensions,
 ) layout.Dimensions {
 	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
@@ -164,7 +164,7 @@ func (t *Tabs) Layout(
 					layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 						dims := material.Clickable(gtx, &tab.Btn, func(gtx layout.Context) layout.Dimensions {
 							return layout.UniformInset(unit.Dp(12)).Layout(gtx,
-								material.H6(application.Theme, tab.Name).Layout,
+								material.H6(app.Theme, tab.Name).Layout,
 							)
 						})
 						tabWidth = dims.Size.X
@@ -178,7 +178,7 @@ func (t *Tabs) Layout(
 
 						highlightHeight := gtx.Dp(unit.Dp(4))
 						highlightRect := image.Rect(0, 0, tabWidth, highlightHeight)
-						paint.FillShape(gtx.Ops, application.Theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
+						paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
 						return layout.Dimensions{
 							Size: image.Point{X: tabWidth, Y: highlightHeight},
 						}

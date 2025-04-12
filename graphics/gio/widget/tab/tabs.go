@@ -177,7 +177,7 @@ func (t *Tabs) LayoutTabs(
 ) layout.Dimensions {
 	return material.List(app.Theme, &t.list).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
-		if tab.Btn.Clicked(gtx) {
+		if tab.Clickable.Clicked(gtx) {
 			if t.selected < tabIdx {
 				t.slider.PushLeft()
 			} else if t.selected > tabIdx {
@@ -189,7 +189,7 @@ func (t *Tabs) LayoutTabs(
 		return layout.Stack{Alignment: layout.S}.Layout(gtx,
 			// click area
 			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-				dims := material.Clickable(gtx, &tab.Btn, func(gtx layout.Context) layout.Dimensions {
+				dims := material.Clickable(gtx, &tab.Clickable, func(gtx layout.Context) layout.Dimensions {
 					return layout.UniformInset(unit.Dp(12)).Layout(gtx,
 						material.H6(app.Theme, tab.Name).Layout,
 					)

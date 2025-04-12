@@ -27,60 +27,61 @@ func NewTabs(tabs ...Tab) Tabs {
 }
 
 type Tabs struct {
-	list     layout.List
-	tabs     []Tab
+	list layout.List
+	Tabs []Tab
+
 	selected int
 	slider   Slider
 }
 
 func (t *Tabs) AddTabByNames(names ...string) {
 	for _, title := range names {
-		t.tabs = append(t.tabs, Tab{Name: title})
+		t.Tabs = append(t.Tabs, Tab{Name: title})
 	}
 }
 
 func (t *Tabs) AddTab(tabs ...Tab) {
-	t.tabs = append(t.tabs, tabs...)
+	t.Tabs = append(t.Tabs, tabs...)
 }
 
 func (t *Tabs) UpdateTabs(cb func(idx int, tab *Tab) (stop bool)) {
 	if cb == nil {
 		return
 	}
-	for i := 0; i < len(t.tabs); i++ {
-		if cb(i, &t.tabs[i]) {
+	for i := 0; i < len(t.Tabs); i++ {
+		if cb(i, &t.Tabs[i]) {
 			break
 		}
 	}
 }
 
 func (t *Tabs) GetTab(cb func(idx int, tab Tab) (ok bool)) *Tab {
-	for i := 0; i < len(t.tabs); i++ {
-		if cb(i, t.tabs[i]) {
-			return &t.tabs[i]
+	for i := 0; i < len(t.Tabs); i++ {
+		if cb(i, t.Tabs[i]) {
+			return &t.Tabs[i]
 		}
 	}
 	return nil
 }
 
 func (t *Tabs) GetTabs() []Tab {
-	return t.tabs
+	return t.Tabs
 }
 
 func (t *Tabs) GetTabByIdx(index int) *Tab {
-	if index < 0 || index >= len(t.tabs) {
+	if index < 0 || index >= len(t.Tabs) {
 		return nil
 	}
-	return &t.tabs[index]
+	return &t.Tabs[index]
 }
 
 func (t *Tabs) DelTab(cb func(idx int, tab Tab) (del bool)) {
-	if len(t.tabs) == 0 {
+	if len(t.Tabs) == 0 {
 		return
 	}
 
-	delIndexes := make([]int, len(t.tabs))
-	for i, tab := range t.tabs {
+	delIndexes := make([]int, len(t.Tabs))
+	for i, tab := range t.Tabs {
 		if cb(i, tab) {
 			delIndexes = append(delIndexes, i)
 		}
@@ -92,28 +93,28 @@ func (t *Tabs) DelTab(cb func(idx int, tab Tab) (del bool)) {
 }
 
 func (t *Tabs) DelTabByIndex(index int) {
-	t.tabs = spsslice.RemoveFast(t.tabs, index)
-	if t.selected >= len(t.tabs) {
+	t.Tabs = spsslice.RemoveFast(t.Tabs, index)
+	if t.selected >= len(t.Tabs) {
 		t.SetFirstSelected()
 	}
 }
 
 func (t *Tabs) UpdateTabName(index int, name string) {
-	if index < 0 || index >= len(t.tabs) {
+	if index < 0 || index >= len(t.Tabs) {
 		return
 	}
-	t.tabs[index].Name = name
+	t.Tabs[index].Name = name
 }
 
 func (t *Tabs) UpdateTabData(index int, data any) {
-	if index < 0 || index >= len(t.tabs) {
+	if index < 0 || index >= len(t.Tabs) {
 		return
 	}
-	t.tabs[index].Data = data
+	t.Tabs[index].Data = data
 }
 
 func (t *Tabs) Count() int {
-	return len(t.tabs)
+	return len(t.Tabs)
 }
 
 func (t *Tabs) Selected() int {
@@ -121,7 +122,7 @@ func (t *Tabs) Selected() int {
 }
 
 func (t *Tabs) SetSelected(index int) {
-	if index < 0 || index >= len(t.tabs) {
+	if index < 0 || index >= len(t.Tabs) {
 		return
 	}
 	t.selected = index
@@ -146,7 +147,7 @@ func (t *Tabs) Layout(
 	content func(gtx layout.Context, selected int) layout.Dimensions,
 ) layout.Dimensions {
 	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
-		// tabs
+		// Tabs
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return t.list.Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 				tab := t.GetTabByIdx(tabIdx)

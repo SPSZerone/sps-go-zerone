@@ -9,8 +9,8 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
-	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/tab"
-	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/table"
+	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
+	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
 )
 
 func New(app *spsgio.Application) *Page {

@@ -12,33 +12,28 @@ import (
 )
 
 func (p *Page) PrefDecorated(app *spsgio.Application, gtx layout.Context, param any) []layout.FlexChild {
-	if app.Pref.Settings.ValueInFront {
-		return []layout.FlexChild{
-			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return spslayout.FlexInset{
-					Ratio: RatioValue,
-				}.LayoutABWidget(gtx,
-					func(gtx layout.Context) layout.Dimensions {
-						return p.Decorated(app, gtx)
-					},
-					material.Body1(app.Theme, p.decorated.Name).Layout,
-				)
-			}),
-		}
-	}
-
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return spslayout.FlexInset{
-				Ratio: RatioKey,
-			}.LayoutABWidget(gtx,
-				material.Body1(app.Theme, p.decorated.Name).Layout,
-				func(gtx layout.Context) layout.Dimensions {
-					return p.Decorated(app, gtx)
-				},
-			)
+			return p.PrefDecoratedDecorated(app, gtx)
 		}),
 	}
+}
+
+func (p *Page) PrefDecoratedDecorated(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+	key := material.Body1(app.Theme, p.decorated.Name).Layout
+	value := func(gtx layout.Context) layout.Dimensions {
+		return p.Decorated(app, gtx)
+	}
+	var aWidget, bWidget layout.Widget
+	var ratio float32
+	if app.Pref.Settings.ValueInFront {
+		aWidget, bWidget = value, key
+		ratio = RatioValue
+	} else {
+		aWidget, bWidget = key, value
+		ratio = RatioKey
+	}
+	return spslayout.FlexInset{Ratio: ratio}.LayoutABWidget(gtx, aWidget, bWidget)
 }
 
 func (p *Page) Decorated(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
@@ -50,10 +45,14 @@ func (p *Page) Decorated(app *spsgio.Application, gtx layout.Context) layout.Dim
 }
 
 func decoratedCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+	colIdx := TableColIdxValue
+	if app.Pref.Settings.ValueInFront {
+		colIdx = TableColIdxKey
+	}
 	switch row {
 	case DecoratedRowIdxDecorated:
 		switch col {
-		case TableColIdxValue:
+		case colIdx:
 			return p.Decorated(app, gtx)
 		default:
 			labelStyle.Text = p.decorated.Name

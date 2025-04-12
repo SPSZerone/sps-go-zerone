@@ -79,6 +79,14 @@ func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) 
 func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
 	p.List.Axis = layout.Vertical
 	return material.List(app.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+		return p.GridAndItem(app, gtx, param)
+	})
+}
+
+// TODO
+func (p *Page) Layout1(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
+	p.List.Axis = layout.Vertical
+	return material.List(app.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 			switch selected {
 			case TabIdxGridAndItem:

@@ -2,6 +2,7 @@ package grid
 
 import (
 	"gioui.org/layout"
+	"gioui.org/widget/material"
 	"gioui.org/x/outlay"
 )
 
@@ -20,7 +21,7 @@ type Grid struct {
 	Num       int
 }
 
-func (g *Grid) Layout(gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
+func (g *Grid) Layout(theme *material.Theme, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
 	if g.Wrap {
 		return outlay.FlowWrap{
 			Axis:      g.Axis,

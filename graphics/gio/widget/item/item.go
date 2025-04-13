@@ -8,12 +8,13 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/unit"
 	"gioui.org/widget/material"
+	"gioui.org/x/component"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
 )
 
-func NewItem(data any, content LayoutContent, opts ...Option) Item {
+func NewItem(data any, content Layout, opts ...Option) Item {
 	i := Item{
 		Data: data,
 		Opts: NewOptions(content, opts...),
@@ -77,10 +78,10 @@ func (i *Item) Layout(
 		}),
 		// content
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			if i.Opts.LayoutContent == nil {
+			if i.Opts.Content == nil {
 				return layout.Dimensions{}
 			}
-			return i.Opts.LayoutContent(i, gtx, layoutCtx)
+			return i.Opts.Content(app, gtx, i, layoutCtx)
 		}),
 		// highlight
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
@@ -100,6 +101,13 @@ func (i *Item) Layout(
 			return layout.Dimensions{
 				Size: layoutCtx.Size,
 			}
+		}),
+		// menu
+		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
+			return i.UI.ContextArea.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+				gtx.Constraints.Min = image.Point{}
+				return component.Menu(app.Theme, &i.UI.Menu).Layout(gtx)
+			})
 		}),
 	)
 

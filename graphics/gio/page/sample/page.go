@@ -6,6 +6,7 @@ import (
 	"gioui.org/font"
 	"gioui.org/io/event"
 	"gioui.org/layout"
+	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
@@ -13,6 +14,7 @@ import (
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsgrid "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/grid"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
@@ -29,31 +31,67 @@ const (
 func New(app *spsgio.Application) *Page {
 	p := &Page{
 		Pages: &app.Pages,
-
-		Tabs: spstab.NewTabsByNames(TabNameGridAndItem),
-
-		Grid: spsgrid.NewGrid(),
+		Tabs:  spstab.NewTabsByNames(TabNameGridAndItem),
+		Grid:  spsgrid.NewGrid(),
 	}
+
+	// test item
 	const count = 100
 	p.Items = make([]spsitem.Item, count)
 	highlightStyle := spsitem.HighlightStyleDefault
 	//highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
 	stackAlignment := layout.Center
-	layoutContent := func(i *spsitem.Item, gtx layout.Context, layoutCtx spsitem.LayoutContext) layout.Dimensions {
-		baseInfo := material.Body1(app.Theme, fmt.Sprintf("%v", i.Data))
+	content := func(app *spsgio.Application, gtx layout.Context, item *spsitem.Item, layoutCtx spsitem.LayoutContext) layout.Dimensions {
+		baseInfo := material.Body1(app.Theme, fmt.Sprintf("%v", item.Data))
 		baseInfo.Font.Style = font.Italic
 		baseInfo.Font.Weight = font.Bold
+		if item.UI.MenuItems[0].Clicked(gtx) {
+			app.Logger.Info().Msgf("Use %v", item.Data)
+		}
 		return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
 	}
 	for i := 0; i < 100; i++ {
-		p.Items[i] = spsitem.NewItem(
+		item := spsitem.NewItem(
 			fmt.Sprintf("item-%d", i),
-			layoutContent,
+			content,
 			spsitem.OptHighlightStyle(highlightStyle),
 			spsitem.OptStackAlignment(stackAlignment),
 		)
+		itemMenu(app, &item)
+		p.Items[i] = item
 	}
 	return p
+}
+
+func itemMenu(app *spsgio.Application, item *spsitem.Item) {
+	item.UI.MenuItems = []widget.Clickable{
+		{},
+	}
+	item.UI.Menu = component.MenuState{
+		Options: []func(gtx layout.Context) layout.Dimensions{
+			func(gtx layout.Context) layout.Dimensions {
+				return layout.Inset{
+					Left:  unit.Dp(16),
+					Right: unit.Dp(16),
+				}.Layout(gtx, material.H6(app.Theme, "Item Info").Layout)
+			},
+			func(gtx layout.Context) layout.Dimensions {
+				return spsdivider.Divider{}.Layout(app.Theme, gtx)
+			},
+			func(gtx layout.Context) layout.Dimensions {
+				return layout.Inset{
+					Left:  unit.Dp(16),
+					Right: unit.Dp(16),
+				}.Layout(gtx, material.H6(app.Theme, fmt.Sprintf("%v", item.Data)).Layout)
+			},
+			func(gtx layout.Context) layout.Dimensions {
+				return spsdivider.Divider{Subheading: "Action"}.Layout(app.Theme, gtx)
+			},
+			func(gtx layout.Context) layout.Dimensions {
+				return component.MenuItem(app.Theme, &item.UI.MenuItems[0], "Use").Layout(gtx)
+			},
+		},
+	}
 }
 
 var _ spsgio.Page = (*Page)(nil)

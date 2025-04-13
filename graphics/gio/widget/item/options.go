@@ -5,6 +5,7 @@ import (
 
 	"gioui.org/layout"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
@@ -18,15 +19,15 @@ const (
 	HighlightStyleCount
 )
 
-type LayoutContent func(item *Item, gtx layout.Context, layoutCtx LayoutContext) layout.Dimensions
+type Layout func(app *spsgio.Application, gtx layout.Context, item *Item, layoutCtx LayoutContext) layout.Dimensions
 
-func NewOptions(content LayoutContent, opts ...Option) Options {
+func NewOptions(content Layout, opts ...Option) Options {
 	o := Options{
 		Dimensions:     NewDimensions(),
 		StackAlignment: layout.Center,
 		BgColor:        spscolor.DynamicColor(2),
 		HighlightStyle: HighlightStyleStrokeRect,
-		LayoutContent:  content,
+		Content:        content,
 	}
 	o.Update(opts...)
 	return o
@@ -37,7 +38,8 @@ type Options struct {
 	StackAlignment layout.Direction
 	BgColor        color.NRGBA
 	HighlightStyle HighlightStyle
-	LayoutContent  LayoutContent
+
+	Content Layout
 }
 
 func (p *Options) Update(opts ...Option) {
@@ -69,5 +71,11 @@ func OptBgColor(value color.NRGBA) Option {
 func OptHighlightStyle(value HighlightStyle) Option {
 	return func(o *Options) {
 		o.HighlightStyle = value
+	}
+}
+
+func OptContent(value Layout) Option {
+	return func(o *Options) {
+		o.Content = value
 	}
 }

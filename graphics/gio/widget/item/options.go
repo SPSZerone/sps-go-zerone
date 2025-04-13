@@ -3,19 +3,43 @@ package item
 import (
 	"image/color"
 
+	"gioui.org/layout"
+
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
-func NewOptions() Options {
-	return Options{
-		Dimensions: NewDimensions(),
-		BgColor:    spscolor.DynamicColor(0),
+type HighlightStyle int
+
+const (
+	HighlightStyleDefault HighlightStyle = iota
+	HighlightStyleStrokeRect
+	HighlightStyleTop
+	HighlightStyleBottom
+	HighlightStyleCount
+)
+
+func NewOptions(opts ...Option) Options {
+	o := Options{
+		Dimensions:     NewDimensions(),
+		StackAlignment: layout.Center,
+		BgColor:        spscolor.DynamicColor(2),
+		HighlightStyle: HighlightStyleStrokeRect,
 	}
+	o.Update(opts...)
+	return o
 }
 
 type Options struct {
-	Dimensions Dimensions
-	BgColor    color.NRGBA
+	Dimensions     Dimensions
+	StackAlignment layout.Direction
+	BgColor        color.NRGBA
+	HighlightStyle HighlightStyle
+}
+
+func (p *Options) Update(opts ...Option) {
+	for _, opt := range opts {
+		opt(p)
+	}
 }
 
 type Option func(*Options)
@@ -26,8 +50,20 @@ func OptDimensions(value Dimensions) Option {
 	}
 }
 
+func OptStackAlignment(value layout.Direction) Option {
+	return func(o *Options) {
+		o.StackAlignment = value
+	}
+}
+
 func OptBgColor(value color.NRGBA) Option {
 	return func(o *Options) {
 		o.BgColor = value
+	}
+}
+
+func OptHighlightStyle(value HighlightStyle) Option {
+	return func(o *Options) {
+		o.HighlightStyle = value
 	}
 }

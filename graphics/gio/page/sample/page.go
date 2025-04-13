@@ -34,8 +34,15 @@ func New(app *spsgio.Application) *Page {
 	}
 	const count = 100
 	p.Items = make([]spsitem.Item, count)
+	highlightStyle := spsitem.HighlightStyleDefault
+	//highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
+	stackAlignment := layout.Center
 	for i := 0; i < 100; i++ {
-		p.Items[i] = spsitem.NewItem(fmt.Sprintf("item-%d", i))
+		p.Items[i] = spsitem.NewItem(
+			fmt.Sprintf("item-%d", i),
+			spsitem.OptHighlightStyle(highlightStyle),
+			spsitem.OptStackAlignment(stackAlignment),
+		)
 	}
 	return p
 }
@@ -77,14 +84,6 @@ func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) 
 }
 
 func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
-	p.List.Axis = layout.Vertical
-	return material.List(app.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
-		return p.GridAndItem(app, gtx, param)
-	})
-}
-
-// TODO
-func (p *Page) Layout1(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
 	p.List.Axis = layout.Vertical
 	return material.List(app.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {

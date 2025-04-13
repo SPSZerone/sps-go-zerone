@@ -17,9 +17,8 @@ import (
 func NewItem(data any, opts ...Option) Item {
 	i := Item{
 		Data: data,
-		Opts: NewOptions(),
+		Opts: NewOptions(opts...),
 	}
-	i.Update(opts...)
 	return i
 }
 
@@ -56,7 +55,7 @@ func (i *Item) Layout(
 		layoutCtx.ContentHeight+layoutCtx.PaddingDouble+layoutCtx.HighlightThicknessDouble,
 	)
 
-	dimensions = layout.Stack{Alignment: layout.S}.Layout(gtx,
+	dimensions = layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
 		// content background
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			contentBgRect := image.Rect(
@@ -88,18 +87,16 @@ func (i *Item) Layout(
 			if !highlight {
 				return layout.Dimensions{}
 			}
-			size := image.Pt(
-				layoutCtx.ContentWidth+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
-				layoutCtx.ContentHeight+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
-			)
-			pos := image.Pt(layoutCtx.HighlightThicknessHalf, layoutCtx.HighlightThicknessHalf)
-			spsdrawing.DrawStrokeRectR(
-				&app.Ops,
-				size,
-				app.Theme.Palette.ContrastBg,
-				pos,
-				float32(layoutCtx.HighlightThickness),
-				layoutCtx.HighlightRoundness)
+			switch i.Opts.HighlightStyle {
+			case HighlightStyleTop:
+				i.LayoutHighlightTop(app, gtx, layoutCtx)
+			case HighlightStyleBottom:
+				i.LayoutHighlightBottom(app, gtx, layoutCtx)
+			case HighlightStyleStrokeRect:
+				i.LayoutHighlightStrokeRect(app, gtx, layoutCtx)
+			default:
+				i.LayoutHighlightStrokeRect(app, gtx, layoutCtx)
+			}
 			return layout.Dimensions{
 				Size: layoutCtx.Size,
 			}
@@ -107,4 +104,33 @@ func (i *Item) Layout(
 	)
 
 	return
+}
+
+func (i *Item) LayoutHighlightStrokeRect(app *spsgio.Application, gtx layout.Context, layoutCtx LayoutContext) {
+	size := image.Pt(
+		layoutCtx.ContentWidth+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
+		layoutCtx.ContentHeight+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
+	)
+	pos := image.Pt(layoutCtx.HighlightThicknessHalf, layoutCtx.HighlightThicknessHalf)
+	spsdrawing.DrawStrokeRectR(
+		gtx.Ops,
+		size,
+		app.Theme.Palette.ContrastBg,
+		pos,
+		float32(layoutCtx.HighlightThickness),
+		layoutCtx.HighlightRoundness)
+}
+
+func (i *Item) LayoutHighlightTop(app *spsgio.Application, gtx layout.Context, layoutCtx LayoutContext) {
+	contentBgRect := image.Rect(
+		layoutCtx.Offset, 0,
+		layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Offset)
+	paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
+}
+
+func (i *Item) LayoutHighlightBottom(app *spsgio.Application, gtx layout.Context, layoutCtx LayoutContext) {
+	contentBgRect := image.Rect(
+		layoutCtx.Offset, layoutCtx.Size.Y-layoutCtx.Offset,
+		layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Size.Y)
+	paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }

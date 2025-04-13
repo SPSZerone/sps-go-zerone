@@ -29,7 +29,7 @@ func NewTabs(tabs ...Tab) Tabs {
 
 func newTabs() Tabs {
 	return Tabs{
-		list: widget.List{
+		tabList: widget.List{
 			List: layout.List{
 				Axis: layout.Horizontal,
 			},
@@ -37,9 +37,11 @@ func newTabs() Tabs {
 	}
 }
 
+type Content func(gtx layout.Context, selected int) layout.Dimensions
+
 type Tabs struct {
-	list widget.List
-	Tabs []Tab
+	tabList widget.List
+	Tabs    []Tab
 
 	selected int
 	slider   Slider
@@ -153,29 +155,28 @@ func (t *Tabs) SetLastSelected() int {
 	return t.selected
 }
 
-func (t *Tabs) Layout(
-	app *spsgio.Application, gtx layout.Context, param any,
-	content func(gtx layout.Context, selected int) layout.Dimensions,
-) layout.Dimensions {
+func (t *Tabs) Layout(app *spsgio.Application, gtx layout.Context, param any, content Content) layout.Dimensions {
 	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
 		// Tabs
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return t.LayoutTabs(app, gtx, param)
 		}),
-		// content
+		// Content
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-			return t.slider.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				spscolor.Fill(gtx, spscolor.DynamicColor(t.selected), spscolor.DynamicColor(t.selected+1))
-				return content(gtx, t.selected)
-			})
+			return t.doLayoutContent(app, gtx, param, content)
 		}),
 	)
 }
 
-func (t *Tabs) LayoutTabs(
-	app *spsgio.Application, gtx layout.Context, param any,
-) layout.Dimensions {
-	return material.List(app.Theme, &t.list).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
+func (t *Tabs) doLayoutContent(app *spsgio.Application, gtx layout.Context, param any, content Content) layout.Dimensions {
+	return t.slider.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+		spscolor.Fill(gtx, spscolor.DynamicColor(t.selected), spscolor.DynamicColor(t.selected+1))
+		return content(gtx, t.selected)
+	})
+}
+
+func (t *Tabs) LayoutTabs(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
+	return material.List(app.Theme, &t.tabList).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
 		if tab.Clickable.Clicked(gtx) {
 			if t.selected < tabIdx {

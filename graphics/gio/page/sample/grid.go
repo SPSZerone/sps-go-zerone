@@ -12,7 +12,7 @@ func (p *Page) GridAndItem(app *spsgio.Application, gtx layout.Context, param an
 		Axis:      layout.Vertical,
 	}.Layout(gtx,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.Grid.Layout(app.Theme, gtx, 100, func(gtx layout.Context, index int) layout.Dimensions {
+			return p.Grid.Layout(app, gtx, 100, func(gtx layout.Context, index int) layout.Dimensions {
 				i := p.GetItem(index)
 				highlight := index == p.SelectItem
 				dimensions, clicked := i.Layout(app, gtx, highlight)

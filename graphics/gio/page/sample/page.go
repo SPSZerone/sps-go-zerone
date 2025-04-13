@@ -71,12 +71,12 @@ func itemMenu(app *spsgio.Application, item *spsitem.Item) {
 	item.UI.Menu = component.MenuState{
 		Options: []func(gtx layout.Context) layout.Dimensions{
 			func(gtx layout.Context) layout.Dimensions {
-				return spssurface.NewSurface().Layout(app.Theme, gtx, func(gtx layout.Context) layout.Dimensions {
+				return spssurface.NewSurface().Layout(app, gtx, func(gtx layout.Context) layout.Dimensions {
 					return material.H6(app.Theme, "Item Info").Layout(gtx)
 				})
 			},
 			func(gtx layout.Context) layout.Dimensions {
-				return spsdivider.Divider{}.Layout(app.Theme, gtx)
+				return spsdivider.Divider{}.Layout(app, gtx)
 			},
 			func(gtx layout.Context) layout.Dimensions {
 				return layout.Inset{
@@ -85,7 +85,7 @@ func itemMenu(app *spsgio.Application, item *spsitem.Item) {
 				}.Layout(gtx, material.H6(app.Theme, fmt.Sprintf("%v", item.Data)).Layout)
 			},
 			func(gtx layout.Context) layout.Dimensions {
-				return spsdivider.Divider{Subheading: "Action"}.Layout(app.Theme, gtx)
+				return spsdivider.Divider{Subheading: "Action"}.Layout(app, gtx)
 			},
 			func(gtx layout.Context) layout.Dimensions {
 				return component.MenuItem(app.Theme, &item.UI.MenuItems[0], "Use").Layout(gtx)

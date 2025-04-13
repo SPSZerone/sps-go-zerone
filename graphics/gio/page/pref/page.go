@@ -87,7 +87,7 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 					cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
 						return decoratedCell(p, app, gtx, row, col, labelStyle)
 					}
-					return p.Table.Layout(app.Theme, gtx, DecoratedRowCount, dimensioner, cell)
+					return p.Table.Layout(app, gtx, DecoratedRowCount, dimensioner, cell)
 				}
 
 				return layout.Flex{
@@ -104,7 +104,7 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 					cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
 						return settingsCell(p, app, gtx, row, col, labelStyle)
 					}
-					return p.Table.Layout(app.Theme, gtx, SettingsRowCount, dimensioner, cell)
+					return p.Table.Layout(app, gtx, SettingsRowCount, dimensioner, cell)
 				}
 
 				return layout.Flex{

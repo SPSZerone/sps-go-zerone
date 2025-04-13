@@ -95,7 +95,7 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 			Axis:      layout.Vertical,
 		}.Layout(gtx,
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return p.Table.Layout(app.Theme, gtx, len(keys), dimensioner, cell)
+				return p.Table.Layout(app, gtx, len(keys), dimensioner, cell)
 			}),
 		)
 	})

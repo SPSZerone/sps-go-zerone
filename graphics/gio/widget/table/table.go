@@ -13,6 +13,8 @@ import (
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 	"gioui.org/x/outlay"
+
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
 func NewTable(opts ...Option) Table {
@@ -54,7 +56,7 @@ func (t *Table) Update(opts ...Option) {
 }
 
 func (t *Table) Layout(
-	theme *material.Theme, gtx layout.Context,
+	app *spsgio.Application, gtx layout.Context,
 	rows int, dimensioner Dimensioner, cell Cell,
 ) layout.Dimensions {
 	minSize := gtx.Dp(unit.Dp(t.MinSize))
@@ -63,16 +65,16 @@ func (t *Table) Layout(
 
 	var headingLabel material.LabelStyle
 	if t.HeaderLabelStyle != nil {
-		headingLabel = t.HeaderLabelStyle(theme)
+		headingLabel = t.HeaderLabelStyle(app.Theme)
 	} else {
-		headingLabel = DefaultHeaderLabelStyle(theme)
+		headingLabel = DefaultHeaderLabelStyle(app.Theme)
 	}
 
 	var dataLabel material.LabelStyle
 	if t.DataLabelStyle != nil {
-		dataLabel = t.DataLabelStyle(theme)
+		dataLabel = t.DataLabelStyle(app.Theme)
 	} else {
-		dataLabel = DefaultDataLabelStyle(theme)
+		dataLabel = DefaultDataLabelStyle(app.Theme)
 	}
 
 	orig := gtx.Constraints
@@ -114,7 +116,7 @@ func (t *Table) Layout(
 		})
 	}
 
-	return component.Table(theme, &t.gridState).Layout(
+	return component.Table(app.Theme, &t.gridState).Layout(
 		gtx,
 		rows, len(t.Headers),
 		finalDimensioner, finalHeading, finalCell,

@@ -3,7 +3,6 @@ package pref
 import (
 	"gioui.org/io/event"
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
@@ -37,7 +36,6 @@ func New(app *spsgio.Application) *Page {
 var _ spsgio.Page = (*Page)(nil)
 
 type Page struct {
-	widget.List
 	*spsgio.Pages
 
 	Tabs  spstab.Tabs
@@ -74,48 +72,54 @@ func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) 
 }
 
 func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
-	p.List.Axis = layout.Vertical
-	return material.List(app.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
-		return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
-			switch selected {
-			case TabIdxDecorated:
-				if app.Pref.Settings.PrefTableStyle {
-					p.UpdateTableHeaders(app)
-					dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
-						return dimension(app, gtx, axis, index, constraint, minSize, height)
-					}
-					cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-						return decoratedCell(p, app, gtx, row, col, labelStyle)
-					}
-					return p.Table.Layout(app, gtx, DecoratedRowCount, dimensioner, cell)
-				}
-
-				return layout.Flex{
-					Alignment: layout.Middle,
-					Axis:      layout.Vertical,
-				}.Layout(gtx, p.PrefDecorated(app, gtx, param)...)
-
-			case TabIdxSettings:
-				if app.Pref.Settings.PrefTableStyle {
-					p.UpdateTableHeaders(app)
-					dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
-						return dimension(app, gtx, axis, index, constraint, minSize, height)
-					}
-					cell := func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-						return settingsCell(p, app, gtx, row, col, labelStyle)
-					}
-					return p.Table.Layout(app, gtx, SettingsRowCount, dimensioner, cell)
-				}
-
-				return layout.Flex{
-					Alignment: layout.Middle,
-					Axis:      layout.Vertical,
-				}.Layout(gtx, p.PrefSettings(app, gtx, param)...)
-			default:
-				return layout.Dimensions{}
-			}
-		})
+	return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+		if app.Pref.Settings.PrefTableStyle {
+			return p.LayoutTableStyle(app, gtx, param, selected)
+		}
+		return p.LayoutDefault(app, gtx, param, selected)
 	})
+}
+
+func (p *Page) LayoutDefault(app *spsgio.Application, gtx layout.Context, param any, selected int) layout.Dimensions {
+	switch selected {
+	case TabIdxDecorated:
+		return layout.Flex{
+			Alignment: layout.Middle,
+			Axis:      layout.Vertical,
+		}.Layout(gtx, p.PrefDecorated(app, gtx, param)...)
+	case TabIdxSettings:
+		return layout.Flex{
+			Alignment: layout.Middle,
+			Axis:      layout.Vertical,
+		}.Layout(gtx, p.PrefSettings(app, gtx, param)...)
+	default:
+		return layout.Dimensions{}
+	}
+}
+
+func (p *Page) LayoutTableStyle(app *spsgio.Application, gtx layout.Context, param any, selected int) layout.Dimensions {
+	var count int
+	var cell spstable.Cell
+	switch selected {
+	case TabIdxDecorated:
+		count = DecoratedRowCount
+		cell = func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+			return decoratedCell(p, app, gtx, row, col, labelStyle)
+		}
+	case TabIdxSettings:
+		count = SettingsRowCount
+		cell = func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+			return settingsCell(p, app, gtx, row, col, labelStyle)
+		}
+	default:
+		return layout.Dimensions{}
+	}
+
+	p.UpdateTableHeaders(app)
+	dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
+		return dimension(app, gtx, axis, index, constraint, minSize, height)
+	}
+	return p.Table.Layout(app, gtx, count, dimensioner, cell)
 }
 
 func (p *Page) UpdateTableHeaders(app *spsgio.Application) {

@@ -17,6 +17,7 @@ import (
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsgrid "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/grid"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
+	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 )
 
@@ -70,10 +71,9 @@ func itemMenu(app *spsgio.Application, item *spsitem.Item) {
 	item.UI.Menu = component.MenuState{
 		Options: []func(gtx layout.Context) layout.Dimensions{
 			func(gtx layout.Context) layout.Dimensions {
-				return layout.Inset{
-					Left:  unit.Dp(16),
-					Right: unit.Dp(16),
-				}.Layout(gtx, material.H6(app.Theme, "Item Info").Layout)
+				return spssurface.NewSurface().Layout(app.Theme, gtx, func(gtx layout.Context) layout.Dimensions {
+					return material.H6(app.Theme, "Item Info").Layout(gtx)
+				})
 			},
 			func(gtx layout.Context) layout.Dimensions {
 				return spsdivider.Divider{}.Layout(app.Theme, gtx)

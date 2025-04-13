@@ -18,12 +18,15 @@ const (
 	HighlightStyleCount
 )
 
-func NewOptions(opts ...Option) Options {
+type LayoutContent func(item *Item, gtx layout.Context, layoutCtx LayoutContext) layout.Dimensions
+
+func NewOptions(content LayoutContent, opts ...Option) Options {
 	o := Options{
 		Dimensions:     NewDimensions(),
 		StackAlignment: layout.Center,
 		BgColor:        spscolor.DynamicColor(2),
 		HighlightStyle: HighlightStyleStrokeRect,
+		LayoutContent:  content,
 	}
 	o.Update(opts...)
 	return o
@@ -34,6 +37,7 @@ type Options struct {
 	StackAlignment layout.Direction
 	BgColor        color.NRGBA
 	HighlightStyle HighlightStyle
+	LayoutContent  LayoutContent
 }
 
 func (p *Options) Update(opts ...Option) {

@@ -7,17 +7,16 @@ import (
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/unit"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
 )
 
-func NewItem(data any, opts ...Option) Item {
+func NewItem(data any, content LayoutContent, opts ...Option) Item {
 	i := Item{
 		Data: data,
-		Opts: NewOptions(opts...),
+		Opts: NewOptions(content, opts...),
 	}
 	return i
 }
@@ -25,8 +24,7 @@ func NewItem(data any, opts ...Option) Item {
 type Item struct {
 	Data any
 	Opts Options
-
-	Clickable widget.Clickable
+	UI   UI
 }
 
 func (i *Item) Update(opts ...Option) {
@@ -37,7 +35,6 @@ func (i *Item) Update(opts ...Option) {
 
 func (i *Item) Layout(
 	app *spsgio.Application, gtx layout.Context, highlight bool,
-	content func(gtx layout.Context, layoutCtx LayoutContext) layout.Dimensions,
 ) (dimensions layout.Dimensions, clicked bool) {
 	layoutCtx := LayoutContext{
 		ContentWidth:       gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentWidth)),
@@ -68,10 +65,10 @@ func (i *Item) Layout(
 		}),
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			if i.Clickable.Clicked(gtx) {
+			if i.UI.Clickable.Clicked(gtx) {
 				clicked = true
 			}
-			clickDimensions := material.Clickable(gtx, &i.Clickable, func(gtx layout.Context) layout.Dimensions {
+			clickDimensions := material.Clickable(gtx, &i.UI.Clickable, func(gtx layout.Context) layout.Dimensions {
 				return layout.Dimensions{
 					Size: layoutCtx.Size,
 				}
@@ -80,7 +77,10 @@ func (i *Item) Layout(
 		}),
 		// content
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return content(gtx, layoutCtx)
+			if i.Opts.LayoutContent == nil {
+				return layout.Dimensions{}
+			}
+			return i.Opts.LayoutContent(i, gtx, layoutCtx)
 		}),
 		// highlight
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {

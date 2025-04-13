@@ -3,6 +3,7 @@ package sample
 import (
 	"fmt"
 
+	"gioui.org/font"
 	"gioui.org/io/event"
 	"gioui.org/layout"
 	"gioui.org/widget"
@@ -11,6 +12,7 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
+	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsgrid "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/grid"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
@@ -37,9 +39,16 @@ func New(app *spsgio.Application) *Page {
 	highlightStyle := spsitem.HighlightStyleDefault
 	//highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
 	stackAlignment := layout.Center
+	layoutContent := func(i *spsitem.Item, gtx layout.Context, layoutCtx spsitem.LayoutContext) layout.Dimensions {
+		baseInfo := material.Body1(app.Theme, fmt.Sprintf("%v", i.Data))
+		baseInfo.Font.Style = font.Italic
+		baseInfo.Font.Weight = font.Bold
+		return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
+	}
 	for i := 0; i < 100; i++ {
 		p.Items[i] = spsitem.NewItem(
 			fmt.Sprintf("item-%d", i),
+			layoutContent,
 			spsitem.OptHighlightStyle(highlightStyle),
 			spsitem.OptStackAlignment(stackAlignment),
 		)

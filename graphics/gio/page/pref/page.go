@@ -16,7 +16,7 @@ func New(app *spsgio.Application) *Page {
 	p := &Page{
 		Pages: &app.Pages,
 
-		Tabs:  spstab.NewTabsByNames(TabNameSettings, TabNameDecorated),
+		Tabs:  spstab.NewTabsByNames([]string{TabNameSettings, TabNameDecorated}),
 		Table: spstable.NewTable(),
 
 		decorated:      NewDecorated(),

@@ -15,23 +15,30 @@ import (
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
-func NewTabsByNames(names ...string) Tabs {
-	t := newTabs()
+func NewTabsByNames(names []string, opts ...Option) Tabs {
+	t := NewTabs(opts...)
 	t.AddTabByNames(names...)
 	return t
 }
 
-func NewTabs(tabs ...Tab) Tabs {
-	t := newTabs()
+func NewTabsByTabs(tabs []Tab, opts ...Option) Tabs {
+	t := NewTabs(opts...)
 	t.AddTab(tabs...)
+	return t
+}
+
+func NewTabs(opts ...Option) Tabs {
+	t := newTabs()
+	t.Update(opts...)
 	return t
 }
 
 func newTabs() Tabs {
 	return Tabs{
+		Opts: NewOptions(),
 		tabList: widget.List{
 			List: layout.List{
-				Axis: layout.Horizontal,
+				Axis: layout.Vertical,
 			},
 		},
 	}
@@ -40,11 +47,19 @@ func newTabs() Tabs {
 type Content func(gtx layout.Context, selected int) layout.Dimensions
 
 type Tabs struct {
+	Opts Options
+
 	tabList widget.List
 	Tabs    []Tab
 
 	selected int
 	slider   Slider
+}
+
+func (t *Tabs) Update(opts ...Option) {
+	for _, opt := range opts {
+		opt(&t.Opts)
+	}
 }
 
 func (t *Tabs) AddTabByNames(names ...string) {
@@ -156,7 +171,11 @@ func (t *Tabs) SetLastSelected() int {
 }
 
 func (t *Tabs) Layout(app *spsgio.Application, gtx layout.Context, param any, content Content) layout.Dimensions {
-	return layout.Flex{Axis: layout.Vertical}.Layout(gtx,
+	axis := layout.Horizontal
+	if t.Opts.Axis == layout.Horizontal {
+		axis = layout.Vertical
+	}
+	return layout.Flex{Axis: axis}.Layout(gtx,
 		// Tabs
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return t.LayoutTabs(app, gtx, param)
@@ -169,13 +188,14 @@ func (t *Tabs) Layout(app *spsgio.Application, gtx layout.Context, param any, co
 }
 
 func (t *Tabs) doLayoutContent(app *spsgio.Application, gtx layout.Context, param any, content Content) layout.Dimensions {
-	return t.slider.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+	return t.slider.Layout(t.Opts.Axis, gtx, func(gtx layout.Context) layout.Dimensions {
 		spscolor.Fill(gtx, spscolor.DynamicColor(t.selected), spscolor.DynamicColor(t.selected+1))
 		return content(gtx, t.selected)
 	})
 }
 
 func (t *Tabs) LayoutTabs(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
+	t.tabList.Axis = t.Opts.Axis
 	return material.List(app.Theme, &t.tabList).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
 		if tab.Clickable.Clicked(gtx) {

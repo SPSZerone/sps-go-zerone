@@ -21,7 +21,7 @@ const (
 func New(app *spsgio.Application) *Page {
 	p := &Page{
 		Pages: &app.Pages,
-		Tabs:  spstab.NewTabsByNames(TabNameGridAndItem),
+		Tabs:  spstab.NewTabsByNames([]string{TabNameGridAndItem}),
 		Grid:  NewGrid(app),
 	}
 	return p

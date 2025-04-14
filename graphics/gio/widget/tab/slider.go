@@ -32,7 +32,7 @@ func (s *Slider) PushLeft() { s.push = 1 }
 func (s *Slider) PushRight() { s.push = -1 }
 
 // Layout lays out widget that can be pushed.
-func (s *Slider) Layout(gtx layout.Context, w layout.Widget) layout.Dimensions {
+func (s *Slider) Layout(axis layout.Axis, gtx layout.Context, w layout.Widget) layout.Dimensions {
 	if s.push != 0 {
 		s.next = nil
 		s.lastCall = s.nextCall
@@ -88,29 +88,53 @@ func (s *Slider) Layout(gtx layout.Context, w layout.Widget) layout.Dimensions {
 	}
 
 	offset := smooth(s.offset)
+	lastOffset, nextOffset := s.getOffset(axis, dims, offset)
+
+	defer op.Offset(lastOffset).Push(gtx.Ops).Pop()
+	s.lastCall.Add(gtx.Ops)
+
+	defer op.Offset(nextOffset).Push(gtx.Ops).Pop()
+	s.nextCall.Add(gtx.Ops)
+
+	return dims
+}
+
+func (s *Slider) getOffset(axis layout.Axis, dims layout.Dimensions, offset float32) (lastOffset, nextOffset image.Point) {
+	if axis == layout.Horizontal {
+		if s.offset > 0 {
+			lastOffset = image.Point{
+				X: int(float32(dims.Size.X) * (offset - 1)),
+			}
+			nextOffset = image.Point{
+				X: dims.Size.X,
+			}
+		} else {
+			lastOffset = image.Point{
+				X: int(float32(dims.Size.X) * (offset + 1)),
+			}
+			nextOffset = image.Point{
+				X: -dims.Size.X,
+			}
+		}
+		return
+	}
 
 	if s.offset > 0 {
-		defer op.Offset(image.Point{
-			X: int(float32(dims.Size.X) * (offset - 1)),
-		}).Push(gtx.Ops).Pop()
-		s.lastCall.Add(gtx.Ops)
-
-		defer op.Offset(image.Point{
-			X: dims.Size.X,
-		}).Push(gtx.Ops).Pop()
-		s.nextCall.Add(gtx.Ops)
+		lastOffset = image.Point{
+			Y: int(float32(dims.Size.Y) * (offset - 1)),
+		}
+		nextOffset = image.Point{
+			Y: dims.Size.Y,
+		}
 	} else {
-		defer op.Offset(image.Point{
-			X: int(float32(dims.Size.X) * (offset + 1)),
-		}).Push(gtx.Ops).Pop()
-		s.lastCall.Add(gtx.Ops)
-
-		defer op.Offset(image.Point{
-			X: -dims.Size.X,
-		}).Push(gtx.Ops).Pop()
-		s.nextCall.Add(gtx.Ops)
+		lastOffset = image.Point{
+			Y: int(float32(dims.Size.Y) * (offset + 1)),
+		}
+		nextOffset = image.Point{
+			Y: -dims.Size.Y,
+		}
 	}
-	return dims
+	return
 }
 
 // smooth handles -1 to 1 with ease-in-out cubic easing func.

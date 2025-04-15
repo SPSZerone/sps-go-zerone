@@ -41,6 +41,8 @@ func NewApplication(ctx context.Context, opts ...Option) *Application {
 		Context:  ctx,
 		Shutdown: cancel,
 		Logger:   spslog.NewLogger(),
+
+		Pref: spspref.NewPreferences(),
 	}
 	a.Init(opts...)
 	return a
@@ -99,7 +101,7 @@ func (a *Application) Init(opts ...Option) {
 	a.Pages = NewPages(a)
 	a.Window = new(app.Window)
 
-	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated))
+	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated.Value))
 
 	if a.Opts.OnInitPost != nil {
 		a.Opts.OnInitPost(a)

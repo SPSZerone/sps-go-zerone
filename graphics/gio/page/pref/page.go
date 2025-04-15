@@ -19,13 +19,11 @@ func New(app *spsgio.Application) *Page {
 		Tabs:  spstab.NewTabsByNames([]string{TabNameSettings, TabNameDecorated}),
 		Table: spstable.NewTable(),
 
-		decorated:      NewDecorated(),
 		nonModalDrawer: NewNonModalDrawer(),
 		bottomBar:      NewBottomBar(),
 		prefTableStyle: NewPrefTableStyle(),
 		valueInFront:   NewValueInFront(),
 	}
-	p.decorated.Widget.Value = app.Pref.Settings.Decorated
 	p.nonModalDrawer.Widget.Value = app.Pref.Settings.NonModalDrawer
 	p.bottomBar.Widget.Value = app.Pref.Settings.BottomBar
 	p.prefTableStyle.Widget.Value = app.Pref.Settings.PrefTableStyle
@@ -41,7 +39,6 @@ type Page struct {
 	Tabs  spstab.Tabs
 	Table spstable.Table
 
-	decorated      SettingBool
 	nonModalDrawer SettingBool
 	bottomBar      SettingBool
 	prefTableStyle SettingBool
@@ -86,7 +83,7 @@ func (p *Page) LayoutDefault(app *spsgio.Application, gtx layout.Context, param 
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
-		}.Layout(gtx, p.PrefDecorated(app, gtx, param)...)
+		}.Layout(gtx, app.Pref.Settings.DecoratedFlexChild(app.Window, app.Theme, gtx)...)
 	case TabIdxSettings:
 		return layout.Flex{
 			Alignment: layout.Middle,

@@ -170,7 +170,7 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 	// => Final
 	flex := layout.Flex{Axis: layout.Vertical}
 
-	if app.Pref.Settings.Decorated {
+	if app.Pref.Settings.Decorated.Value {
 		if app.Pref.Settings.BottomBar {
 			flex.Layout(gtx, content, bar)
 		} else {

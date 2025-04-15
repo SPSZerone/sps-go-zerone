@@ -8,13 +8,6 @@ type SettingBool struct {
 	Widget widget.Bool
 }
 
-func NewDecorated() SettingBool {
-	return SettingBool{
-		Name: "Decorated",
-		Desc: "Use decorated",
-	}
-}
-
 func NewNonModalDrawer() SettingBool {
 	return SettingBool{
 		Name: "Use non-modal drawer",

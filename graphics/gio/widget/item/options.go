@@ -19,15 +19,17 @@ const (
 	HighlightStyleCount
 )
 
-type Layout func(app *spsgio.Application, gtx layout.Context, item *Item, layoutCtx LayoutContext) layout.Dimensions
+type LayoutContent func(app *spsgio.Application, gtx layout.Context, item *Item, layoutCtx LayoutContext) layout.Dimensions
 
-func NewOptions(content Layout, opts ...Option) Options {
+type LayoutDetail func(app *spsgio.Application, gtx layout.Context, item *Item) layout.Dimensions
+
+func NewOptions(content LayoutContent, opts ...Option) Options {
 	o := Options{
 		Dimensions:     NewDimensions(),
 		StackAlignment: layout.Center,
 		BgColor:        spscolor.DynamicColor(2),
 		HighlightStyle: HighlightStyleStrokeRect,
-		Content:        content,
+		LayoutContent:  content,
 	}
 	o.Update(opts...)
 	return o
@@ -39,7 +41,8 @@ type Options struct {
 	BgColor        color.NRGBA
 	HighlightStyle HighlightStyle
 
-	Content Layout
+	LayoutContent LayoutContent
+	LayoutDetail  LayoutDetail
 }
 
 func (p *Options) Update(opts ...Option) {
@@ -74,8 +77,14 @@ func OptHighlightStyle(value HighlightStyle) Option {
 	}
 }
 
-func OptContent(value Layout) Option {
+func OptLayoutContent(value LayoutContent) Option {
 	return func(o *Options) {
-		o.Content = value
+		o.LayoutContent = value
+	}
+}
+
+func OptLayoutDetail(value LayoutDetail) Option {
+	return func(o *Options) {
+		o.LayoutDetail = value
 	}
 }

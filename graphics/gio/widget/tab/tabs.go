@@ -180,7 +180,7 @@ func (t *Tabs) Layout(app *spsgio.Application, gtx layout.Context, param any, co
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return t.LayoutTabs(app, gtx, param)
 		}),
-		// Content
+		// LayoutContent
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 			return t.doLayoutContent(app, gtx, param, content)
 		}),

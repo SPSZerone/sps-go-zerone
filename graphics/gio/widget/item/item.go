@@ -14,7 +14,7 @@ import (
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
 )
 
-func NewItem(data any, content Layout, opts ...Option) Item {
+func NewItem(data any, content LayoutContent, opts ...Option) Item {
 	i := Item{
 		Data: data,
 		Opts: NewOptions(content, opts...),
@@ -78,10 +78,10 @@ func (i *Item) Layout(
 		}),
 		// content
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			if i.Opts.Content == nil {
+			if i.Opts.LayoutContent == nil {
 				return layout.Dimensions{}
 			}
-			return i.Opts.Content(app, gtx, i, layoutCtx)
+			return i.Opts.LayoutContent(app, gtx, i, layoutCtx)
 		}),
 		// highlight
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {

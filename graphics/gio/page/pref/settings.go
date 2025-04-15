@@ -29,20 +29,17 @@ func (p *Page) PrefSettings(app *spsgio.Application, gtx layout.Context, param a
 }
 
 func (p *Page) PrefSettingsNonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	key := material.Body1(app.Theme, p.nonModalDrawer.Name).Layout
-	value := func(gtx layout.Context) layout.Dimensions {
-		return p.NonModalDrawer(app, gtx)
-	}
-	var aWidget, bWidget layout.Widget
 	var ratio float32
-	if app.Pref.Settings.ValueInFront {
-		aWidget, bWidget = value, key
+	if app.Pref.Pref.ValueInFront {
 		ratio = RatioValue
 	} else {
-		aWidget, bWidget = key, value
 		ratio = RatioKey
 	}
-	return spslayout.FlexInset{Ratio: ratio}.LayoutABWidget(gtx, aWidget, bWidget)
+	return app.Pref.Settings.ModalNavDrawer.Layout(
+		app.Window, app.Theme, gtx,
+		app.Pref.Pref.ValueInFront, ratio,
+		&p.Pages.NavAnim,
+	)
 }
 
 func (p *Page) PrefSettingsValueInFront(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
@@ -52,7 +49,7 @@ func (p *Page) PrefSettingsValueInFront(app *spsgio.Application, gtx layout.Cont
 	}
 	var aWidget, bWidget layout.Widget
 	var ratio float32
-	if app.Pref.Settings.ValueInFront {
+	if app.Pref.Pref.ValueInFront {
 		aWidget, bWidget = value, key
 		ratio = RatioValue
 	} else {
@@ -63,20 +60,16 @@ func (p *Page) PrefSettingsValueInFront(app *spsgio.Application, gtx layout.Cont
 }
 
 func (p *Page) PrefSettingsBottomBar(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	key := material.Body1(app.Theme, p.bottomBar.Name).Layout
-	value := func(gtx layout.Context) layout.Dimensions {
-		return p.BottomBar(app, gtx)
-	}
-	var aWidget, bWidget layout.Widget
 	var ratio float32
-	if app.Pref.Settings.ValueInFront {
-		aWidget, bWidget = value, key
+	if app.Pref.Pref.ValueInFront {
 		ratio = RatioValue
 	} else {
-		aWidget, bWidget = key, value
 		ratio = RatioKey
 	}
-	return spslayout.FlexInset{Ratio: ratio}.LayoutABWidget(gtx, aWidget, bWidget)
+	return app.Pref.Settings.BottomBar.Layout(
+		app.Window, app.Theme, gtx,
+		app.Pref.Pref.ValueInFront, ratio,
+	)
 }
 
 func (p *Page) PrefSettingsPrefTableStyle(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
@@ -86,7 +79,7 @@ func (p *Page) PrefSettingsPrefTableStyle(app *spsgio.Application, gtx layout.Co
 	}
 	var aWidget, bWidget layout.Widget
 	var ratio float32
-	if app.Pref.Settings.ValueInFront {
+	if app.Pref.Pref.ValueInFront {
 		aWidget, bWidget = value, key
 		ratio = RatioValue
 	} else {
@@ -97,48 +90,44 @@ func (p *Page) PrefSettingsPrefTableStyle(app *spsgio.Application, gtx layout.Co
 }
 
 func (p *Page) NonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	if p.nonModalDrawer.Widget.Update(gtx) {
-		app.Pref.Settings.NonModalDrawer = p.nonModalDrawer.Widget.Value
-		if p.nonModalDrawer.Widget.Value {
-			p.Pages.NavAnim.Appear(gtx.Now)
-		} else {
-			p.Pages.NavAnim.Disappear(gtx.Now)
-		}
-	}
-	return material.Switch(app.Theme, &p.nonModalDrawer.Widget, p.bottomBar.Desc).Layout(gtx)
+	return app.Pref.Settings.ModalNavDrawer.LayoutSwitch(
+		app.Window, app.Theme, gtx,
+		&p.Pages.NavAnim,
+	)
 }
 
 func (p *Page) ValueInFront(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	if p.valueInFront.Widget.Update(gtx) {
-		app.Pref.Settings.ValueInFront = p.valueInFront.Widget.Value
+		app.Pref.Pref.ValueInFront = p.valueInFront.Widget.Value
 	}
 	return material.Switch(app.Theme, &p.valueInFront.Widget, p.valueInFront.Desc).Layout(gtx)
 }
 
 func (p *Page) BottomBar(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	if p.bottomBar.Widget.Update(gtx) {
-		if p.bottomBar.Widget.Value {
-			p.Pages.ModalNavDrawer.Anchor = component.Bottom
-			p.Pages.AppBar.Anchor = component.Bottom
-		} else {
-			p.Pages.ModalNavDrawer.Anchor = component.Top
-			p.Pages.AppBar.Anchor = component.Top
-		}
-		app.Pref.Settings.BottomBar = p.bottomBar.Widget.Value
-	}
-	return material.Switch(app.Theme, &p.bottomBar.Widget, p.bottomBar.Desc).Layout(gtx)
+	return app.Pref.Settings.BottomBar.LayoutSwitch(
+		app.Window, app.Theme, gtx,
+		func() {
+			if app.Pref.Settings.BottomBar.Value {
+				p.Pages.ModalNavDrawer.Anchor = component.Bottom
+				p.Pages.AppBar.Anchor = component.Bottom
+			} else {
+				p.Pages.ModalNavDrawer.Anchor = component.Top
+				p.Pages.AppBar.Anchor = component.Top
+			}
+		},
+	)
 }
 
 func (p *Page) TableStyle(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	if p.prefTableStyle.Widget.Update(gtx) {
-		app.Pref.Settings.PrefTableStyle = p.prefTableStyle.Widget.Value
+		app.Pref.Pref.PrefTableStyle = p.prefTableStyle.Widget.Value
 	}
 	return material.Switch(app.Theme, &p.prefTableStyle.Widget, p.prefTableStyle.Desc).Layout(gtx)
 }
 
 func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
 	colIdx := TableColIdxValue
-	if app.Pref.Settings.ValueInFront {
+	if app.Pref.Pref.ValueInFront {
 		colIdx = TableColIdxKey
 	}
 	switch row {
@@ -147,7 +136,7 @@ func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col
 		case colIdx:
 			return p.NonModalDrawer(app, gtx)
 		default:
-			labelStyle.Text = p.nonModalDrawer.Name
+			labelStyle.Text = app.Pref.Settings.ModalNavDrawer.Name
 		}
 		return labelStyle.Layout(gtx)
 	case SettingsRowIdxValueInFront:
@@ -163,7 +152,7 @@ func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col
 		case colIdx:
 			return p.BottomBar(app, gtx)
 		default:
-			labelStyle.Text = p.bottomBar.Name
+			labelStyle.Text = app.Pref.Settings.BottomBar.Name
 		}
 		return labelStyle.Layout(gtx)
 	case SettingsRowIdxTableStyle:

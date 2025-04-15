@@ -86,7 +86,7 @@ func (p *Pages) Start(tag any) Page {
 	page := p.SwitchTo(tag)
 
 	timeNow := time.Now()
-	if p.App.Pref.Settings.NonModalDrawer {
+	if p.App.Pref.Settings.ModalNavDrawer.Value {
 		p.NavAnim.ToggleVisibility(timeNow)
 	} else {
 		p.ModalNavDrawer.Appear(timeNow)
@@ -116,7 +116,7 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 	for _, evt := range p.AppBar.Events(gtx) {
 		switch e := evt.(type) {
 		case component.AppBarNavigationClicked:
-			if app.Pref.Settings.NonModalDrawer {
+			if app.Pref.Settings.ModalNavDrawer.Value {
 				p.NavAnim.ToggleVisibility(gtx.Now)
 			} else {
 				p.ModalNavDrawer.Appear(gtx.Now)
@@ -171,14 +171,14 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 	flex := layout.Flex{Axis: layout.Vertical}
 
 	if app.Pref.Settings.Decorated.Value {
-		if app.Pref.Settings.BottomBar {
+		if app.Pref.Settings.BottomBar.Value {
 			flex.Layout(gtx, content, bar)
 		} else {
 			flex.Layout(gtx, bar, content)
 		}
 	} else {
 		decorations := deco()
-		if app.Pref.Settings.BottomBar {
+		if app.Pref.Settings.BottomBar.Value {
 			flex.Layout(gtx, decorations, content, bar)
 		} else {
 			flex.Layout(gtx, decorations, bar, content)

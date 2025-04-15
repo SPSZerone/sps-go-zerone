@@ -49,7 +49,7 @@ func dimension(app *spsgio.Application, gtx layout.Context, axis layout.Axis, in
 	switch axis {
 	case layout.Horizontal:
 		var widthUnit int
-		if app.Pref.Settings.ValueInFront {
+		if app.Pref.Pref.ValueInFront {
 			switch index {
 			case TableColIdxKey:
 				widthUnit = gtx.Dp(unit.Dp(TableColWidthValue))

@@ -8,52 +8,46 @@ import (
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
 )
 
-func NewDecorated() Decorated {
-	return Decorated{
+func NewBottomBar() BottomBar {
+	return BottomBar{
 		Bool: setting.Bool{
-			Name: "Decorated",
-			Desc: "Use decorated",
+			Name: "Bottom Bar",
+			Desc: "Use Bottom Bar",
 		},
 	}
 }
 
-type Decorated struct {
+type BottomBar struct {
 	setting.Bool
 }
 
-func (d *Decorated) FlexChild(
+func (b *BottomBar) FlexChild(
 	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return d.Layout(window, theme, gtx, valueInFront, ratioInFront)
+			return b.Layout(window, theme, gtx, valueInFront, ratioInFront)
 		}),
 	}
 }
 
-func (d *Decorated) Layout(
+func (b *BottomBar) Layout(
 	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return d.Bool.Layout(
+	return b.Bool.Layout(
 		theme, gtx,
 		valueInFront, ratioInFront,
 		func() {
-			d.UpdateWindow(window)
+
 		},
 	)
 }
 
-func (d *Decorated) LayoutSwitch(window *gioapp.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
-	return d.Bool.LayoutSwitch(
-		theme, gtx,
-		func() {
-			d.UpdateWindow(window)
-		},
-	)
-}
-
-func (d *Decorated) UpdateWindow(window *gioapp.Window) {
-	window.Option(gioapp.Decorated(d.Bool.Value))
+func (b *BottomBar) LayoutSwitch(
+	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	onValueChanged func(),
+) layout.Dimensions {
+	return b.Bool.LayoutSwitch(theme, gtx, onValueChanged)
 }

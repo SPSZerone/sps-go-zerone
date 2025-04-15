@@ -11,14 +11,14 @@ import (
 
 func decoratedCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
 	colIdx := TableColIdxValue
-	if app.Pref.Settings.ValueInFront {
+	if app.Pref.Pref.ValueInFront {
 		colIdx = TableColIdxKey
 	}
 	switch row {
 	case DecoratedRowIdxDecorated:
 		switch col {
 		case colIdx:
-			return app.Pref.Settings.DecoratedLayoutSwitch(app.Window, app.Theme, gtx)
+			return app.Pref.Settings.Decorated.LayoutSwitch(app.Window, app.Theme, gtx)
 		default:
 			labelStyle.Text = app.Pref.Settings.Decorated.Name
 		}

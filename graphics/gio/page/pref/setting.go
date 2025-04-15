@@ -8,20 +8,6 @@ type SettingBool struct {
 	Widget widget.Bool
 }
 
-func NewNonModalDrawer() SettingBool {
-	return SettingBool{
-		Name: "Use non-modal drawer",
-		Desc: "Use Non-Modal Navigation Drawer",
-	}
-}
-
-func NewBottomBar() SettingBool {
-	return SettingBool{
-		Name: "Bottom Bar",
-		Desc: "Use Bottom Bar",
-	}
-}
-
 func NewPrefTableStyle() SettingBool {
 	return SettingBool{
 		Name: "Pref Table Style",

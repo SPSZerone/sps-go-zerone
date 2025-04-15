@@ -19,15 +19,11 @@ func New(app *spsgio.Application) *Page {
 		Tabs:  spstab.NewTabsByNames([]string{TabNameSettings, TabNameDecorated}),
 		Table: spstable.NewTable(),
 
-		nonModalDrawer: NewNonModalDrawer(),
-		bottomBar:      NewBottomBar(),
 		prefTableStyle: NewPrefTableStyle(),
 		valueInFront:   NewValueInFront(),
 	}
-	p.nonModalDrawer.Widget.Value = app.Pref.Settings.NonModalDrawer
-	p.bottomBar.Widget.Value = app.Pref.Settings.BottomBar
-	p.prefTableStyle.Widget.Value = app.Pref.Settings.PrefTableStyle
-	p.valueInFront.Widget.Value = app.Pref.Settings.ValueInFront
+	p.prefTableStyle.Widget.Value = app.Pref.Pref.PrefTableStyle
+	p.valueInFront.Widget.Value = app.Pref.Pref.ValueInFront
 	return p
 }
 
@@ -39,8 +35,6 @@ type Page struct {
 	Tabs  spstab.Tabs
 	Table spstable.Table
 
-	nonModalDrawer SettingBool
-	bottomBar      SettingBool
 	prefTableStyle SettingBool
 	valueInFront   SettingBool
 }
@@ -70,7 +64,7 @@ func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) 
 
 func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
 	return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
-		if app.Pref.Settings.PrefTableStyle {
+		if app.Pref.Pref.PrefTableStyle {
 			return p.LayoutTableStyle(app, gtx, param, selected)
 		}
 		return p.LayoutDefault(app, gtx, param, selected)
@@ -83,7 +77,7 @@ func (p *Page) LayoutDefault(app *spsgio.Application, gtx layout.Context, param 
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
-		}.Layout(gtx, app.Pref.Settings.DecoratedFlexChild(app.Window, app.Theme, gtx)...)
+		}.Layout(gtx, app.Pref.Settings.Decorated.FlexChild(app.Window, app.Theme, gtx, app.Pref.Pref.ValueInFront, 0.3)...)
 	case TabIdxSettings:
 		return layout.Flex{
 			Alignment: layout.Middle,
@@ -120,7 +114,7 @@ func (p *Page) LayoutTableStyle(app *spsgio.Application, gtx layout.Context, par
 }
 
 func (p *Page) UpdateTableHeaders(app *spsgio.Application) {
-	if app.Pref.Settings.ValueInFront {
+	if app.Pref.Pref.ValueInFront {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Value"}, {Text: "Key"}}...))
 	} else {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))

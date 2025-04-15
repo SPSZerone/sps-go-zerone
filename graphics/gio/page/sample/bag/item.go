@@ -1,4 +1,4 @@
-package sample
+package bag
 
 import (
 	"fmt"
@@ -12,36 +12,34 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
-func NewItem(data any, app *spsgio.Application) Item {
+func NewItem(data any, app *spsgio.Application) *Item {
+	dimensions := spsitem.NewDimensions()
+	dimensions.ContentWidth = 200
+	dimensions.ContentHeight = 200
 	highlightStyle := spsitem.HighlightStyleDefault
 	//highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
 	stackAlignment := layout.Center
-	content := func(app *spsgio.Application, gtx layout.Context, item *spsitem.Item, layoutCtx spsitem.LayoutContext) layout.Dimensions {
-		baseInfo := material.Body1(app.Theme, fmt.Sprintf("%v", item.Data))
-		baseInfo.Font.Style = font.Italic
-		baseInfo.Font.Weight = font.Bold
-		if item.UI.MenuItems[0].Clicked(gtx) {
-			app.Logger.Info().Msgf("Use %v", item.Data)
-		}
-		return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
-	}
+
+	i := &Item{}
 	item := spsitem.NewItem(
 		data,
-		content,
+		i.LayoutContent,
 		spsitem.OptHighlightStyle(highlightStyle),
 		spsitem.OptStackAlignment(stackAlignment),
+		spsitem.OptDimensions(dimensions),
 	)
-	i := Item{
-		Item: item,
-	}
+	i.Item = item
 	i.InitMenu(app)
 	return i
 }
+
+var _ spsbag.Item = (*Item)(nil)
 
 type Item struct {
 	Item spsitem.Item
@@ -77,7 +75,21 @@ func (i *Item) InitMenu(app *spsgio.Application) {
 	}
 }
 
-func (i *Item) layoutDetail(app *spsgio.Application, gtx layout.Context, title string) layout.Dimensions {
+func (i *Item) GetItem() *spsitem.Item {
+	return &i.Item
+}
+
+func (i *Item) UpdateItem(item spsitem.Item) {
+	i.Item = item
+}
+
+func (i *Item) Layout(
+	app *spsgio.Application, gtx layout.Context, highlight bool,
+) (dimensions layout.Dimensions, clicked bool) {
+	return i.Item.Layout(app, gtx, highlight)
+}
+
+func (i *Item) LayoutDetail(app *spsgio.Application, gtx layout.Context, title string) layout.Dimensions {
 	return layout.Flex{
 		Alignment: layout.Middle,
 		Axis:      layout.Vertical,
@@ -93,4 +105,14 @@ func (i *Item) layoutDetail(app *spsgio.Application, gtx layout.Context, title s
 			return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
 		}),
 	)
+}
+
+func (i *Item) LayoutContent(app *spsgio.Application, gtx layout.Context, item *spsitem.Item, layoutCtx spsitem.LayoutContext) layout.Dimensions {
+	baseInfo := material.Body1(app.Theme, fmt.Sprintf("%v", item.Data))
+	baseInfo.Font.Style = font.Italic
+	baseInfo.Font.Weight = font.Bold
+	if item.UI.MenuItems[0].Clicked(gtx) {
+		app.Logger.Info().Msgf("Use %v", item.Data)
+	}
+	return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
 }

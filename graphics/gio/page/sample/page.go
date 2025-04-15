@@ -1,12 +1,16 @@
 package sample
 
 import (
+	"time"
+
 	"gioui.org/io/event"
 	"gioui.org/layout"
 	"gioui.org/x/component"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
+	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page/sample/bag"
+	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 )
 
@@ -19,10 +23,13 @@ const (
 )
 
 func New(app *spsgio.Application) *Page {
+	bags := spsbag.NewBags()
+	bags.AddBag(spsbag.NewBag("Items A"), spsbag.NewBag("Items B"))
 	p := &Page{
-		Pages: &app.Pages,
-		Tabs:  spstab.NewTabsByNames([]string{TabNameGridAndItem}),
-		Grid:  NewGrid(app),
+		Pages:   &app.Pages,
+		Tabs:    spstab.NewTabsByNames([]string{TabNameGridAndItem}),
+		Bags:    bags,
+		BagData: bag.NewData(app),
 	}
 	return p
 }
@@ -33,7 +40,8 @@ type Page struct {
 	*spsgio.Pages
 	Tabs spstab.Tabs
 
-	Grid Grid
+	Bags    spsbag.Bags
+	BagData bag.Data
 }
 
 func (p *Page) Actions() []component.AppBarAction {
@@ -63,7 +71,9 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 	return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		switch selected {
 		case TabIdxGridAndItem:
-			return p.Grid.Layout(app, gtx, param)
+			return p.Bags.Layout(app, gtx, param, func(index int) (items []spsbag.Item, itemUpdateTime time.Time) {
+				return p.BagData.GetItems(index)
+			})
 		default:
 			return layout.Dimensions{}
 		}

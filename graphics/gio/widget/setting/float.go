@@ -14,6 +14,8 @@ type Float struct {
 	widget.Float
 	Name string
 	Desc string
+
+	Min, Max float32
 }
 
 func (f *Float) Layout(
@@ -21,7 +23,7 @@ func (f *Float) Layout(
 	valueInFront bool, ratioInFront float32,
 	onValueChanged func(),
 ) layout.Dimensions {
-	key := material.Body1(theme, fmt.Sprintf("%v %v", f.Name, f.Float.Value)).Layout
+	key := material.Body1(theme, fmt.Sprintf("%v %v [%v,%v]", f.Name, f.Float.Value, f.Min, f.Max)).Layout
 	value := func(gtx layout.Context) layout.Dimensions {
 		return f.LayoutSwitch(theme, gtx, onValueChanged)
 	}
@@ -39,9 +41,20 @@ func (f *Float) LayoutSwitch(
 	onValueChanged func(),
 ) layout.Dimensions {
 	if f.Float.Update(gtx) {
+		if f.Float.Value < f.Min {
+			f.Float.Value = f.Min
+		}
+		if f.Float.Value > f.Max {
+			f.Float.Value = f.Max
+		}
 		if onValueChanged != nil {
 			onValueChanged()
 		}
 	}
 	return material.Slider(theme, &f.Float).Layout(gtx)
+}
+
+func (f *Float) UpdateMinMax(min, max float32) {
+	f.Min = min
+	f.Max = max
 }

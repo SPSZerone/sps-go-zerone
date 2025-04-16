@@ -28,10 +28,15 @@ type Navigation struct {
 func (n *Navigation) FlexChild(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
+	min, max float32,
 ) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return n.Layout(window, theme, gtx, valueInFront, ratioInFront)
+			return n.Layout(
+				window, theme, gtx,
+				valueInFront, ratioInFront,
+				min, max,
+			)
 		}),
 	}
 }
@@ -39,10 +44,16 @@ func (n *Navigation) FlexChild(
 func (n *Navigation) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
+	min, max float32,
 ) layout.Dimensions {
+	n.Float.UpdateMinMax(min, max)
 	return n.Float.Layout(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
-func (n *Navigation) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
+func (n *Navigation) LayoutSwitch(
+	window *app.Window, theme *material.Theme, gtx layout.Context,
+	min, max float32,
+) layout.Dimensions {
+	n.Float.UpdateMinMax(min, max)
 	return n.Float.LayoutSwitch(theme, gtx, nil)
 }

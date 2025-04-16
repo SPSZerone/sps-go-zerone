@@ -37,9 +37,11 @@ func (p *Page) LayoutSettingsNavigation(app *spsgio.Application, gtx layout.Cont
 	} else {
 		ratio = RatioKey
 	}
+	minRatio, maxRatio := app.GetNavigationRatioLimit()
 	return app.Pref.Settings.Navigation.Layout(
 		app.Window, app.Theme, gtx,
 		app.Pref.Settings.ValueInFront.Value, ratio,
+		minRatio, maxRatio,
 	)
 }
 
@@ -110,8 +112,10 @@ func (p *Page) LayoutSettingsDecorated(app *spsgio.Application, gtx layout.Conte
 }
 
 func (p *Page) Navigation(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+	minRatio, maxRatio := app.GetNavigationRatioLimit()
 	return app.Pref.Settings.Navigation.LayoutSwitch(
 		app.Window, app.Theme, gtx,
+		minRatio, maxRatio,
 	)
 }
 

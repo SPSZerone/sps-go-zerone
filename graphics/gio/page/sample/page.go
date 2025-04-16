@@ -11,6 +11,7 @@ import (
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page/sample/bag"
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
+	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 )
 
@@ -29,7 +30,7 @@ func New(app *spsgio.Application) *Page {
 		Pages:   &app.Pages,
 		Tabs:    spstab.NewTabsByNames([]string{TabNameGridAndItem}),
 		Bags:    bags,
-		BagData: bag.NewData(app),
+		BagData: bag.NewTestData(app, bags.GetCount(), 100),
 	}
 	return p
 }
@@ -71,9 +72,12 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 	return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		switch selected {
 		case TabIdxGridAndItem:
-			return p.Bags.Layout(app, gtx, param, func(index int) (items []spsbag.Item, itemUpdateTime time.Time) {
-				return p.BagData.GetItems(index)
-			})
+			return p.Bags.Layout(
+				app, gtx, param,
+				func(index int) (items []spsitem.Item, itemUpdateTime time.Time) {
+					return p.BagData.GetItems(index)
+				},
+			)
 		default:
 			return layout.Dimensions{}
 		}

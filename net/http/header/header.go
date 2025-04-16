@@ -4,7 +4,7 @@ import "net/http"
 
 const (
 	Authorization = "Authorization"
-	ContentType   = "LayoutContent-Type"
+	ContentType   = "Content-Type"
 	Host          = "Host"
 
 	ContentTypeJsonUtf8  = "application/json; charset=utf-8"

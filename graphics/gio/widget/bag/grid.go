@@ -7,6 +7,7 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsgrid "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/grid"
+	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 )
 
 func NewGrid() Grid {
@@ -20,9 +21,9 @@ func NewGrid() Grid {
 type Grid struct {
 	Grid spsgrid.Grid
 
-	Items          []Item
+	Items          []spsitem.Item
 	ItemUpdateTime time.Time
-	ItemSelected   Item
+	ItemSelected   *spsitem.Item
 }
 
 func (g *Grid) Layout(app *spsgio.Application, gtx layout.Context, itemData ItemData) layout.Dimensions {
@@ -39,7 +40,7 @@ func (g *Grid) Layout(app *spsgio.Application, gtx layout.Context, itemData Item
 	})
 }
 
-func (g *Grid) UpdateItems(items []Item, itemUpdateTime time.Time) {
+func (g *Grid) UpdateItems(items []spsitem.Item, itemUpdateTime time.Time) {
 	if itemUpdateTime == g.ItemUpdateTime {
 		return
 	}
@@ -48,15 +49,15 @@ func (g *Grid) UpdateItems(items []Item, itemUpdateTime time.Time) {
 	g.ItemUpdateTime = itemUpdateTime
 
 	if len(g.Items) > 0 {
-		g.ItemSelected = g.Items[0]
+		g.ItemSelected = &g.Items[0]
 	}
 }
 
-func (g *Grid) GetItem(index int) Item {
+func (g *Grid) GetItem(index int) *spsitem.Item {
 	if index < 0 || index >= len(g.Items) {
 		return nil
 	}
-	return g.Items[index]
+	return &g.Items[index]
 }
 
 func (g *Grid) GetItemCount() int {

@@ -6,6 +6,7 @@ import (
 	"gioui.org/layout"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
+	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 )
 
@@ -26,7 +27,7 @@ func (b *Bags) Layout(app *spsgio.Application, gtx layout.Context, param any, ba
 		if bag == nil {
 			return layout.Dimensions{}
 		}
-		return bag.Layout(app, gtx, param, func() (items []Item, itemUpdateTime time.Time) {
+		return bag.Layout(app, gtx, param, func() (items []spsitem.Item, itemUpdateTime time.Time) {
 			return bagData(selected)
 		})
 	})
@@ -48,4 +49,8 @@ func (b *Bags) GetBag(index int) *Bag {
 		return nil
 	}
 	return &b.Bags[index]
+}
+
+func (b *Bags) GetCount() int {
+	return len(b.Bags)
 }

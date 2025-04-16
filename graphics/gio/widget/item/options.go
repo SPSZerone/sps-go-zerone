@@ -19,9 +19,14 @@ const (
 	HighlightStyleCount
 )
 
-type LayoutContent func(app *spsgio.Application, gtx layout.Context, item *Item, layoutCtx LayoutContext) layout.Dimensions
+type LayoutContent func(
+	app *spsgio.Application, gtx layout.Context,
+	item *Item, layoutCtx LayoutContext,
+) layout.Dimensions
 
-type LayoutDetail func(app *spsgio.Application, gtx layout.Context, item *Item) layout.Dimensions
+type LayoutDetail func(
+	app *spsgio.Application, gtx layout.Context, item *Item,
+) layout.Dimensions
 
 func NewOptions(content LayoutContent, opts ...Option) Options {
 	o := Options{

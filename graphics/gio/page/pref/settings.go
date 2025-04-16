@@ -17,6 +17,9 @@ func (p *Page) PrefSettings(app *spsgio.Application, gtx layout.Context, param a
 			return p.PrefSettingsNonModalDrawer(app, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return p.PrefSettingsTabAxis(app, gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.PrefSettingsValueInFront(app, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
@@ -39,6 +42,19 @@ func (p *Page) PrefSettingsNonModalDrawer(app *spsgio.Application, gtx layout.Co
 		app.Window, app.Theme, gtx,
 		app.Pref.Pref.ValueInFront, ratio,
 		&p.Pages.NavAnim,
+	)
+}
+
+func (p *Page) PrefSettingsTabAxis(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+	var ratio float32
+	if app.Pref.Pref.ValueInFront {
+		ratio = RatioValue
+	} else {
+		ratio = RatioKey
+	}
+	return app.Pref.Settings.TabAxis.Layout(
+		app.Window, app.Theme, gtx,
+		app.Pref.Pref.ValueInFront, ratio,
 	)
 }
 

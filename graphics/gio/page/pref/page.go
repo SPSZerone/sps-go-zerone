@@ -16,14 +16,9 @@ func New(app *spsgio.Application) *Page {
 	p := &Page{
 		Pages: &app.Pages,
 
-		Tabs:  spstab.NewTabsByNames([]string{TabNameSettings, TabNameDecorated}),
+		Tabs:  spstab.NewTabsByNames([]string{TabNameSettings, TabNamePreferences}),
 		Table: spstable.NewTable(),
-
-		prefTableStyle: NewPrefTableStyle(),
-		valueInFront:   NewValueInFront(),
 	}
-	p.prefTableStyle.Widget.Value = app.Pref.Pref.PrefTableStyle
-	p.valueInFront.Widget.Value = app.Pref.Pref.ValueInFront
 	return p
 }
 
@@ -34,9 +29,6 @@ type Page struct {
 
 	Tabs  spstab.Tabs
 	Table spstable.Table
-
-	prefTableStyle SettingBool
-	valueInFront   SettingBool
 }
 
 func (p *Page) Actions() []component.AppBarAction {
@@ -64,7 +56,7 @@ func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) 
 
 func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
 	return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
-		if app.Pref.Pref.PrefTableStyle {
+		if app.Pref.Pref.TableStyle.Value {
 			return p.LayoutTableStyle(app, gtx, param, selected)
 		}
 		return p.LayoutDefault(app, gtx, param, selected)
@@ -73,16 +65,16 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 
 func (p *Page) LayoutDefault(app *spsgio.Application, gtx layout.Context, param any, selected int) layout.Dimensions {
 	switch selected {
-	case TabIdxDecorated:
-		return layout.Flex{
-			Alignment: layout.Middle,
-			Axis:      layout.Vertical,
-		}.Layout(gtx, app.Pref.Settings.Decorated.FlexChild(app.Window, app.Theme, gtx, app.Pref.Pref.ValueInFront, 0.3)...)
 	case TabIdxSettings:
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
-		}.Layout(gtx, p.PrefSettings(app, gtx, param)...)
+		}.Layout(gtx, p.LayoutSettings(app, gtx, param)...)
+	case TabIdxPreferences:
+		return layout.Flex{
+			Alignment: layout.Middle,
+			Axis:      layout.Vertical,
+		}.Layout(gtx, p.LayoutPref(app, gtx, param)...)
 	default:
 		return layout.Dimensions{}
 	}
@@ -92,10 +84,10 @@ func (p *Page) LayoutTableStyle(app *spsgio.Application, gtx layout.Context, par
 	var count int
 	var cell spstable.Cell
 	switch selected {
-	case TabIdxDecorated:
-		count = DecoratedRowCount
+	case TabIdxPreferences:
+		count = PreferencesRowCount
 		cell = func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-			return decoratedCell(p, app, gtx, row, col, labelStyle)
+			return prefCell(p, app, gtx, row, col, labelStyle)
 		}
 	case TabIdxSettings:
 		count = SettingsRowCount
@@ -108,13 +100,13 @@ func (p *Page) LayoutTableStyle(app *spsgio.Application, gtx layout.Context, par
 
 	p.UpdateTableHeaders(app)
 	dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
-		return dimension(app, gtx, axis, index, constraint, minSize, height)
+		return tableDimension(app, gtx, axis, index, constraint, minSize, height)
 	}
 	return p.Table.Layout(app, gtx, count, dimensioner, cell)
 }
 
 func (p *Page) UpdateTableHeaders(app *spsgio.Application) {
-	if app.Pref.Pref.ValueInFront {
+	if app.Pref.Settings.ValueInFront.Value {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Value"}, {Text: "Key"}}...))
 	} else {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))

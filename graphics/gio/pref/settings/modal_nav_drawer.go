@@ -3,6 +3,7 @@ package settings
 import (
 	"gioui.org/app"
 	"gioui.org/layout"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
@@ -14,6 +15,9 @@ func NewModalNavDrawer() ModalNavDrawer {
 		Bool: setting.Bool{
 			Name: "Use non-modal drawer",
 			Desc: "Use Non-Modal Navigation Drawer",
+			Bool: widget.Bool{
+				Value: true,
+			},
 		},
 	}
 }

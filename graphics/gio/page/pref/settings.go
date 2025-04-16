@@ -1,108 +1,96 @@
 package pref
 
 import (
-	"image/color"
-
 	"gioui.org/layout"
-	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
-	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
-func (p *Page) PrefSettings(app *spsgio.Application, gtx layout.Context, param any) []layout.FlexChild {
+func (p *Page) LayoutSettings(app *spsgio.Application, gtx layout.Context, param any) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.PrefSettingsNonModalDrawer(app, gtx)
+			return p.LayoutSettingsNonModalDrawer(app, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.PrefSettingsTabAxis(app, gtx)
+			return p.LayoutSettingsTabAxis(app, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.PrefSettingsValueInFront(app, gtx)
+			return p.LayoutSettingsValueInFront(app, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.PrefSettingsBottomBar(app, gtx)
+			return p.LayoutSettingsBottomBar(app, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.PrefSettingsPrefTableStyle(app, gtx)
+			return p.LayoutSettingsDecorated(app, gtx)
 		}),
 	}
 }
 
-func (p *Page) PrefSettingsNonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsNonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Pref.ValueInFront {
+	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
 	return app.Pref.Settings.ModalNavDrawer.Layout(
 		app.Window, app.Theme, gtx,
-		app.Pref.Pref.ValueInFront, ratio,
+		app.Pref.Settings.ValueInFront.Value, ratio,
 		&p.Pages.NavAnim,
 	)
 }
 
-func (p *Page) PrefSettingsTabAxis(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsTabAxis(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Pref.ValueInFront {
+	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
 	return app.Pref.Settings.TabAxis.Layout(
 		app.Window, app.Theme, gtx,
-		app.Pref.Pref.ValueInFront, ratio,
+		app.Pref.Settings.ValueInFront.Value, ratio,
 	)
 }
 
-func (p *Page) PrefSettingsValueInFront(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	key := material.Body1(app.Theme, p.valueInFront.Name).Layout
-	value := func(gtx layout.Context) layout.Dimensions {
-		return p.ValueInFront(app, gtx)
-	}
-	var aWidget, bWidget layout.Widget
+func (p *Page) LayoutSettingsValueInFront(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Pref.ValueInFront {
-		aWidget, bWidget = value, key
+	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
-		aWidget, bWidget = key, value
 		ratio = RatioKey
 	}
-	return spslayout.FlexInset{Ratio: ratio}.LayoutABWidget(gtx, aWidget, bWidget)
+	return app.Pref.Settings.ValueInFront.Layout(
+		app.Window, app.Theme, gtx,
+		app.Pref.Settings.ValueInFront.Value, ratio,
+	)
 }
 
-func (p *Page) PrefSettingsBottomBar(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsBottomBar(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Pref.ValueInFront {
+	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
 	return app.Pref.Settings.BottomBar.Layout(
 		app.Window, app.Theme, gtx,
-		app.Pref.Pref.ValueInFront, ratio,
+		app.Pref.Settings.ValueInFront.Value, ratio,
 	)
 }
 
-func (p *Page) PrefSettingsPrefTableStyle(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	key := material.Body1(app.Theme, p.prefTableStyle.Name).Layout
-	value := func(gtx layout.Context) layout.Dimensions {
-		return p.TableStyle(app, gtx)
-	}
-	var aWidget, bWidget layout.Widget
+func (p *Page) LayoutSettingsDecorated(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Pref.ValueInFront {
-		aWidget, bWidget = value, key
+	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
-		aWidget, bWidget = key, value
 		ratio = RatioKey
 	}
-	return spslayout.FlexInset{Ratio: ratio}.LayoutABWidget(gtx, aWidget, bWidget)
+	return app.Pref.Settings.Decorated.Layout(
+		app.Window, app.Theme, gtx,
+		app.Pref.Settings.ValueInFront.Value, ratio,
+	)
 }
 
 func (p *Page) NonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
@@ -112,11 +100,16 @@ func (p *Page) NonModalDrawer(app *spsgio.Application, gtx layout.Context) layou
 	)
 }
 
+func (p *Page) TabAxis(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+	return app.Pref.Settings.TabAxis.LayoutSwitch(
+		app.Window, app.Theme, gtx,
+	)
+}
+
 func (p *Page) ValueInFront(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	if p.valueInFront.Widget.Update(gtx) {
-		app.Pref.Pref.ValueInFront = p.valueInFront.Widget.Value
-	}
-	return material.Switch(app.Theme, &p.valueInFront.Widget, p.valueInFront.Desc).Layout(gtx)
+	return app.Pref.Settings.ValueInFront.LayoutSwitch(
+		app.Window, app.Theme, gtx,
+	)
 }
 
 func (p *Page) BottomBar(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
@@ -134,54 +127,8 @@ func (p *Page) BottomBar(app *spsgio.Application, gtx layout.Context) layout.Dim
 	)
 }
 
-func (p *Page) TableStyle(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	if p.prefTableStyle.Widget.Update(gtx) {
-		app.Pref.Pref.PrefTableStyle = p.prefTableStyle.Widget.Value
-	}
-	return material.Switch(app.Theme, &p.prefTableStyle.Widget, p.prefTableStyle.Desc).Layout(gtx)
-}
-
-func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-	colIdx := TableColIdxValue
-	if app.Pref.Pref.ValueInFront {
-		colIdx = TableColIdxKey
-	}
-	switch row {
-	case SettingsRowIdxNonModalDrawer:
-		switch col {
-		case colIdx:
-			return p.NonModalDrawer(app, gtx)
-		default:
-			labelStyle.Text = app.Pref.Settings.ModalNavDrawer.Name
-		}
-		return labelStyle.Layout(gtx)
-	case SettingsRowIdxValueInFront:
-		switch col {
-		case colIdx:
-			return p.ValueInFront(app, gtx)
-		default:
-			labelStyle.Text = p.valueInFront.Name
-		}
-		return labelStyle.Layout(gtx)
-	case SettingsRowIdxBottomBar:
-		switch col {
-		case colIdx:
-			return p.BottomBar(app, gtx)
-		default:
-			labelStyle.Text = app.Pref.Settings.BottomBar.Name
-		}
-		return labelStyle.Layout(gtx)
-	case SettingsRowIdxTableStyle:
-		switch col {
-		case colIdx:
-			return p.TableStyle(app, gtx)
-		default:
-			labelStyle.Text = p.prefTableStyle.Name
-		}
-		return labelStyle.Layout(gtx)
-	default:
-		labelStyle.Text = "Unknown"
-		labelStyle.Color = color.NRGBA{A: 0xff, R: 0xff, G: 0x00, B: 0x00}
-		return labelStyle.Layout(gtx)
-	}
+func (p *Page) Decorated(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+	return app.Pref.Settings.Decorated.LayoutSwitch(
+		app.Window, app.Theme, gtx,
+	)
 }

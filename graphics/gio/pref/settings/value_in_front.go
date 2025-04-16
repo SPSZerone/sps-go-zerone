@@ -9,23 +9,23 @@ import (
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
 )
 
-func NewTabAxis() TabAxis {
-	return TabAxis{
+func NewValueInFront() ValueInFront {
+	return ValueInFront{
 		Bool: setting.Bool{
-			Name: "TabAxis Horizontal",
-			Desc: "TabAxis Horizontal",
+			Name: "Value In Front",
+			Desc: "Use Value In Front",
 			Bool: widget.Bool{
-				Value: false,
+				Value: true,
 			},
 		},
 	}
 }
 
-type TabAxis struct {
+type ValueInFront struct {
 	setting.Bool
 }
 
-func (d *TabAxis) FlexChild(
+func (d *ValueInFront) FlexChild(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) []layout.FlexChild {
@@ -36,13 +36,13 @@ func (d *TabAxis) FlexChild(
 	}
 }
 
-func (d *TabAxis) Layout(
+func (d *ValueInFront) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
 	return d.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
-func (d *TabAxis) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
+func (d *ValueInFront) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	return d.Bool.LayoutSwitch(theme, gtx, nil)
 }

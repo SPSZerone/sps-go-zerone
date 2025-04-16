@@ -1,4 +1,4 @@
-package settings
+package pref
 
 import (
 	"gioui.org/app"
@@ -9,11 +9,11 @@ import (
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
 )
 
-func NewTabAxis() TabAxis {
-	return TabAxis{
+func NewTableStyle() TableStyle {
+	return TableStyle{
 		Bool: setting.Bool{
-			Name: "TabAxis Horizontal",
-			Desc: "TabAxis Horizontal",
+			Name: "TableStyle",
+			Desc: "TableStyle",
 			Bool: widget.Bool{
 				Value: false,
 			},
@@ -21,11 +21,11 @@ func NewTabAxis() TabAxis {
 	}
 }
 
-type TabAxis struct {
+type TableStyle struct {
 	setting.Bool
 }
 
-func (d *TabAxis) FlexChild(
+func (d *TableStyle) FlexChild(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) []layout.FlexChild {
@@ -36,13 +36,13 @@ func (d *TabAxis) FlexChild(
 	}
 }
 
-func (d *TabAxis) Layout(
+func (d *TableStyle) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
 	return d.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
-func (d *TabAxis) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
+func (d *TableStyle) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	return d.Bool.LayoutSwitch(theme, gtx, nil)
 }

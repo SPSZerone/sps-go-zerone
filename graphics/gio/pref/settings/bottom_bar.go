@@ -3,6 +3,7 @@ package settings
 import (
 	"gioui.org/app"
 	"gioui.org/layout"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
 
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
@@ -13,6 +14,9 @@ func NewBottomBar() BottomBar {
 		Bool: setting.Bool{
 			Name: "Bottom Bar",
 			Desc: "Use Bottom Bar",
+			Bool: widget.Bool{
+				Value: false,
+			},
 		},
 	}
 }

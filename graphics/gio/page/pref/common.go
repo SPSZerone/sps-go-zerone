@@ -1,20 +1,13 @@
 package pref
 
-import (
-	"gioui.org/layout"
-	"gioui.org/unit"
-
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
-)
-
 const (
 	TabIdxSettings = iota
-	TabIdxDecorated
+	TabIdxPreferences
 )
 
 const (
-	TabNameSettings  = "Settings"
-	TabNameDecorated = "Decorated"
+	TabNameSettings    = "Settings"
+	TabNamePreferences = "Preferences"
 )
 
 const (
@@ -34,38 +27,14 @@ const (
 
 const (
 	SettingsRowIdxNonModalDrawer = iota
+	SettingsRowIdxTabAxis
 	SettingsRowIdxValueInFront
 	SettingsRowIdxBottomBar
-	SettingsRowIdxTableStyle
+	SettingsRowIdxDecorated
 	SettingsRowCount
 )
 
 const (
-	DecoratedRowIdxDecorated = iota
-	DecoratedRowCount
+	PreferencesRowIdxTableStyle = iota
+	PreferencesRowCount
 )
-
-func dimension(app *spsgio.Application, gtx layout.Context, axis layout.Axis, index, constraint, minSize, height int) int {
-	switch axis {
-	case layout.Horizontal:
-		var widthUnit int
-		if app.Pref.Pref.ValueInFront {
-			switch index {
-			case TableColIdxKey:
-				widthUnit = gtx.Dp(unit.Dp(TableColWidthValue))
-			case TableColIdxValue:
-				widthUnit = gtx.Dp(unit.Dp(TableColWidthKey))
-			}
-		} else {
-			switch index {
-			case TableColIdxKey:
-				widthUnit = gtx.Dp(unit.Dp(TableColWidthKey))
-			case TableColIdxValue:
-				widthUnit = gtx.Dp(unit.Dp(TableColWidthValue))
-			}
-		}
-		return widthUnit
-	default:
-		return height
-	}
-}

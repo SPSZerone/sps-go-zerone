@@ -25,24 +25,24 @@ type ValueInFront struct {
 	setting.Bool
 }
 
-func (d *ValueInFront) FlexChild(
+func (f *ValueInFront) FlexChild(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return d.Layout(window, theme, gtx, valueInFront, ratioInFront)
+			return f.Layout(window, theme, gtx, valueInFront, ratioInFront)
 		}),
 	}
 }
 
-func (d *ValueInFront) Layout(
+func (f *ValueInFront) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return d.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
+	return f.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
-func (d *ValueInFront) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
-	return d.Bool.LayoutSwitch(theme, gtx, nil)
+func (f *ValueInFront) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
+	return f.Bool.LayoutSwitch(theme, gtx, nil)
 }

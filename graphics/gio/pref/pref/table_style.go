@@ -25,24 +25,24 @@ type TableStyle struct {
 	setting.Bool
 }
 
-func (d *TableStyle) FlexChild(
+func (s *TableStyle) FlexChild(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return d.Layout(window, theme, gtx, valueInFront, ratioInFront)
+			return s.Layout(window, theme, gtx, valueInFront, ratioInFront)
 		}),
 	}
 }
 
-func (d *TableStyle) Layout(
+func (s *TableStyle) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return d.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
+	return s.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
-func (d *TableStyle) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
-	return d.Bool.LayoutSwitch(theme, gtx, nil)
+func (s *TableStyle) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
+	return s.Bool.LayoutSwitch(theme, gtx, nil)
 }

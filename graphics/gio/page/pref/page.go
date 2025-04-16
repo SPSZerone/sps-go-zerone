@@ -55,6 +55,7 @@ func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) 
 }
 
 func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
+	p.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
 	return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		if app.Pref.Pref.TableStyle.Value {
 			return p.LayoutTableStyle(app, gtx, param, selected)

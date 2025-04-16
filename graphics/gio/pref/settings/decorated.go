@@ -1,7 +1,7 @@
 package settings
 
 import (
-	gioapp "gioui.org/app"
+	"gioui.org/app"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
@@ -22,7 +22,7 @@ type Decorated struct {
 }
 
 func (d *Decorated) FlexChild(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) []layout.FlexChild {
 	return []layout.FlexChild{
@@ -33,7 +33,7 @@ func (d *Decorated) FlexChild(
 }
 
 func (d *Decorated) Layout(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
 	return d.Bool.Layout(
@@ -45,7 +45,7 @@ func (d *Decorated) Layout(
 	)
 }
 
-func (d *Decorated) LayoutSwitch(window *gioapp.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
+func (d *Decorated) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	return d.Bool.LayoutSwitch(
 		theme, gtx,
 		func() {
@@ -54,6 +54,6 @@ func (d *Decorated) LayoutSwitch(window *gioapp.Window, theme *material.Theme, g
 	)
 }
 
-func (d *Decorated) UpdateWindow(window *gioapp.Window) {
-	window.Option(gioapp.Decorated(d.Bool.Value))
+func (d *Decorated) UpdateWindow(window *app.Window) {
+	window.Option(app.Decorated(d.Bool.Value))
 }

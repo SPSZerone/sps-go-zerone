@@ -1,7 +1,7 @@
 package settings
 
 import (
-	gioapp "gioui.org/app"
+	"gioui.org/app"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
@@ -22,7 +22,7 @@ type BottomBar struct {
 }
 
 func (b *BottomBar) FlexChild(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) []layout.FlexChild {
 	return []layout.FlexChild{
@@ -33,7 +33,7 @@ func (b *BottomBar) FlexChild(
 }
 
 func (b *BottomBar) Layout(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
 	return b.Bool.Layout(
@@ -46,7 +46,7 @@ func (b *BottomBar) Layout(
 }
 
 func (b *BottomBar) LayoutSwitch(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	onValueChanged func(),
 ) layout.Dimensions {
 	return b.Bool.LayoutSwitch(theme, gtx, onValueChanged)

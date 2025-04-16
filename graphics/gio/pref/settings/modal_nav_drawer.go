@@ -1,7 +1,7 @@
 package settings
 
 import (
-	gioapp "gioui.org/app"
+	"gioui.org/app"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
@@ -23,7 +23,7 @@ type ModalNavDrawer struct {
 }
 
 func (d *ModalNavDrawer) FlexChild(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 	navAnim *component.VisibilityAnimation,
 ) []layout.FlexChild {
@@ -35,7 +35,7 @@ func (d *ModalNavDrawer) FlexChild(
 }
 
 func (d *ModalNavDrawer) Layout(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 	navAnim *component.VisibilityAnimation,
 ) layout.Dimensions {
@@ -49,7 +49,7 @@ func (d *ModalNavDrawer) Layout(
 }
 
 func (d *ModalNavDrawer) LayoutSwitch(
-	window *gioapp.Window, theme *material.Theme, gtx layout.Context,
+	window *app.Window, theme *material.Theme, gtx layout.Context,
 	navAnim *component.VisibilityAnimation,
 ) layout.Dimensions {
 	return d.Bool.LayoutSwitch(

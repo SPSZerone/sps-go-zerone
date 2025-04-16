@@ -155,7 +155,13 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 	content := layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				gtx.Constraints.Max.X /= 5
+				navRatio := app.Pref.Settings.Navigation.Value
+				if navRatio < 0.1 {
+					navRatio = 0.1
+				} else if navRatio > 0.8 {
+					navRatio = 0.8
+				}
+				gtx.Constraints.Max.X = int(float32(gtx.Constraints.Max.X) * navRatio)
 				return p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
 			}),
 		}

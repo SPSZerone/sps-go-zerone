@@ -261,6 +261,14 @@ func (a *Application) loopParam() error {
 func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
 	gtx := app.NewContext(&a.Ops, e)
 
+	if a.Tabs.Count() == 1 {
+		a.Layout(gtx, param)
+	}
+
+	e.Frame(gtx.Ops)
+}
+
+func (a *Application) Layout(gtx layout.Context, param any) {
 	a.CurPages().Layout(a, gtx, param, func() layout.FlexChild {
 		if a.startAction != 0 {
 			clickable := a.Deco.Clickable(a.startAction)
@@ -273,8 +281,6 @@ func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
 		a.Window.Perform(a.Deco.Update(gtx))
 		return a.decorationsFlexChild()
 	})
-
-	e.Frame(gtx.Ops)
 }
 
 func (a *Application) decorationsFlexChild() layout.FlexChild {

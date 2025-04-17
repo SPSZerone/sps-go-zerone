@@ -42,7 +42,7 @@ func NewPages(app *Application) Pages {
 		ModalLayer:     modalLayer,
 		ModalNavDrawer: modalNavDrawer,
 		NavAnim:        navAnim,
-		split:          split,
+		Split:          split,
 	}
 }
 
@@ -66,7 +66,7 @@ type Pages struct {
 	ModalNavDrawer *component.ModalNavDrawer
 	ModalLayer     *component.ModalLayer
 	NavAnim        component.VisibilityAnimation
-	split          spslayout.Split
+	Split          spslayout.Split
 }
 
 func (p *Pages) Register(tag any, page Page) {
@@ -169,15 +169,14 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 			if !p.NavAnim.Visible() {
 				return p.pages[p.current].Layout(app, gtx, param)
 			}
-			return p.split.Layout(
+			return p.Split.Layout(
 				gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					if p.NavAnim.State == component.Disappearing {
 						dimensions := p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
 
 						ratio := -(1 - float32(dimensions.Size.X)/float32(totalWidth>>1))
-						app.Logger.Info().Msgf("%v %v %v", ratio, totalWidth, dimensions)
-						p.split.Ratio = ratio
+						p.Split.Ratio = ratio
 
 						return dimensions
 					}
@@ -189,7 +188,7 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 						gtxAnim.Constraints.Max.X = int(float32(totalWidth)*ratioValue) >> 1
 						process := p.NavAnim.Revealed(gtxAnim) // 0.1 0.2 0.3 ...
 
-						p.split.Ratio = -(1 - ratioValue*process) // -0.95 -0.9 -0.85...
+						p.Split.Ratio = -(1 - ratioValue*process) // -0.95 -0.9 -0.85...
 						return dimensions
 					}
 

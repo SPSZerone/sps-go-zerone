@@ -26,9 +26,7 @@ const (
 )
 
 const (
-	SettingsRowIdxNavigation = iota
-	SettingsRowIdxNonModalDrawer
-
+	SettingsRowIdxNonModalDrawer = iota
 	SettingsRowIdxTabAxis
 	SettingsRowIdxValueInFront
 	SettingsRowIdxBottomBar

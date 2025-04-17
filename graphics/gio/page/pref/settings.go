@@ -10,9 +10,6 @@ import (
 func (p *Page) LayoutSettings(app *spsgio.Application, gtx layout.Context, param any) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.LayoutSettingsNavigation(app, gtx)
-		}),
-		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.LayoutSettingsNonModalDrawer(app, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
@@ -28,21 +25,6 @@ func (p *Page) LayoutSettings(app *spsgio.Application, gtx layout.Context, param
 			return p.LayoutSettingsDecorated(app, gtx)
 		}),
 	}
-}
-
-func (p *Page) LayoutSettingsNavigation(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	var ratio float32
-	if app.Pref.Settings.ValueInFront.Value {
-		ratio = RatioValue
-	} else {
-		ratio = RatioKey
-	}
-	minRatio, maxRatio := app.GetNavigationRatioLimit()
-	return app.Pref.Settings.Navigation.Layout(
-		app.Window, app.Theme, gtx,
-		app.Pref.Settings.ValueInFront.Value, ratio,
-		minRatio, maxRatio,
-	)
 }
 
 func (p *Page) LayoutSettingsNonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
@@ -108,14 +90,6 @@ func (p *Page) LayoutSettingsDecorated(app *spsgio.Application, gtx layout.Conte
 	return app.Pref.Settings.Decorated.Layout(
 		app.Window, app.Theme, gtx,
 		app.Pref.Settings.ValueInFront.Value, ratio,
-	)
-}
-
-func (p *Page) Navigation(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
-	minRatio, maxRatio := app.GetNavigationRatioLimit()
-	return app.Pref.Settings.Navigation.LayoutSwitch(
-		app.Window, app.Theme, gtx,
-		minRatio, maxRatio,
 	)
 }
 

@@ -273,22 +273,6 @@ func (a *Application) SendParam(param any) {
 	a.ChanParam <- param
 }
 
-func (a *Application) GetNavigationWidth(gtx layout.Context) int {
-	navRatio := a.GetNavigationRatio(gtx)
-	return int(float32(gtx.Constraints.Max.X) * navRatio)
-}
-
-func (a *Application) GetNavigationRatio(gtx layout.Context) float32 {
-	navRatio := a.Pref.Settings.Navigation.Value
-	minRatio, maxRatio := a.GetNavigationRatioLimit()
-	if navRatio < minRatio {
-		navRatio = minRatio
-	} else if navRatio > maxRatio {
-		navRatio = maxRatio
-	}
-	return navRatio
-}
-
 func (a *Application) GetNavigationRatioLimit() (min, max float32) {
 	min = 0.05
 	max = 0.75

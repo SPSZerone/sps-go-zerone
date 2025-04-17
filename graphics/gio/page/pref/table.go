@@ -41,14 +41,6 @@ func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col
 		colIdx = TableColIdxKey
 	}
 	switch row {
-	case SettingsRowIdxNavigation:
-		switch col {
-		case colIdx:
-			return p.Navigation(app, gtx)
-		default:
-			labelStyle.Text = app.Pref.Settings.Navigation.Name
-		}
-		return labelStyle.Layout(gtx)
 	case SettingsRowIdxNonModalDrawer:
 		switch col {
 		case colIdx:

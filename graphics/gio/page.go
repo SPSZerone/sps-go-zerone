@@ -203,7 +203,6 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				gtx.Constraints.Max.X = app.GetNavigationWidth(gtx)
 				return p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
 			}),
 		}

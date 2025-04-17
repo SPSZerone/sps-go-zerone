@@ -2,7 +2,6 @@ package settings
 
 func NewSettings() Settings {
 	return Settings{
-		Navigation:     NewNavigation(),
 		ModalNavDrawer: NewModalNavDrawer(),
 		TabAxis:        NewTabAxis(),
 		ValueInFront:   NewValueInFront(),
@@ -12,7 +11,6 @@ func NewSettings() Settings {
 }
 
 type Settings struct {
-	Navigation     Navigation
 	ModalNavDrawer ModalNavDrawer
 	TabAxis        TabAxis
 	ValueInFront   ValueInFront

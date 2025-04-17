@@ -2,6 +2,7 @@ package gio
 
 import (
 	"log"
+	"math"
 	"time"
 
 	"gioui.org/io/event"
@@ -11,28 +12,37 @@ import (
 
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 	"github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
+	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+)
+
+const (
+	DefaultNavRatio float32 = -0.8
 )
 
 func NewPages(app *Application) Pages {
-	modal := component.NewModal()
+	modalLayer := component.NewModal()
 
-	nav := component.NewNav("Navigation", "Enjoy!!")
-	modalNav := component.ModalNavFrom(&nav, modal)
+	navDrawer := component.NewNav("Navigation", "Enjoy!!")
+	modalNavDrawer := component.ModalNavFrom(&navDrawer, modalLayer)
 
-	bar := component.NewAppBar(modal)
-	bar.NavigationIcon = icon.NavigationMenu
+	appBar := component.NewAppBar(modalLayer)
+	appBar.NavigationIcon = icon.NavigationMenu
 
-	na := component.VisibilityAnimation{
+	navAnim := component.VisibilityAnimation{
 		State:    component.Invisible,
 		Duration: time.Millisecond * 250,
+	}
+	split := spslayout.Split{
+		Ratio: DefaultNavRatio,
 	}
 	return Pages{
 		pages:          make(map[any]Page),
 		App:            app,
-		AppBar:         bar,
-		ModalLayer:     modal,
-		ModalNavDrawer: modalNav,
-		NavAnim:        na,
+		AppBar:         appBar,
+		ModalLayer:     modalLayer,
+		ModalNavDrawer: modalNavDrawer,
+		NavAnim:        navAnim,
+		split:          split,
 	}
 }
 
@@ -56,6 +66,7 @@ type Pages struct {
 	ModalNavDrawer *component.ModalNavDrawer
 	ModalLayer     *component.ModalLayer
 	NavAnim        component.VisibilityAnimation
+	split          spslayout.Split
 }
 
 func (p *Pages) Register(tag any, page Page) {
@@ -112,6 +123,7 @@ func (p *Pages) OnEventPost(app *Application, evt event.Event, param any) {
 }
 
 func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
+	totalWidth := gtx.Constraints.Max.X
 	// => AppBar
 	for _, evt := range p.AppBar.Events(gtx) {
 		switch e := evt.(type) {
@@ -153,6 +165,43 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 
 	// => content
 	content := layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+		if p.App.Pref.Settings.ModalNavDrawer.Value {
+			if !p.NavAnim.Visible() {
+				return p.pages[p.current].Layout(app, gtx, param)
+			}
+			return p.split.Layout(
+				gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					if p.NavAnim.State == component.Disappearing {
+						dimensions := p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
+
+						ratio := -(1 - float32(dimensions.Size.X)/float32(totalWidth>>1))
+						app.Logger.Info().Msgf("%v %v %v", ratio, totalWidth, dimensions)
+						p.split.Ratio = ratio
+
+						return dimensions
+					}
+					if p.NavAnim.State == component.Appearing {
+						dimensions := p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
+
+						ratioValue := 1 - float32(math.Abs(float64(DefaultNavRatio)))
+						gtxAnim := gtx
+						gtxAnim.Constraints.Max.X = int(float32(totalWidth)*ratioValue) >> 1
+						process := p.NavAnim.Revealed(gtxAnim) // 0.1 0.2 0.3 ...
+
+						p.split.Ratio = -(1 - ratioValue*process) // -0.95 -0.9 -0.85...
+						return dimensions
+					}
+
+					p.split.Ratio = DefaultNavRatio
+					return p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
+				},
+				func(gtx layout.Context) layout.Dimensions {
+					return p.pages[p.current].Layout(app, gtx, param)
+				},
+			)
+		}
+
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				gtx.Constraints.Max.X = app.GetNavigationWidth(gtx)

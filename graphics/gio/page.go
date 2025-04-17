@@ -193,7 +193,6 @@ func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco fun
 						return dimensions
 					}
 
-					p.split.Ratio = DefaultNavRatio
 					return p.ModalNavDrawer.NavDrawer.Layout(gtx, app.Theme, &p.NavAnim)
 				},
 				func(gtx layout.Context) layout.Dimensions {

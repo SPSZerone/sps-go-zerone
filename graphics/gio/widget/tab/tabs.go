@@ -11,7 +11,6 @@ import (
 	"gioui.org/widget/material"
 
 	spsslice "github.com/SPSZerone/sps-go-zerone/generic/slice"
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
@@ -36,7 +35,7 @@ func NewTabs(opts ...Option) Tabs {
 func newTabs() Tabs {
 	return Tabs{
 		Opts: NewOptions(),
-		tabList: widget.List{
+		List: widget.List{
 			List: layout.List{
 				Axis: layout.Vertical,
 			},
@@ -49,11 +48,11 @@ type Content func(gtx layout.Context, selected int) layout.Dimensions
 type Tabs struct {
 	Opts Options
 
-	tabList widget.List
-	Tabs    []Tab
+	List widget.List
+	Tabs []Tab
 
 	selected int
-	slider   Slider
+	Slider   Slider
 }
 
 func (t *Tabs) Update(opts ...Option) {
@@ -145,7 +144,7 @@ func (t *Tabs) Count() int {
 	return len(t.Tabs)
 }
 
-func (t *Tabs) Selected() int {
+func (t *Tabs) GetSelected() int {
 	return t.selected
 }
 
@@ -170,7 +169,7 @@ func (t *Tabs) SetLastSelected() int {
 	return t.selected
 }
 
-func (t *Tabs) Layout(app *spsgio.Application, gtx layout.Context, param any, content Content) layout.Dimensions {
+func (t *Tabs) Layout(theme *material.Theme, gtx layout.Context, param any, content Content) layout.Dimensions {
 	axis := layout.Horizontal
 	if t.Opts.Axis == layout.Horizontal {
 		axis = layout.Vertical
@@ -178,31 +177,31 @@ func (t *Tabs) Layout(app *spsgio.Application, gtx layout.Context, param any, co
 	return layout.Flex{Axis: axis}.Layout(gtx,
 		// Tabs
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return t.LayoutTabs(app, gtx, param)
+			return t.LayoutTabs(theme, gtx, param)
 		}),
 		// LayoutContent
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-			return t.doLayoutContent(app, gtx, param, content)
+			return t.doLayoutContent(theme, gtx, param, content)
 		}),
 	)
 }
 
-func (t *Tabs) doLayoutContent(app *spsgio.Application, gtx layout.Context, param any, content Content) layout.Dimensions {
-	return t.slider.Layout(t.Opts.Axis, gtx, func(gtx layout.Context) layout.Dimensions {
+func (t *Tabs) doLayoutContent(theme *material.Theme, gtx layout.Context, param any, content Content) layout.Dimensions {
+	return t.Slider.Layout(t.Opts.Axis, gtx, func(gtx layout.Context) layout.Dimensions {
 		spscolor.Fill(gtx, spscolor.DynamicColor(t.selected), spscolor.DynamicColor(t.selected+1))
 		return content(gtx, t.selected)
 	})
 }
 
-func (t *Tabs) LayoutTabs(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
-	t.tabList.Axis = t.Opts.Axis
-	return material.List(app.Theme, &t.tabList).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
+func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) layout.Dimensions {
+	t.List.Axis = t.Opts.Axis
+	return material.List(theme, &t.List).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
 		if tab.Clickable.Clicked(gtx) {
 			if t.selected < tabIdx {
-				t.slider.PushLeft()
+				t.Slider.PushLeft()
 			} else if t.selected > tabIdx {
-				t.slider.PushRight()
+				t.Slider.PushRight()
 			}
 			t.selected = tabIdx
 		}
@@ -212,7 +211,7 @@ func (t *Tabs) LayoutTabs(app *spsgio.Application, gtx layout.Context, param any
 			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 				dims := material.Clickable(gtx, &tab.Clickable, func(gtx layout.Context) layout.Dimensions {
 					return layout.UniformInset(unit.Dp(12)).Layout(gtx,
-						material.H6(app.Theme, tab.Name).Layout,
+						material.H6(theme, tab.Name).Layout,
 					)
 				})
 				tabWidth = dims.Size.X
@@ -226,7 +225,7 @@ func (t *Tabs) LayoutTabs(app *spsgio.Application, gtx layout.Context, param any
 
 				highlightHeight := gtx.Dp(unit.Dp(4))
 				highlightRect := image.Rect(0, 0, tabWidth, highlightHeight)
-				paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
+				paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
 				return layout.Dimensions{
 					Size: image.Point{X: tabWidth, Y: highlightHeight},
 				}

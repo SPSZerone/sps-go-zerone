@@ -13,9 +13,9 @@ import (
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
 )
 
-func New(app *spsgio.Application) *Page {
+func New(pages *spsgio.Pages) *Page {
 	return &Page{
-		Pages: &app.Pages,
+		Pages: pages,
 		Table: spstable.NewTable(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...)),
 	}
 }

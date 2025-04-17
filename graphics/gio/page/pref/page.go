@@ -12,9 +12,9 @@ import (
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
 )
 
-func New(app *spsgio.Application) *Page {
+func New(pages *spsgio.Pages) *Page {
 	p := &Page{
-		Pages: &app.Pages,
+		Pages: pages,
 
 		Tabs:  spstab.NewTabsByNames([]string{TabNameSettings, TabNamePreferences}),
 		Table: spstable.NewTable(),
@@ -56,7 +56,7 @@ func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) 
 
 func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
 	p.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
-	return p.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+	return p.Tabs.Layout(app.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		if app.Pref.Pref.TableStyle.Value {
 			return p.LayoutTableStyle(app, gtx, param, selected)
 		}

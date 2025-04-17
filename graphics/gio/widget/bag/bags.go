@@ -23,7 +23,7 @@ type Bags struct {
 
 func (b *Bags) Layout(app *spsgio.Application, gtx layout.Context, param any, bagData Data) layout.Dimensions {
 	b.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
-	return b.Tabs.Layout(app, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+	return b.Tabs.Layout(app.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		bag := b.GetBag(selected)
 		if bag == nil {
 			return layout.Dimensions{}

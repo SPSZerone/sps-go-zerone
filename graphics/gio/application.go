@@ -19,6 +19,7 @@ import (
 	"github.com/rs/zerolog"
 
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
+	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
@@ -43,6 +44,7 @@ func NewApplication(ctx context.Context, opts ...Option) *Application {
 		Logger:   spslog.NewLogger(),
 
 		Pref: spspref.NewPreferences(),
+		Tabs: spstab.NewTabs(),
 	}
 	a.Init(opts...)
 	return a
@@ -65,7 +67,8 @@ type Application struct {
 	Opts Options
 
 	Window *app.Window
-	Pages  Pages
+	Tabs   spstab.Tabs
+	Pages  []Pages
 
 	Ops   op.Ops
 	Theme *material.Theme
@@ -96,7 +99,7 @@ func (a *Application) Init(opts ...Option) {
 	theme.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
 	a.Theme = theme
 
-	a.Pages = NewPages(a)
+	a.AddPages(NewPages(a, "Default"))
 	a.Window = new(app.Window)
 
 	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated.Value))
@@ -106,16 +109,30 @@ func (a *Application) Init(opts ...Option) {
 	}
 }
 
-func (a *Application) PageRegister(tag any, page Page) {
-	a.Pages.Register(tag, page)
+func (a *Application) AddPages(pages ...Pages) {
+	for _, page := range pages {
+		a.Pages = append(a.Pages, page)
+		tab := spstab.Tab{
+			Name: page.Name,
+			Data: a.GetPages(len(a.Pages) - 1),
+		}
+		a.Tabs.AddTab(tab)
+	}
 }
 
-func (a *Application) PageSwitchTo(tag any) Page {
-	return a.Pages.SwitchTo(tag)
+func (a *Application) GetPages(index int) *Pages {
+	if index < 0 || index >= len(a.Pages) {
+		return nil
+	}
+	return &a.Pages[index]
 }
 
-func (a *Application) PageStart(tag any) Page {
-	return a.Pages.Start(tag)
+func (a *Application) CurPages() *Pages {
+	return a.GetPages(a.Tabs.GetSelected())
+}
+
+func (a *Application) GetDefaultPages() *Pages {
+	return a.GetPages(0)
 }
 
 func (a *Application) Run() {
@@ -183,18 +200,18 @@ func (a *Application) loopSimple() error {
 	for {
 		evt := a.Window.Event()
 
-		a.Pages.OnEventPre(a, evt, nil)
+		a.CurPages().OnEventPre(a, evt, nil)
 
 		switch e := evt.(type) {
 		case app.DestroyEvent:
 			a.Logger.Info().Msg("loopSimple app.DestroyEvent ...")
-			a.Pages.OnEventPost(a, evt, nil)
+			a.CurPages().OnEventPost(a, evt, nil)
 			return e.Err
 		case app.FrameEvent:
 			a.OnFrameEvent(e, nil)
 		}
 
-		a.Pages.OnEventPost(a, evt, nil)
+		a.CurPages().OnEventPost(a, evt, nil)
 	}
 }
 
@@ -223,19 +240,19 @@ func (a *Application) loopParam() error {
 		case param = <-a.ChanParam:
 			a.Window.Invalidate()
 		case evt := <-chanEvent:
-			a.Pages.OnEventPre(a, evt, param)
+			a.CurPages().OnEventPre(a, evt, param)
 
 			switch e := evt.(type) {
 			case app.DestroyEvent:
 				a.Logger.Info().Msg("loopParam app.DestroyEvent ...")
-				a.Pages.OnEventPost(a, evt, param)
+				a.CurPages().OnEventPost(a, evt, param)
 				chanEventDone <- struct{}{}
 				return e.Err
 			case app.FrameEvent:
 				a.OnFrameEvent(e, param)
 			}
 
-			a.Pages.OnEventPost(a, evt, param)
+			a.CurPages().OnEventPost(a, evt, param)
 			chanEventDone <- struct{}{}
 		}
 	}
@@ -244,7 +261,7 @@ func (a *Application) loopParam() error {
 func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
 	gtx := app.NewContext(&a.Ops, e)
 
-	a.Pages.Layout(a, gtx, param, func() layout.FlexChild {
+	a.CurPages().Layout(a, gtx, param, func() layout.FlexChild {
 		if a.startAction != 0 {
 			clickable := a.Deco.Clickable(a.startAction)
 			if clickable != nil {

@@ -261,9 +261,7 @@ func (a *Application) loopParam() error {
 func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
 	gtx := app.NewContext(&a.Ops, e)
 
-	if a.Tabs.Count() == 1 {
-		a.Layout(gtx, param)
-	}
+	a.Layout(gtx, param)
 
 	e.Frame(gtx.Ops)
 }

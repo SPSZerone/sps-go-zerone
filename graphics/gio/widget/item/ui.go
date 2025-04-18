@@ -3,9 +3,8 @@ package item
 import (
 	"gioui.org/layout"
 	"gioui.org/widget"
+	"gioui.org/widget/material"
 	"gioui.org/x/component"
-
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
 func NewUI() UI {
@@ -19,22 +18,22 @@ type UI struct {
 	ContextArea component.ContextArea
 }
 
-func Divider(app *spsgio.Application, gtx layout.Context, item *Item, layoutCtx LayoutContext) layout.Dimensions {
-	return component.Divider(app.Theme).Layout(gtx)
+func Divider(theme *material.Theme, gtx layout.Context, item *Item, layoutCtx LayoutContext) layout.Dimensions {
+	return component.Divider(theme).Layout(gtx)
 }
 
 func SubheadingDivider(
-	app *spsgio.Application, gtx layout.Context,
+	theme *material.Theme, gtx layout.Context,
 	item *Item, layoutCtx LayoutContext,
 	subheading string,
 ) layout.Dimensions {
-	return component.SubheadingDivider(app.Theme, subheading).Layout(gtx)
+	return component.SubheadingDivider(theme, subheading).Layout(gtx)
 }
 
 func MenuItem(
-	app *spsgio.Application, gtx layout.Context,
+	theme *material.Theme, gtx layout.Context,
 	item *Item, layoutCtx LayoutContext,
 	clickable *widget.Clickable, label string,
 ) layout.Dimensions {
-	return component.MenuItem(app.Theme, clickable, label).Layout(gtx)
+	return component.MenuItem(theme, clickable, label).Layout(gtx)
 }

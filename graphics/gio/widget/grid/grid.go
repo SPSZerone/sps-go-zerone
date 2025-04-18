@@ -5,8 +5,6 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/outlay"
-
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
 func NewGrid() Grid {
@@ -32,13 +30,13 @@ type Grid struct {
 	Num       int
 }
 
-func (g *Grid) Layout(app *spsgio.Application, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
-	return material.List(app.Theme, &g.list).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
-		return g.LayoutContent(app, gtx, num, element)
+func (g *Grid) Layout(theme *material.Theme, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
+	return material.List(theme, &g.list).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+		return g.LayoutContent(theme, gtx, num, element)
 	})
 }
 
-func (g *Grid) LayoutContent(app *spsgio.Application, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
+func (g *Grid) LayoutContent(theme *material.Theme, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
 	if g.Wrap {
 		return outlay.FlowWrap{
 			Axis:      g.Axis,

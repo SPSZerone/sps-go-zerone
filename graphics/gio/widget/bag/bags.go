@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"gioui.org/layout"
+	"gioui.org/widget/material"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 )
@@ -21,14 +21,13 @@ type Bags struct {
 	Bags []Bag
 }
 
-func (b *Bags) Layout(app *spsgio.Application, gtx layout.Context, param any, bagData Data) layout.Dimensions {
-	b.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
-	return b.Tabs.Layout(app.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+func (b *Bags) Layout(theme *material.Theme, gtx layout.Context, param any, bagData Data) layout.Dimensions {
+	return b.Tabs.Layout(theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		bag := b.GetBag(selected)
 		if bag == nil {
 			return layout.Dimensions{}
 		}
-		return bag.Layout(app, gtx, param, func() (items []spsitem.Item, itemUpdateTime time.Time) {
+		return bag.Layout(theme, gtx, param, func() (items []spsitem.Item, itemUpdateTime time.Time) {
 			return bagData(selected)
 		})
 	})

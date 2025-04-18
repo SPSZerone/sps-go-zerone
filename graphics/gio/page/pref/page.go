@@ -103,7 +103,7 @@ func (p *Page) LayoutTableStyle(app *spsgio.Application, gtx layout.Context, par
 	dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
 		return tableDimension(app, gtx, axis, index, constraint, minSize, height)
 	}
-	return p.Table.Layout(app, gtx, count, dimensioner, cell)
+	return p.Table.Layout(app.Theme, gtx, count, dimensioner, cell)
 }
 
 func (p *Page) UpdateTableHeaders(app *spsgio.Application) {

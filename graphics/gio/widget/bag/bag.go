@@ -7,7 +7,6 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 )
@@ -43,7 +42,7 @@ type Bag struct {
 }
 
 func (b *Bag) Layout(
-	app *spsgio.Application, gtx layout.Context, param any,
+	theme *material.Theme, gtx layout.Context, param any,
 	itemData ItemData,
 ) layout.Dimensions {
 	return layout.Flex{
@@ -55,12 +54,12 @@ func (b *Bag) Layout(
 				gtx,
 				// item grid
 				func(gtx layout.Context) layout.Dimensions {
-					return b.Grid.Layout(app, gtx, itemData)
+					return b.Grid.Layout(theme, gtx, itemData)
 				},
 				// item detail
 				func(gtx layout.Context) layout.Dimensions {
 					b.DetailList.Axis = layout.Vertical
-					return material.List(app.Theme, &b.DetailList).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+					return material.List(theme, &b.DetailList).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 						if b.Grid.ItemSelected == nil {
 							return layout.Dimensions{}
 						}
@@ -68,7 +67,7 @@ func (b *Bag) Layout(
 						if layoutDetail == nil {
 							return layout.Dimensions{}
 						}
-						return layoutDetail(app, gtx, b.Grid.ItemSelected)
+						return layoutDetail(theme, gtx, b.Grid.ItemSelected)
 					})
 				},
 			)

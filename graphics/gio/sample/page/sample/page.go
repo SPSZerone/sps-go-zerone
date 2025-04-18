@@ -5,6 +5,7 @@ import (
 
 	"gioui.org/io/event"
 	"gioui.org/layout"
+	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
@@ -23,14 +24,14 @@ const (
 	TabNameGridAndItem = "Grid & Item"
 )
 
-func New(app *spsgio.Application, pages *spsgio.Pages) *Page {
+func New(theme *material.Theme, pages *spsgio.Pages) *Page {
 	bags := spsbag.NewBags()
 	bags.AddBag(spsbag.NewBag("Items A"), spsbag.NewBag("Items B"))
 	p := &Page{
 		Pages:   pages,
 		Tabs:    spstab.NewTabsByNames([]string{TabNameGridAndItem}),
 		Bags:    bags,
-		BagData: bag.NewTestData(app, bags.GetCount(), 100),
+		BagData: bag.NewTestData(theme, bags.GetCount(), 100),
 	}
 	return p
 }
@@ -73,8 +74,9 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 	return p.Tabs.Layout(app.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		switch selected {
 		case TabIdxGridAndItem:
+			p.Bags.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
 			return p.Bags.Layout(
-				app, gtx, param,
+				app.Theme, gtx, param,
 				func(index int) (items []spsitem.Item, itemUpdateTime time.Time) {
 					return p.BagData.GetItems(index)
 				},

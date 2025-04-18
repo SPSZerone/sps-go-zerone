@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"gioui.org/layout"
+	"gioui.org/widget/material"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsgrid "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/grid"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 )
@@ -26,13 +26,13 @@ type Grid struct {
 	ItemSelected   *spsitem.Item
 }
 
-func (g *Grid) Layout(app *spsgio.Application, gtx layout.Context, itemData ItemData) layout.Dimensions {
+func (g *Grid) Layout(theme *material.Theme, gtx layout.Context, itemData ItemData) layout.Dimensions {
 	g.UpdateItems(itemData())
 
-	return g.Grid.Layout(app, gtx, g.GetItemCount(), func(gtx layout.Context, index int) layout.Dimensions {
+	return g.Grid.Layout(theme, gtx, g.GetItemCount(), func(gtx layout.Context, index int) layout.Dimensions {
 		curItem := g.GetItem(index)
 		highlight := curItem == g.ItemSelected
-		dimensions, clicked := curItem.Layout(app, gtx, highlight)
+		dimensions, clicked := curItem.Layout(theme, gtx, highlight)
 		if clicked {
 			g.ItemSelected = curItem
 		}

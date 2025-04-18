@@ -40,7 +40,7 @@ func main() {
 			pages.Register(pageTag, pref)
 
 			pageTag++
-			pages.Register(pageTag, spssample.New(app, pages))
+			pages.Register(pageTag, spssample.New(app.Theme, pages))
 		}),
 		spsgio.OptOnStart(func(app *spsgio.Application) {
 			app.Logger.Info().Msg("SPS Tools Start")

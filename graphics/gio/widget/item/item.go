@@ -10,7 +10,6 @@ import (
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
 )
 
@@ -35,7 +34,7 @@ func (i *Item) Update(opts ...Option) {
 }
 
 func (i *Item) Layout(
-	app *spsgio.Application, gtx layout.Context, highlight bool,
+	theme *material.Theme, gtx layout.Context, highlight bool,
 ) (dimensions layout.Dimensions, clicked bool) {
 	layoutCtx := LayoutContext{
 		ContentWidth:       gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentWidth)),
@@ -81,7 +80,7 @@ func (i *Item) Layout(
 			if i.Opts.LayoutContent == nil {
 				return layout.Dimensions{}
 			}
-			return i.Opts.LayoutContent(app, gtx, i, layoutCtx)
+			return i.Opts.LayoutContent(theme, gtx, i, layoutCtx)
 		}),
 		// highlight
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
@@ -90,13 +89,13 @@ func (i *Item) Layout(
 			}
 			switch i.Opts.HighlightStyle {
 			case HighlightStyleTop:
-				i.LayoutHighlightTop(app, gtx, layoutCtx)
+				i.LayoutHighlightTop(theme, gtx, layoutCtx)
 			case HighlightStyleBottom:
-				i.LayoutHighlightBottom(app, gtx, layoutCtx)
+				i.LayoutHighlightBottom(theme, gtx, layoutCtx)
 			case HighlightStyleStrokeRect:
-				i.LayoutHighlightStrokeRect(app, gtx, layoutCtx)
+				i.LayoutHighlightStrokeRect(theme, gtx, layoutCtx)
 			default:
-				i.LayoutHighlightStrokeRect(app, gtx, layoutCtx)
+				i.LayoutHighlightStrokeRect(theme, gtx, layoutCtx)
 			}
 			return layout.Dimensions{
 				Size: layoutCtx.Size,
@@ -106,7 +105,7 @@ func (i *Item) Layout(
 		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
 			return i.UI.ContextArea.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 				gtx.Constraints.Min = image.Point{}
-				return component.Menu(app.Theme, &i.UI.Menu).Layout(gtx)
+				return component.Menu(theme, &i.UI.Menu).Layout(gtx)
 			})
 		}),
 	)
@@ -114,7 +113,7 @@ func (i *Item) Layout(
 	return
 }
 
-func (i *Item) LayoutHighlightStrokeRect(app *spsgio.Application, gtx layout.Context, layoutCtx LayoutContext) {
+func (i *Item) LayoutHighlightStrokeRect(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	size := image.Pt(
 		layoutCtx.ContentWidth+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
 		layoutCtx.ContentHeight+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
@@ -123,22 +122,22 @@ func (i *Item) LayoutHighlightStrokeRect(app *spsgio.Application, gtx layout.Con
 	spsdrawing.DrawStrokeRectR(
 		gtx.Ops,
 		size,
-		app.Theme.Palette.ContrastBg,
+		theme.Palette.ContrastBg,
 		pos,
 		float32(layoutCtx.HighlightThickness),
 		layoutCtx.HighlightRoundness)
 }
 
-func (i *Item) LayoutHighlightTop(app *spsgio.Application, gtx layout.Context, layoutCtx LayoutContext) {
+func (i *Item) LayoutHighlightTop(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
 		layoutCtx.Offset, 0,
 		layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Offset)
-	paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
+	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }
 
-func (i *Item) LayoutHighlightBottom(app *spsgio.Application, gtx layout.Context, layoutCtx LayoutContext) {
+func (i *Item) LayoutHighlightBottom(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
 		layoutCtx.Offset, layoutCtx.Size.Y-layoutCtx.Offset,
 		layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Size.Y)
-	paint.FillShape(gtx.Ops, app.Theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
+	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }

@@ -4,8 +4,8 @@ import (
 	"image/color"
 
 	"gioui.org/layout"
+	"gioui.org/widget/material"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
@@ -20,12 +20,12 @@ const (
 )
 
 type LayoutContent func(
-	app *spsgio.Application, gtx layout.Context,
+	theme *material.Theme, gtx layout.Context,
 	item *Item, layoutCtx LayoutContext,
 ) layout.Dimensions
 
 type LayoutDetail func(
-	app *spsgio.Application, gtx layout.Context, item *Item,
+	theme *material.Theme, gtx layout.Context, item *Item,
 ) layout.Dimensions
 
 func NewOptions(content LayoutContent, opts ...Option) Options {

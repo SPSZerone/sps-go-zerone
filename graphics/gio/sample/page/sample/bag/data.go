@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
+	"gioui.org/widget/material"
+
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 )
 
-func NewTestData(app *spsgio.Application, groupCount, count int) Data {
+func NewTestData(theme *material.Theme, groupCount, count int) Data {
 	d := Data{
 		UpdateTime: time.Now(),
 	}
@@ -16,7 +17,7 @@ func NewTestData(app *spsgio.Application, groupCount, count int) Data {
 	for i := 0; i < groupCount; i++ {
 		d.Items[i] = make([]spsitem.Item, count)
 		for j := 0; j < count; j++ {
-			d.Items[i][j] = NewItem(fmt.Sprintf("Item %v %v", i, j), app)
+			d.Items[i][j] = NewItem(fmt.Sprintf("Item %v %v", i, j), theme)
 		}
 	}
 	return d

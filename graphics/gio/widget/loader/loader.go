@@ -4,8 +4,6 @@ import (
 	"gioui.org/layout"
 	"gioui.org/unit"
 	"gioui.org/widget/material"
-
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
 func NewLoader() Loader {
@@ -27,10 +25,10 @@ type Loader struct {
 	Height int
 }
 
-func (l Loader) Layout(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (l Loader) Layout(theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	return l.Inset.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 		gtx.Constraints.Max.X = gtx.Dp(unit.Dp(l.Width))
 		gtx.Constraints.Max.Y = gtx.Dp(unit.Dp(l.Height))
-		return material.Loader(app.Theme).Layout(gtx)
+		return material.Loader(theme).Layout(gtx)
 	})
 }

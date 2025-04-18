@@ -7,14 +7,14 @@ import (
 
 type Option func(o *Options)
 
-type OnInitPre func(app *Application)
-type OnInitPost func(app *Application)
-type OnStart func(app *Application)
-type OnLoop func(app *Application) error
-type OnStop func(app *Application)
+type OnInitPre func(app *Window)
+type OnInitPost func(app *Window)
+type OnStart func(app *Window)
+type OnLoop func(app *Window) error
+type OnStop func(app *Window)
 
-type OnEventPre func(app *Application, evt event.Event, param any)
-type OnEventPost func(app *Application, evt event.Event, param any)
+type OnEventPre func(app *Window, evt event.Event, param any)
+type OnEventPost func(app *Window, evt event.Event, param any)
 
 type Options struct {
 	Title       string

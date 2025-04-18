@@ -10,7 +10,7 @@ import (
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
-func tableDimension(app *spsgio.Application, gtx layout.Context, axis layout.Axis, index, constraint, minSize, height int) int {
+func tableDimension(app *spsgio.Window, gtx layout.Context, axis layout.Axis, index, constraint, minSize, height int) int {
 	switch axis {
 	case layout.Horizontal:
 		var widthUnit int
@@ -35,7 +35,7 @@ func tableDimension(app *spsgio.Application, gtx layout.Context, axis layout.Axi
 	}
 }
 
-func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+func settingsCell(p *Page, app *spsgio.Window, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
 	colIdx := TableColIdxValue
 	if app.Pref.Settings.ValueInFront.Value {
 		colIdx = TableColIdxKey
@@ -88,7 +88,7 @@ func settingsCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col
 	}
 }
 
-func prefCell(p *Page, app *spsgio.Application, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+func prefCell(p *Page, app *spsgio.Window, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
 	colIdx := TableColIdxValue
 	if app.Pref.Settings.ValueInFront.Value {
 		colIdx = TableColIdxKey

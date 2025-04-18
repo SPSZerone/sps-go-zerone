@@ -46,15 +46,15 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) OnEventPre(app *spsgio.Application, evt event.Event, param any) {
+func (p *Page) OnEventPre(app *spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) {
+func (p *Page) OnEventPost(app *spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
+func (p *Page) Layout(app *spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
 	p.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
 	return p.Tabs.Layout(app.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		if app.Pref.Pref.TableStyle.Value {
@@ -64,7 +64,7 @@ func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) la
 	})
 }
 
-func (p *Page) LayoutDefault(app *spsgio.Application, gtx layout.Context, param any, selected int) layout.Dimensions {
+func (p *Page) LayoutDefault(app *spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
 	switch selected {
 	case TabIdxSettings:
 		return layout.Flex{
@@ -81,7 +81,7 @@ func (p *Page) LayoutDefault(app *spsgio.Application, gtx layout.Context, param 
 	}
 }
 
-func (p *Page) LayoutTableStyle(app *spsgio.Application, gtx layout.Context, param any, selected int) layout.Dimensions {
+func (p *Page) LayoutTableStyle(app *spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
 	var count int
 	var cell spstable.Cell
 	switch selected {
@@ -106,7 +106,7 @@ func (p *Page) LayoutTableStyle(app *spsgio.Application, gtx layout.Context, par
 	return p.Table.Layout(app.Theme, gtx, count, dimensioner, cell)
 }
 
-func (p *Page) UpdateTableHeaders(app *spsgio.Application) {
+func (p *Page) UpdateTableHeaders(app *spsgio.Window) {
 	if app.Pref.Settings.ValueInFront.Value {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Value"}, {Text: "Key"}}...))
 	} else {

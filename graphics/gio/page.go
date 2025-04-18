@@ -19,7 +19,7 @@ const (
 	DefaultNavRatio float32 = -0.8
 )
 
-func NewPages(app *Application) Pages {
+func NewPages(app *Window) Pages {
 	modalLayer := component.NewModal()
 
 	navDrawer := component.NewNav("Navigation", "Enjoy!!")
@@ -51,9 +51,9 @@ type Page interface {
 	Overflow() []component.OverflowAction
 	NavItem() component.NavItem
 
-	OnEventPre(app *Application, evt event.Event, param any)
-	OnEventPost(app *Application, evt event.Event, param any)
-	Layout(app *Application, gtx layout.Context, param any) layout.Dimensions
+	OnEventPre(app *Window, evt event.Event, param any)
+	OnEventPost(app *Window, evt event.Event, param any)
+	Layout(app *Window, gtx layout.Context, param any) layout.Dimensions
 }
 
 type Pages struct {
@@ -62,7 +62,7 @@ type Pages struct {
 	pages   map[any]Page
 	current any
 
-	App *Application
+	App *Window
 
 	AppBar         *component.AppBar
 	ModalNavDrawer *component.ModalNavDrawer
@@ -110,21 +110,21 @@ func (p *Pages) Start(tag any) Page {
 	return page
 }
 
-func (p *Pages) OnEventPre(app *Application, evt event.Event, param any) {
+func (p *Pages) OnEventPre(app *Window, evt event.Event, param any) {
 	if p.current == nil {
 		return
 	}
 	p.pages[p.current].OnEventPre(app, evt, param)
 }
 
-func (p *Pages) OnEventPost(app *Application, evt event.Event, param any) {
+func (p *Pages) OnEventPost(app *Window, evt event.Event, param any) {
 	if p.current == nil {
 		return
 	}
 	p.pages[p.current].OnEventPost(app, evt, param)
 }
 
-func (p *Pages) Layout(app *Application, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
+func (p *Pages) Layout(app *Window, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
 	totalWidth := gtx.Constraints.Max.X
 	// => AppBar
 	for _, evt := range p.AppBar.Events(gtx) {

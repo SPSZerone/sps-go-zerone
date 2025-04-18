@@ -35,9 +35,9 @@ func Run(opts ...Option) {
 	app.Main()
 }
 
-func NewApplication(ctx context.Context, opts ...Option) *Application {
+func NewApplication(ctx context.Context, opts ...Option) *Window {
 	ctx, cancel := context.WithCancel(ctx)
-	a := &Application{
+	a := &Window{
 		Context:  ctx,
 		Shutdown: cancel,
 		Logger:   spslog.NewLogger(),
@@ -56,7 +56,7 @@ const (
 	LoopModeCustom
 )
 
-type Application struct {
+type Window struct {
 	Context   context.Context
 	Shutdown  func()
 	waitGroup sync.WaitGroup
@@ -78,128 +78,128 @@ type Application struct {
 	startAction system.Action
 }
 
-func (a *Application) Init(opts ...Option) {
+func (w *Window) Init(opts ...Option) {
 	// default init
-	a.Opts.StartAction = system.ActionMaximize
+	w.Opts.StartAction = system.ActionMaximize
 
 	for _, opt := range opts {
-		opt(&a.Opts)
+		opt(&w.Opts)
 	}
 
-	if a.Opts.OnInitPre != nil {
-		a.Opts.OnInitPre(a)
+	if w.Opts.OnInitPre != nil {
+		w.Opts.OnInitPre(w)
 	}
 
-	a.startAction = a.Opts.StartAction
+	w.startAction = w.Opts.StartAction
 
 	theme := material.NewTheme()
 	theme.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
-	a.Theme = theme
+	w.Theme = theme
 
-	a.Pages = NewPages(a)
-	a.Window = new(app.Window)
+	w.Pages = NewPages(w)
+	w.Window = new(app.Window)
 
-	a.Window.Option(app.Title(a.Opts.Title), app.Decorated(a.Pref.Settings.Decorated.Value))
+	w.Window.Option(app.Title(w.Opts.Title), app.Decorated(w.Pref.Settings.Decorated.Value))
 
-	if a.Opts.OnInitPost != nil {
-		a.Opts.OnInitPost(a)
+	if w.Opts.OnInitPost != nil {
+		w.Opts.OnInitPost(w)
 	}
 }
 
-func (a *Application) Run() {
+func (w *Window) Run() {
 	// OnStart
-	a.Logger.Info().Msg("Hello!!")
-	if a.Opts.OnStart != nil {
-		a.Opts.OnStart(a)
+	w.Logger.Info().Msg("Hello!!")
+	if w.Opts.OnStart != nil {
+		w.Opts.OnStart(w)
 	}
 
-	a.run()
+	w.run()
 
 	// OnStop
-	if a.Opts.OnStop != nil {
-		a.Opts.OnStop(a)
+	if w.Opts.OnStop != nil {
+		w.Opts.OnStop(w)
 	}
-	a.Logger.Info().Msg("Bye!!")
+	w.Logger.Info().Msg("Bye!!")
 }
 
-func (a *Application) GoRun(run func()) {
+func (w *Window) GoRun(run func()) {
 	if run == nil {
 		return
 	}
 
-	a.waitGroup.Add(1)
+	w.waitGroup.Add(1)
 
 	go func() {
-		defer a.waitGroup.Done()
+		defer w.waitGroup.Done()
 
 		run()
 	}()
 }
 
-func (a *Application) run() {
-	a.GoRun(func() {
-		if err := a.loop(); err != nil {
-			a.Logger.Info().Msgf("App %s err: %+v", a.Opts.Title, err)
+func (w *Window) run() {
+	w.GoRun(func() {
+		if err := w.loop(); err != nil {
+			w.Logger.Info().Msgf("App %s err: %+v", w.Opts.Title, err)
 		}
 	})
 
-	a.waitGroup.Wait()
+	w.waitGroup.Wait()
 }
 
-func (a *Application) loop() error {
+func (w *Window) loop() error {
 	go func() {
-		<-a.Context.Done()
-		a.Logger.Info().Msg("close by signal ...")
-		a.Window.Perform(system.ActionClose)
+		<-w.Context.Done()
+		w.Logger.Info().Msg("close by signal ...")
+		w.Window.Perform(system.ActionClose)
 	}()
 
-	if a.Opts.LoopMode == LoopModeCustom && a.Opts.OnLoop != nil {
-		a.Logger.Info().Msg("loopCustom...")
-		return a.Opts.OnLoop(a)
+	if w.Opts.LoopMode == LoopModeCustom && w.Opts.OnLoop != nil {
+		w.Logger.Info().Msg("loopCustom...")
+		return w.Opts.OnLoop(w)
 	}
 
-	if a.Opts.LoopMode == LoopModeParam {
-		return a.loopParam()
+	if w.Opts.LoopMode == LoopModeParam {
+		return w.loopParam()
 	}
 
-	return a.loopSimple()
+	return w.loopSimple()
 }
 
-func (a *Application) loopSimple() error {
-	a.Logger.Info().Msg("loopSimple...")
+func (w *Window) loopSimple() error {
+	w.Logger.Info().Msg("loopSimple...")
 
 	for {
-		evt := a.Window.Event()
+		evt := w.Window.Event()
 
-		a.Pages.OnEventPre(a, evt, nil)
+		w.Pages.OnEventPre(w, evt, nil)
 
 		switch e := evt.(type) {
 		case app.DestroyEvent:
-			a.Logger.Info().Msg("loopSimple app.DestroyEvent ...")
-			a.Pages.OnEventPost(a, evt, nil)
+			w.Logger.Info().Msg("loopSimple app.DestroyEvent ...")
+			w.Pages.OnEventPost(w, evt, nil)
 			return e.Err
 		case app.FrameEvent:
-			a.OnFrameEvent(e, nil)
+			w.OnFrameEvent(e, nil)
 		}
 
-		a.Pages.OnEventPost(a, evt, nil)
+		w.Pages.OnEventPost(w, evt, nil)
 	}
 }
 
-func (a *Application) loopParam() error {
-	a.Logger.Info().Msg("loopParam...")
+func (w *Window) loopParam() error {
+	w.Logger.Info().Msg("loopParam...")
 
-	a.ChanParam = make(chan any)
+	w.ChanParam = make(chan any)
 	chanEvent := make(chan event.Event)
 	chanEventDone := make(chan struct{})
 
-	a.GoRun(func() {
+	w.GoRun(func() {
 		for {
-			evt := a.Window.Event()
+			evt := w.Window.Event()
 			chanEvent <- evt
 			<-chanEventDone
 			if _, ok := evt.(app.DestroyEvent); ok {
-				a.Logger.Info().Msg("loopParam Window.Event app.DestroyEvent ...")
+				w.Logger.Info().Msg("loopParam Window.Event app.DestroyEvent ...")
 				return
 			}
 		}
@@ -208,64 +208,64 @@ func (a *Application) loopParam() error {
 	var param any
 	for {
 		select {
-		case param = <-a.ChanParam:
-			a.Window.Invalidate()
+		case param = <-w.ChanParam:
+			w.Window.Invalidate()
 		case evt := <-chanEvent:
-			a.Pages.OnEventPre(a, evt, param)
+			w.Pages.OnEventPre(w, evt, param)
 
 			switch e := evt.(type) {
 			case app.DestroyEvent:
-				a.Logger.Info().Msg("loopParam app.DestroyEvent ...")
-				a.Pages.OnEventPost(a, evt, param)
+				w.Logger.Info().Msg("loopParam app.DestroyEvent ...")
+				w.Pages.OnEventPost(w, evt, param)
 				chanEventDone <- struct{}{}
 				return e.Err
 			case app.FrameEvent:
-				a.OnFrameEvent(e, param)
+				w.OnFrameEvent(e, param)
 			}
 
-			a.Pages.OnEventPost(a, evt, param)
+			w.Pages.OnEventPost(w, evt, param)
 			chanEventDone <- struct{}{}
 		}
 	}
 }
 
-func (a *Application) OnFrameEvent(e app.FrameEvent, param any) {
-	gtx := app.NewContext(&a.Ops, e)
+func (w *Window) OnFrameEvent(e app.FrameEvent, param any) {
+	gtx := app.NewContext(&w.Ops, e)
 
-	a.Layout(gtx, param)
+	w.Layout(gtx, param)
 
 	e.Frame(gtx.Ops)
 }
 
-func (a *Application) Layout(gtx layout.Context, param any) {
-	a.Pages.Layout(a, gtx, param, func() layout.FlexChild {
-		if a.startAction != 0 {
-			clickable := a.Deco.Clickable(a.startAction)
+func (w *Window) Layout(gtx layout.Context, param any) {
+	w.Pages.Layout(w, gtx, param, func() layout.FlexChild {
+		if w.startAction != 0 {
+			clickable := w.Deco.Clickable(w.startAction)
 			if clickable != nil {
 				clickable.Click()
 			}
-			a.startAction = 0
+			w.startAction = 0
 		}
 
-		a.Window.Perform(a.Deco.Update(gtx))
-		return a.decorationsFlexChild()
+		w.Window.Perform(w.Deco.Update(gtx))
+		return w.decorationsFlexChild()
 	})
 }
 
-func (a *Application) decorationsFlexChild() layout.FlexChild {
+func (w *Window) decorationsFlexChild() layout.FlexChild {
 	return layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		return material.Decorations(a.Theme, &a.Deco, ^system.Action(0), a.Opts.Title).Layout(gtx)
+		return material.Decorations(w.Theme, &w.Deco, ^system.Action(0), w.Opts.Title).Layout(gtx)
 	})
 }
 
-func (a *Application) SendParam(param any) {
-	if a.ChanParam == nil || param == nil {
+func (w *Window) SendParam(param any) {
+	if w.ChanParam == nil || param == nil {
 		return
 	}
-	a.ChanParam <- param
+	w.ChanParam <- param
 }
 
-func (a *Application) GetNavigationRatioLimit() (min, max float32) {
+func (w *Window) GetNavigationRatioLimit() (min, max float32) {
 	min = 0.05
 	max = 0.75
 	return

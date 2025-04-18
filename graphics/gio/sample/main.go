@@ -20,11 +20,11 @@ func main() {
 		//spsgio.OptLoopMode(spsgio.LoopModeParam),
 		//spsgio.OptLoopMode(spsgio.LoopModeCustom),
 
-		spsgio.OptOnInitPre(func(app *spsgio.Application) {
+		spsgio.OptOnInitPre(func(app *spsgio.Window) {
 			app.Logger.Info().Msg("SPS Tools InitPre")
 			//app.Pref.Settings.NonModalDrawer = true
 		}),
-		spsgio.OptOnInitPost(func(app *spsgio.Application) {
+		spsgio.OptOnInitPost(func(app *spsgio.Window) {
 			app.Logger.Info().Msg("SPS Tools InitPost")
 
 			pages := &app.Pages
@@ -42,18 +42,18 @@ func main() {
 			pageTag++
 			pages.Register(pageTag, spssample.New(app.Theme, pages))
 		}),
-		spsgio.OptOnStart(func(app *spsgio.Application) {
+		spsgio.OptOnStart(func(app *spsgio.Window) {
 			app.Logger.Info().Msg("SPS Tools Start")
 			app.Pages.Start(2)
 		}),
 		spsgio.OptOnLoop(onLoop),
-		spsgio.OptOnStop(func(app *spsgio.Application) {
+		spsgio.OptOnStop(func(app *spsgio.Window) {
 			app.Logger.Info().Msg("SPS Tools Stop")
 		}),
 	)
 }
 
-func onLoop(a *spsgio.Application) error {
+func onLoop(a *spsgio.Window) error {
 	a.Logger.Info().Msg("SPS Tools Loop")
 
 	chanEvent := make(chan event.Event)

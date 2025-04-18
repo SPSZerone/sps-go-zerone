@@ -7,7 +7,7 @@ import (
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
-func (p *Page) LayoutSettings(app *spsgio.Application, gtx layout.Context, param any) []layout.FlexChild {
+func (p *Page) LayoutSettings(app *spsgio.Window, gtx layout.Context, param any) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.LayoutSettingsNonModalDrawer(app, gtx)
@@ -27,7 +27,7 @@ func (p *Page) LayoutSettings(app *spsgio.Application, gtx layout.Context, param
 	}
 }
 
-func (p *Page) LayoutSettingsNonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsNonModalDrawer(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
 	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
@@ -41,7 +41,7 @@ func (p *Page) LayoutSettingsNonModalDrawer(app *spsgio.Application, gtx layout.
 	)
 }
 
-func (p *Page) LayoutSettingsTabAxis(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsTabAxis(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
 	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
@@ -54,7 +54,7 @@ func (p *Page) LayoutSettingsTabAxis(app *spsgio.Application, gtx layout.Context
 	)
 }
 
-func (p *Page) LayoutSettingsValueInFront(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsValueInFront(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
 	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
@@ -67,7 +67,7 @@ func (p *Page) LayoutSettingsValueInFront(app *spsgio.Application, gtx layout.Co
 	)
 }
 
-func (p *Page) LayoutSettingsBottomBar(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsBottomBar(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
 	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
@@ -80,7 +80,7 @@ func (p *Page) LayoutSettingsBottomBar(app *spsgio.Application, gtx layout.Conte
 	)
 }
 
-func (p *Page) LayoutSettingsDecorated(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsDecorated(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
 	if app.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
@@ -93,26 +93,26 @@ func (p *Page) LayoutSettingsDecorated(app *spsgio.Application, gtx layout.Conte
 	)
 }
 
-func (p *Page) NonModalDrawer(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) NonModalDrawer(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	return app.Pref.Settings.ModalNavDrawer.LayoutSwitch(
 		app.Window, app.Theme, gtx,
 		&p.Pages.NavAnim,
 	)
 }
 
-func (p *Page) TabAxis(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) TabAxis(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	return app.Pref.Settings.TabAxis.LayoutSwitch(
 		app.Window, app.Theme, gtx,
 	)
 }
 
-func (p *Page) ValueInFront(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) ValueInFront(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	return app.Pref.Settings.ValueInFront.LayoutSwitch(
 		app.Window, app.Theme, gtx,
 	)
 }
 
-func (p *Page) BottomBar(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) BottomBar(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	return app.Pref.Settings.BottomBar.LayoutSwitch(
 		app.Window, app.Theme, gtx,
 		func() {
@@ -127,7 +127,7 @@ func (p *Page) BottomBar(app *spsgio.Application, gtx layout.Context) layout.Dim
 	)
 }
 
-func (p *Page) Decorated(app *spsgio.Application, gtx layout.Context) layout.Dimensions {
+func (p *Page) Decorated(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
 	return app.Pref.Settings.Decorated.LayoutSwitch(
 		app.Window, app.Theme, gtx,
 	)

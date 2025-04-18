@@ -44,15 +44,15 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) OnEventPre(app *spsgio.Application, evt event.Event, param any) {
+func (p *Page) OnEventPre(app *spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) OnEventPost(app *spsgio.Application, evt event.Event, param any) {
+func (p *Page) OnEventPost(app *spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) Layout(app *spsgio.Application, gtx layout.Context, param any) layout.Dimensions {
+func (p *Page) Layout(app *spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
 	p.List.Axis = layout.Vertical
 
 	keys := []string{

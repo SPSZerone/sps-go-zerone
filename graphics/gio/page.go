@@ -19,7 +19,7 @@ const (
 	DefaultNavRatio float32 = -0.8
 )
 
-func NewPages(app *Application, name string) Pages {
+func NewPages(app *Application) Pages {
 	modalLayer := component.NewModal()
 
 	navDrawer := component.NewNav("Navigation", "Enjoy!!")
@@ -36,7 +36,6 @@ func NewPages(app *Application, name string) Pages {
 		Ratio: DefaultNavRatio,
 	}
 	return Pages{
-		Name:           name,
 		pages:          make(map[any]Page),
 		App:            app,
 		AppBar:         appBar,

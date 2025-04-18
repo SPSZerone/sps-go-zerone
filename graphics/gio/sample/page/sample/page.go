@@ -9,7 +9,7 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/page/sample/bag"
+	"github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample/bag"
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"

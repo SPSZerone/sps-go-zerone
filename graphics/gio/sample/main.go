@@ -9,7 +9,7 @@ import (
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
-	spssample "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/sample"
+	spssample "github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample"
 )
 
 func main() {

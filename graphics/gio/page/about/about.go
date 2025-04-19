@@ -8,23 +8,23 @@ import (
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
+	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
-func New(pages *spsgio.Pages) *Page {
+func New(pages *spswin.Pages) *Page {
 	return &Page{
 		Pages: pages,
 		Table: spstable.NewTable(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...)),
 	}
 }
 
-var _ spsgio.Page = (*Page)(nil)
+var _ spswin.Page = (*Page)(nil)
 
 type Page struct {
 	widget.List
-	*spsgio.Pages
+	*spswin.Pages
 
 	Table spstable.Table
 }
@@ -44,15 +44,15 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) OnEventPre(app *spsgio.Window, evt event.Event, param any) {
+func (p *Page) OnEventPre(win *spswin.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) OnEventPost(app *spsgio.Window, evt event.Event, param any) {
+func (p *Page) OnEventPost(win *spswin.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) Layout(app *spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
+func (p *Page) Layout(win *spswin.Window, gtx layout.Context, param any) layout.Dimensions {
 	p.List.Axis = layout.Vertical
 
 	keys := []string{
@@ -89,13 +89,13 @@ func (p *Page) Layout(app *spsgio.Window, gtx layout.Context, param any) layout.
 		return labelStyle.Layout(gtx)
 	}
 
-	return material.List(app.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+	return material.List(win.Theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
 		}.Layout(gtx,
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return p.Table.Layout(app.Theme, gtx, len(keys), dimensioner, cell)
+				return p.Table.Layout(win.Theme, gtx, len(keys), dimensioner, cell)
 			}),
 		)
 	})

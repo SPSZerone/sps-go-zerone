@@ -4,119 +4,119 @@ import (
 	"gioui.org/layout"
 	"gioui.org/x/component"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
+	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
-func (p *Page) LayoutSettings(app *spsgio.Window, gtx layout.Context, param any) []layout.FlexChild {
+func (p *Page) LayoutSettings(win *spswin.Window, gtx layout.Context, param any) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.LayoutSettingsNonModalDrawer(app, gtx)
+			return p.LayoutSettingsNonModalDrawer(win, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.LayoutSettingsTabAxis(app, gtx)
+			return p.LayoutSettingsTabAxis(win, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.LayoutSettingsValueInFront(app, gtx)
+			return p.LayoutSettingsValueInFront(win, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.LayoutSettingsBottomBar(app, gtx)
+			return p.LayoutSettingsBottomBar(win, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.LayoutSettingsDecorated(app, gtx)
+			return p.LayoutSettingsDecorated(win, gtx)
 		}),
 	}
 }
 
-func (p *Page) LayoutSettingsNonModalDrawer(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsNonModalDrawer(win *spswin.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Settings.ValueInFront.Value {
+	if win.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
-	return app.Pref.Settings.ModalNavDrawer.Layout(
-		app.Window, app.Theme, gtx,
-		app.Pref.Settings.ValueInFront.Value, ratio,
+	return win.Pref.Settings.ModalNavDrawer.Layout(
+		win.Window, win.Theme, gtx,
+		win.Pref.Settings.ValueInFront.Value, ratio,
 		&p.Pages.NavAnim,
 	)
 }
 
-func (p *Page) LayoutSettingsTabAxis(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsTabAxis(win *spswin.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Settings.ValueInFront.Value {
+	if win.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
-	return app.Pref.Settings.TabAxis.Layout(
-		app.Window, app.Theme, gtx,
-		app.Pref.Settings.ValueInFront.Value, ratio,
+	return win.Pref.Settings.TabAxis.Layout(
+		win.Window, win.Theme, gtx,
+		win.Pref.Settings.ValueInFront.Value, ratio,
 	)
 }
 
-func (p *Page) LayoutSettingsValueInFront(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsValueInFront(win *spswin.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Settings.ValueInFront.Value {
+	if win.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
-	return app.Pref.Settings.ValueInFront.Layout(
-		app.Window, app.Theme, gtx,
-		app.Pref.Settings.ValueInFront.Value, ratio,
+	return win.Pref.Settings.ValueInFront.Layout(
+		win.Window, win.Theme, gtx,
+		win.Pref.Settings.ValueInFront.Value, ratio,
 	)
 }
 
-func (p *Page) LayoutSettingsBottomBar(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsBottomBar(win *spswin.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Settings.ValueInFront.Value {
+	if win.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
-	return app.Pref.Settings.BottomBar.Layout(
-		app.Window, app.Theme, gtx,
-		app.Pref.Settings.ValueInFront.Value, ratio,
+	return win.Pref.Settings.BottomBar.Layout(
+		win.Window, win.Theme, gtx,
+		win.Pref.Settings.ValueInFront.Value, ratio,
 	)
 }
 
-func (p *Page) LayoutSettingsDecorated(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
+func (p *Page) LayoutSettingsDecorated(win *spswin.Window, gtx layout.Context) layout.Dimensions {
 	var ratio float32
-	if app.Pref.Settings.ValueInFront.Value {
+	if win.Pref.Settings.ValueInFront.Value {
 		ratio = RatioValue
 	} else {
 		ratio = RatioKey
 	}
-	return app.Pref.Settings.Decorated.Layout(
-		app.Window, app.Theme, gtx,
-		app.Pref.Settings.ValueInFront.Value, ratio,
+	return win.Pref.Settings.Decorated.Layout(
+		win.Window, win.Theme, gtx,
+		win.Pref.Settings.ValueInFront.Value, ratio,
 	)
 }
 
-func (p *Page) NonModalDrawer(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
-	return app.Pref.Settings.ModalNavDrawer.LayoutSwitch(
-		app.Window, app.Theme, gtx,
+func (p *Page) NonModalDrawer(win *spswin.Window, gtx layout.Context) layout.Dimensions {
+	return win.Pref.Settings.ModalNavDrawer.LayoutSwitch(
+		win.Window, win.Theme, gtx,
 		&p.Pages.NavAnim,
 	)
 }
 
-func (p *Page) TabAxis(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
-	return app.Pref.Settings.TabAxis.LayoutSwitch(
-		app.Window, app.Theme, gtx,
+func (p *Page) TabAxis(win *spswin.Window, gtx layout.Context) layout.Dimensions {
+	return win.Pref.Settings.TabAxis.LayoutSwitch(
+		win.Window, win.Theme, gtx,
 	)
 }
 
-func (p *Page) ValueInFront(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
-	return app.Pref.Settings.ValueInFront.LayoutSwitch(
-		app.Window, app.Theme, gtx,
+func (p *Page) ValueInFront(win *spswin.Window, gtx layout.Context) layout.Dimensions {
+	return win.Pref.Settings.ValueInFront.LayoutSwitch(
+		win.Window, win.Theme, gtx,
 	)
 }
 
-func (p *Page) BottomBar(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
-	return app.Pref.Settings.BottomBar.LayoutSwitch(
-		app.Window, app.Theme, gtx,
+func (p *Page) BottomBar(win *spswin.Window, gtx layout.Context) layout.Dimensions {
+	return win.Pref.Settings.BottomBar.LayoutSwitch(
+		win.Window, win.Theme, gtx,
 		func() {
-			if app.Pref.Settings.BottomBar.Value {
+			if win.Pref.Settings.BottomBar.Value {
 				p.Pages.ModalNavDrawer.Anchor = component.Bottom
 				p.Pages.AppBar.Anchor = component.Bottom
 			} else {
@@ -127,8 +127,8 @@ func (p *Page) BottomBar(app *spsgio.Window, gtx layout.Context) layout.Dimensio
 	)
 }
 
-func (p *Page) Decorated(app *spsgio.Window, gtx layout.Context) layout.Dimensions {
-	return app.Pref.Settings.Decorated.LayoutSwitch(
-		app.Window, app.Theme, gtx,
+func (p *Page) Decorated(win *spswin.Window, gtx layout.Context) layout.Dimensions {
+	return win.Pref.Settings.Decorated.LayoutSwitch(
+		win.Window, win.Theme, gtx,
 	)
 }

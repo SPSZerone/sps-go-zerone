@@ -8,12 +8,13 @@ import (
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample/bag"
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
+	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
+
+	"github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample/bag"
 )
 
 const (
@@ -24,7 +25,7 @@ const (
 	TabNameGridAndItem = "Grid & Item"
 )
 
-func New(theme *material.Theme, pages *spsgio.Pages) *Page {
+func New(theme *material.Theme, pages *spswin.Pages) *Page {
 	bags := spsbag.NewBags()
 	bags.AddBag(spsbag.NewBag("Items A"), spsbag.NewBag("Items B"))
 	p := &Page{
@@ -36,10 +37,10 @@ func New(theme *material.Theme, pages *spsgio.Pages) *Page {
 	return p
 }
 
-var _ spsgio.Page = (*Page)(nil)
+var _ spswin.Page = (*Page)(nil)
 
 type Page struct {
-	*spsgio.Pages
+	*spswin.Pages
 	Tabs spstab.Tabs
 
 	Bags    spsbag.Bags
@@ -61,22 +62,22 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) OnEventPre(app *spsgio.Window, evt event.Event, param any) {
+func (p *Page) OnEventPre(win *spswin.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) OnEventPost(app *spsgio.Window, evt event.Event, param any) {
+func (p *Page) OnEventPost(win *spswin.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) Layout(app *spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
-	p.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
-	return p.Tabs.Layout(app.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+func (p *Page) Layout(win *spswin.Window, gtx layout.Context, param any) layout.Dimensions {
+	p.Tabs.Opts.Axis = win.Pref.Settings.TabAxis.GetAxis()
+	return p.Tabs.Layout(win.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		switch selected {
 		case TabIdxGridAndItem:
-			p.Bags.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
+			p.Bags.Tabs.Opts.Axis = win.Pref.Settings.TabAxis.GetAxis()
 			return p.Bags.Layout(
-				app.Theme, gtx, param,
+				win.Theme, gtx, param,
 				func(index int) (items []spsitem.Item, itemUpdateTime time.Time) {
 					return p.BagData.GetItems(index)
 				},

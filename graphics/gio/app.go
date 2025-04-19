@@ -10,15 +10,16 @@ import (
 	"github.com/rs/zerolog"
 
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
+	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
-func Run(opts ...Option) {
+func Run(opts ...spswin.Option) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	go func() {
-		a := NewWindow(ctx, opts...)
+		a := spswin.NewWindow(ctx, opts...)
 		a.Run()
 		os.Exit(0)
 	}()

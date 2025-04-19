@@ -1,4 +1,4 @@
-package gio
+package window
 
 import (
 	"context"

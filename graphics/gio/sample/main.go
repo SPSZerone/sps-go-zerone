@@ -10,24 +10,24 @@ import (
 	spsabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
 	spssample "github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample"
+	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
 func main() {
 	spsgio.Run(
-		spsgio.OptTitle("SPS Tools"),
-		//spsgio.OptStartAction(system.ActionMaximize),
-		spsgio.OptLoopMode(spsgio.LoopModeSimple),
-		//spsgio.OptLoopMode(spsgio.LoopModeParam),
-		//spsgio.OptLoopMode(spsgio.LoopModeCustom),
+		spswin.OptTitle("SPS Tools"),
+		//spswin.OptStartAction(system.ActionMaximize),
+		spswin.OptLoopMode(spswin.LoopModeSimple),
+		//spswin.OptLoopMode(spswin.LoopModeParam),
+		//spswin.OptLoopMode(spswin.LoopModeCustom),
 
-		spsgio.OptOnInitPre(func(app *spsgio.Window) {
-			app.Logger.Info().Msg("SPS Tools InitPre")
-			//app.Pref.Settings.NonModalDrawer = true
+		spswin.OptOnInitPre(func(win *spswin.Window) {
+			win.Logger.Info().Msg("SPS Tools InitPre")
 		}),
-		spsgio.OptOnInitPost(func(app *spsgio.Window) {
-			app.Logger.Info().Msg("SPS Tools InitPost")
+		spswin.OptOnInitPost(func(win *spswin.Window) {
+			win.Logger.Info().Msg("SPS Tools InitPost")
 
-			pages := &app.Pages
+			pages := &win.Pages
 			pageTag := 0
 			pages.Register(pageTag, spsabout.New(pages))
 
@@ -40,32 +40,32 @@ func main() {
 			pages.Register(pageTag, pref)
 
 			pageTag++
-			pages.Register(pageTag, spssample.New(app.Theme, pages))
+			pages.Register(pageTag, spssample.New(win.Theme, pages))
 		}),
-		spsgio.OptOnStart(func(app *spsgio.Window) {
-			app.Logger.Info().Msg("SPS Tools Start")
-			app.Pages.Start(2)
+		spswin.OptOnStart(func(win *spswin.Window) {
+			win.Logger.Info().Msg("SPS Tools Start")
+			win.Pages.Start(2)
 		}),
-		spsgio.OptOnLoop(onLoop),
-		spsgio.OptOnStop(func(app *spsgio.Window) {
-			app.Logger.Info().Msg("SPS Tools Stop")
+		spswin.OptOnLoop(onLoop),
+		spswin.OptOnStop(func(win *spswin.Window) {
+			win.Logger.Info().Msg("SPS Tools Stop")
 		}),
 	)
 }
 
-func onLoop(a *spsgio.Window) error {
-	a.Logger.Info().Msg("SPS Tools Loop")
+func onLoop(win *spswin.Window) error {
+	win.Logger.Info().Msg("SPS Tools Loop")
 
 	chanEvent := make(chan event.Event)
 	chanEventDone := make(chan struct{})
 
-	a.GoRun(func() {
+	win.GoRun(func() {
 		for {
-			evt := a.Window.Event()
+			evt := win.Window.Event()
 			chanEvent <- evt
 			<-chanEventDone
 			if _, ok := evt.(app.DestroyEvent); ok {
-				a.Logger.Info().Msg("loopCustom Window.Event app.DestroyEvent ...")
+				win.Logger.Info().Msg("loopCustom Window.Event app.DestroyEvent ...")
 				return
 			}
 		}
@@ -76,11 +76,11 @@ func onLoop(a *spsgio.Window) error {
 		case evt := <-chanEvent:
 			switch e := evt.(type) {
 			case app.DestroyEvent:
-				a.Logger.Info().Msg("loopCustom app.DestroyEvent ...")
+				win.Logger.Info().Msg("loopCustom app.DestroyEvent ...")
 				chanEventDone <- struct{}{}
 				return e.Err
 			case app.FrameEvent:
-				a.OnFrameEvent(e, nil)
+				win.OnFrameEvent(e, nil)
 			}
 
 			chanEventDone <- struct{}{}

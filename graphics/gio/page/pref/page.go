@@ -6,13 +6,13 @@ import (
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
+	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
-func New(pages *spsgio.Pages) *Page {
+func New(pages *spswin.Pages) *Page {
 	p := &Page{
 		Pages: pages,
 
@@ -22,10 +22,10 @@ func New(pages *spsgio.Pages) *Page {
 	return p
 }
 
-var _ spsgio.Page = (*Page)(nil)
+var _ spswin.Page = (*Page)(nil)
 
 type Page struct {
-	*spsgio.Pages
+	*spswin.Pages
 
 	Tabs  spstab.Tabs
 	Table spstable.Table
@@ -46,68 +46,68 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) OnEventPre(app *spsgio.Window, evt event.Event, param any) {
+func (p *Page) OnEventPre(win *spswin.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) OnEventPost(app *spsgio.Window, evt event.Event, param any) {
+func (p *Page) OnEventPost(win *spswin.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) Layout(app *spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
-	p.Tabs.Opts.Axis = app.Pref.Settings.TabAxis.GetAxis()
-	return p.Tabs.Layout(app.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
-		if app.Pref.Pref.TableStyle.Value {
-			return p.LayoutTableStyle(app, gtx, param, selected)
+func (p *Page) Layout(win *spswin.Window, gtx layout.Context, param any) layout.Dimensions {
+	p.Tabs.Opts.Axis = win.Pref.Settings.TabAxis.GetAxis()
+	return p.Tabs.Layout(win.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+		if win.Pref.Pref.TableStyle.Value {
+			return p.LayoutTableStyle(win, gtx, param, selected)
 		}
-		return p.LayoutDefault(app, gtx, param, selected)
+		return p.LayoutDefault(win, gtx, param, selected)
 	})
 }
 
-func (p *Page) LayoutDefault(app *spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
+func (p *Page) LayoutDefault(win *spswin.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
 	switch selected {
 	case TabIdxSettings:
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
-		}.Layout(gtx, p.LayoutSettings(app, gtx, param)...)
+		}.Layout(gtx, p.LayoutSettings(win, gtx, param)...)
 	case TabIdxPreferences:
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,
-		}.Layout(gtx, p.LayoutPref(app, gtx, param)...)
+		}.Layout(gtx, p.LayoutPref(win, gtx, param)...)
 	default:
 		return layout.Dimensions{}
 	}
 }
 
-func (p *Page) LayoutTableStyle(app *spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
+func (p *Page) LayoutTableStyle(win *spswin.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
 	var count int
 	var cell spstable.Cell
 	switch selected {
 	case TabIdxPreferences:
 		count = PreferencesRowCount
 		cell = func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-			return prefCell(p, app, gtx, row, col, labelStyle)
+			return prefCell(p, win, gtx, row, col, labelStyle)
 		}
 	case TabIdxSettings:
 		count = SettingsRowCount
 		cell = func(gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
-			return settingsCell(p, app, gtx, row, col, labelStyle)
+			return settingsCell(p, win, gtx, row, col, labelStyle)
 		}
 	default:
 		return layout.Dimensions{}
 	}
 
-	p.UpdateTableHeaders(app)
+	p.UpdateTableHeaders(win)
 	dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
-		return tableDimension(app, gtx, axis, index, constraint, minSize, height)
+		return tableDimension(win, gtx, axis, index, constraint, minSize, height)
 	}
-	return p.Table.Layout(app.Theme, gtx, count, dimensioner, cell)
+	return p.Table.Layout(win.Theme, gtx, count, dimensioner, cell)
 }
 
-func (p *Page) UpdateTableHeaders(app *spsgio.Window) {
-	if app.Pref.Settings.ValueInFront.Value {
+func (p *Page) UpdateTableHeaders(win *spswin.Window) {
+	if win.Pref.Settings.ValueInFront.Value {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Value"}, {Text: "Key"}}...))
 	} else {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))

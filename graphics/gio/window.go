@@ -2,10 +2,7 @@ package gio
 
 import (
 	"context"
-	"os"
-	"os/signal"
 	"sync"
-	"syscall"
 
 	"gioui.org/app"
 	"gioui.org/font/gofont"
@@ -22,20 +19,7 @@ import (
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
-func Run(opts ...Option) {
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-
-	go func() {
-		a := NewApplication(ctx, opts...)
-		a.Run()
-		os.Exit(0)
-	}()
-
-	app.Main()
-}
-
-func NewApplication(ctx context.Context, opts ...Option) *Window {
+func NewWindow(ctx context.Context, opts ...Option) *Window {
 	ctx, cancel := context.WithCancel(ctx)
 	a := &Window{
 		Context:  ctx,

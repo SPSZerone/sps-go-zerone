@@ -15,46 +15,54 @@ import (
 
 func main() {
 	spsgio.Run(
-		spswin.OptTitle("SPS Tools"),
-		//spswin.OptStartAction(system.ActionMaximize),
-		spswin.OptLoopMode(spswin.LoopModeSimple),
-		//spswin.OptLoopMode(spswin.LoopModeParam),
-		//spswin.OptLoopMode(spswin.LoopModeCustom),
-
-		spswin.OptOnInitPre(func(win *spswin.Window) {
-			win.Logger.Info().Msg("SPS Tools InitPre")
+		spsgio.OptOnStart(func(app *spsgio.App) {
+			app.Logger.Info().Msg("App SPS Sample Start")
 		}),
-		spswin.OptOnInitPost(func(win *spswin.Window) {
-			win.Logger.Info().Msg("SPS Tools InitPost")
-
-			pages := &win.Pages
-			pageTag := 0
-			pages.Register(pageTag, spsabout.New(pages))
-
-			pageTag++
-			pref := spspref.New(pages)
-			for i := 0; i < 20; i++ {
-				pref.Tabs.AddTabByNames(fmt.Sprintf("test-%d", i))
-			}
-			pref.Tabs.SetSelected(spspref.TabIdxSettings)
-			pages.Register(pageTag, pref)
-
-			pageTag++
-			pages.Register(pageTag, spssample.New(win.Theme, pages))
+		spsgio.OptOnStop(func(app *spsgio.App) {
+			app.Logger.Info().Msg("App SPS Sample Stop")
 		}),
-		spswin.OptOnStart(func(win *spswin.Window) {
-			win.Logger.Info().Msg("SPS Tools Start")
-			win.Pages.Start(2)
-		}),
-		spswin.OptOnLoop(onLoop),
-		spswin.OptOnStop(func(win *spswin.Window) {
-			win.Logger.Info().Msg("SPS Tools Stop")
-		}),
+		spsgio.OptWinOpts(
+			spswin.OptTitle("SPS Sample"),
+			//spswin.OptStartAction(system.ActionMaximize),
+			spswin.OptLoopMode(spswin.LoopModeSimple),
+			//spswin.OptLoopMode(spswin.LoopModeParam),
+			//spswin.OptLoopMode(spswin.LoopModeCustom),
+
+			spswin.OptOnInitPre(func(win *spswin.Window) {
+				win.Logger.Info().Msgf("%s InitPre", win.LogPrefix())
+			}),
+			spswin.OptOnInitPost(func(win *spswin.Window) {
+				win.Logger.Info().Msgf("%s InitPost", win.LogPrefix())
+
+				pages := &win.Pages
+				pageTag := 0
+				pages.Register(pageTag, spsabout.New(pages))
+
+				pageTag++
+				pref := spspref.New(pages)
+				for i := 0; i < 20; i++ {
+					pref.Tabs.AddTabByNames(fmt.Sprintf("test-%d", i))
+				}
+				pref.Tabs.SetSelected(spspref.TabIdxSettings)
+				pages.Register(pageTag, pref)
+
+				pageTag++
+				pages.Register(pageTag, spssample.New(win.Theme, pages))
+			}),
+			spswin.OptOnStart(func(win *spswin.Window) {
+				win.Logger.Info().Msgf("%s Start", win.LogPrefix())
+				win.Pages.Start(2)
+			}),
+			spswin.OptOnLoop(onLoop),
+			spswin.OptOnStop(func(win *spswin.Window) {
+				win.Logger.Info().Msgf("%s Stop", win.LogPrefix())
+			}),
+		),
 	)
 }
 
 func onLoop(win *spswin.Window) error {
-	win.Logger.Info().Msg("SPS Tools Loop")
+	win.Logger.Info().Msgf("%s Loop", win.LogPrefix())
 
 	chanEvent := make(chan event.Event)
 	chanEventDone := make(chan struct{})
@@ -65,7 +73,7 @@ func onLoop(win *spswin.Window) error {
 			chanEvent <- evt
 			<-chanEventDone
 			if _, ok := evt.(app.DestroyEvent); ok {
-				win.Logger.Info().Msg("loopCustom Window.Event app.DestroyEvent ...")
+				win.Logger.Info().Msgf("%s Loop loopCustom Window.Event app.DestroyEvent ...", win.LogPrefix())
 				return
 			}
 		}
@@ -76,7 +84,7 @@ func onLoop(win *spswin.Window) error {
 		case evt := <-chanEvent:
 			switch e := evt.(type) {
 			case app.DestroyEvent:
-				win.Logger.Info().Msg("loopCustom app.DestroyEvent ...")
+				win.Logger.Info().Msgf("%s loopCustom app.DestroyEvent ...", win.LogPrefix())
 				chanEventDone <- struct{}{}
 				return e.Err
 			case app.FrameEvent:

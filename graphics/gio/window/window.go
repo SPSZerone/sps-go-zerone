@@ -2,6 +2,7 @@ package window
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"gioui.org/app"
@@ -90,9 +91,13 @@ func (w *Window) Init(opts ...Option) {
 	}
 }
 
+func (w *Window) LogPrefix() string {
+	return fmt.Sprintf("Window '%s'", w.Opts.Title)
+}
+
 func (w *Window) Run() {
 	// OnStart
-	w.Logger.Info().Msg("Hello!!")
+	w.Logger.Info().Msgf("%s Hello!!", w.LogPrefix())
 	if w.Opts.OnStart != nil {
 		w.Opts.OnStart(w)
 	}
@@ -103,7 +108,7 @@ func (w *Window) Run() {
 	if w.Opts.OnStop != nil {
 		w.Opts.OnStop(w)
 	}
-	w.Logger.Info().Msg("Bye!!")
+	w.Logger.Info().Msgf("%s Bye!!", w.LogPrefix())
 }
 
 func (w *Window) GoRun(run func()) {
@@ -123,7 +128,7 @@ func (w *Window) GoRun(run func()) {
 func (w *Window) run() {
 	w.GoRun(func() {
 		if err := w.loop(); err != nil {
-			w.Logger.Info().Msgf("App %s err: %+v", w.Opts.Title, err)
+			w.Logger.Info().Msgf("%s err: %+v", w.LogPrefix(), err)
 		}
 	})
 
@@ -133,12 +138,12 @@ func (w *Window) run() {
 func (w *Window) loop() error {
 	go func() {
 		<-w.Context.Done()
-		w.Logger.Info().Msg("close by signal ...")
+		w.Logger.Info().Msgf("%s close by signal ...", w.LogPrefix())
 		w.Window.Perform(system.ActionClose)
 	}()
 
 	if w.Opts.LoopMode == LoopModeCustom && w.Opts.OnLoop != nil {
-		w.Logger.Info().Msg("loopCustom...")
+		w.Logger.Info().Msgf("%s loopCustom...", w.LogPrefix())
 		return w.Opts.OnLoop(w)
 	}
 
@@ -150,7 +155,7 @@ func (w *Window) loop() error {
 }
 
 func (w *Window) loopSimple() error {
-	w.Logger.Info().Msg("loopSimple...")
+	w.Logger.Info().Msgf("%s loopSimple...", w.LogPrefix())
 
 	for {
 		evt := w.Window.Event()
@@ -159,7 +164,7 @@ func (w *Window) loopSimple() error {
 
 		switch e := evt.(type) {
 		case app.DestroyEvent:
-			w.Logger.Info().Msg("loopSimple app.DestroyEvent ...")
+			w.Logger.Info().Msgf("%s loopSimple app.DestroyEvent ...", w.LogPrefix())
 			w.Pages.OnEventPost(w, evt, nil)
 			return e.Err
 		case app.FrameEvent:
@@ -171,7 +176,7 @@ func (w *Window) loopSimple() error {
 }
 
 func (w *Window) loopParam() error {
-	w.Logger.Info().Msg("loopParam...")
+	w.Logger.Info().Msgf("%s loopParam...", w.LogPrefix())
 
 	w.ChanParam = make(chan any)
 	chanEvent := make(chan event.Event)
@@ -183,7 +188,7 @@ func (w *Window) loopParam() error {
 			chanEvent <- evt
 			<-chanEventDone
 			if _, ok := evt.(app.DestroyEvent); ok {
-				w.Logger.Info().Msg("loopParam Window.Event app.DestroyEvent ...")
+				w.Logger.Info().Msgf("%s loopParam Window.Event app.DestroyEvent ...", w.LogPrefix())
 				return
 			}
 		}
@@ -199,7 +204,7 @@ func (w *Window) loopParam() error {
 
 			switch e := evt.(type) {
 			case app.DestroyEvent:
-				w.Logger.Info().Msg("loopParam app.DestroyEvent ...")
+				w.Logger.Info().Msgf("%s loopParam app.DestroyEvent ...", w.LogPrefix())
 				w.Pages.OnEventPost(w, evt, param)
 				chanEventDone <- struct{}{}
 				return e.Err

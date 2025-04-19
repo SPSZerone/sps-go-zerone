@@ -25,6 +25,7 @@ func main() {
 			app.Logger.Info().Msg("App SPS Sample Stop")
 		}),
 		spsgio.OptWinOpts(
+			spswin.OptID("Main"),
 			spswin.OptTitle("SPS Sample"),
 			//spswin.OptStartAction(system.ActionMaximize),
 			spswin.OptLoopMode(spswin.LoopModeSimple),

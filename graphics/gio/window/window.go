@@ -92,7 +92,7 @@ func (w *Window) Init(opts ...Option) {
 }
 
 func (w *Window) LogPrefix() string {
-	return fmt.Sprintf("Window '%s'", w.Opts.Title)
+	return fmt.Sprintf("Window {ID: %v Title: %s}", w.Opts.ID, w.Opts.Title)
 }
 
 func (w *Window) Run() {

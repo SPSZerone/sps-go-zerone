@@ -15,6 +15,9 @@ import (
 
 func main() {
 	spsgio.Run(
+		spsgio.OptOnCreate(func(app *spsgio.App) {
+			app.Logger.Info().Msg("App SPS Sample Create")
+		}),
 		spsgio.OptOnStart(func(app *spsgio.App) {
 			app.Logger.Info().Msg("App SPS Sample Start")
 		}),

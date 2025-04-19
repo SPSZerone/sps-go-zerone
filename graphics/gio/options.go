@@ -6,13 +6,23 @@ import (
 
 type Option func(o *Options)
 
+type OnCreate func(app *App)
 type OnStart func(app *App)
 type OnStop func(app *App)
 
 type Options struct {
+	OnCreate OnCreate
+
 	OnStart OnStart
 	OnStop  OnStop
+
 	WinOpts []spswin.Option
+}
+
+func OptOnCreate(value OnCreate) Option {
+	return func(o *Options) {
+		o.OnCreate = value
+	}
 }
 
 func OptOnStart(value OnStart) Option {

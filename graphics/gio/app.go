@@ -38,7 +38,7 @@ func NewApp(ctx context.Context, opts ...Option) *App {
 
 		Logger: spslog.NewLogger(),
 	}
-	a.UpdateOpts(opts...)
+	a.Init(opts...)
 	return a
 }
 
@@ -51,6 +51,14 @@ type App struct {
 	Opts Options
 
 	Logger zerolog.Logger
+}
+
+func (a *App) Init(opts ...Option) {
+	a.UpdateOpts(opts...)
+
+	if a.Opts.OnCreate != nil {
+		a.Opts.OnCreate(a)
+	}
 }
 
 func (a *App) UpdateOpts(opts ...Option) {

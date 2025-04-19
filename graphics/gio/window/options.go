@@ -17,7 +17,9 @@ type OnEventPre func(app *Window, evt event.Event, param any)
 type OnEventPost func(app *Window, evt event.Event, param any)
 
 type Options struct {
-	Title       string
+	ID    any
+	Title string
+
 	StartAction system.Action
 	LoopMode    LoopMode
 
@@ -28,6 +30,12 @@ type Options struct {
 	OnStop      OnStop
 	OnEventPre  OnEventPre
 	OnEventPost OnEventPost
+}
+
+func OptID(value any) Option {
+	return func(o *Options) {
+		o.ID = value
+	}
 }
 
 func OptTitle(value string) Option {

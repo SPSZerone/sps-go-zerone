@@ -9,7 +9,7 @@ import (
 func NewOptions(opts ...Option) Options {
 	o := Options{
 		Axis:              layout.Vertical,
-		WidthWhenVertical: 128,
+		WidthWhenVertical: 150,
 	}
 	o.Update(opts...)
 	return o

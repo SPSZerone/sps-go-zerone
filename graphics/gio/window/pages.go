@@ -107,27 +107,30 @@ func (p *Pages) Start(tag any) spsgio.Page {
 	return page
 }
 
-func (p *Pages) OnEventPre(win *Window, evt event.Event, param any) {
+func (p *Pages) OnEventPre(win spsgio.Window, evt event.Event, param any) {
 	if p.current == nil {
 		return
 	}
 	p.pages[p.current].OnEventPre(win, evt, param)
 }
 
-func (p *Pages) OnEventPost(win *Window, evt event.Event, param any) {
+func (p *Pages) OnEventPost(win spsgio.Window, evt event.Event, param any) {
 	if p.current == nil {
 		return
 	}
 	p.pages[p.current].OnEventPost(win, evt, param)
 }
 
-func (p *Pages) Layout(win *Window, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
+func (p *Pages) Layout(win spsgio.Window, gtx layout.Context, param any, deco func() layout.FlexChild) layout.Dimensions {
+	theme := win.GetTheme()
+	pref := win.GetPref()
+
 	totalWidth := gtx.Constraints.Max.X
 	// => AppBar
 	for _, evt := range p.AppBar.Events(gtx) {
 		switch e := evt.(type) {
 		case component.AppBarNavigationClicked:
-			if win.Pref.Settings.ModalNavDrawer.Value {
+			if pref.Settings.ModalNavDrawer.Value {
 				p.NavAnim.ToggleVisibility(gtx.Now)
 			} else {
 				p.ModalNavDrawer.Appear(gtx.Now)
@@ -150,12 +153,12 @@ func (p *Pages) Layout(win *Window, gtx layout.Context, param any, deco func() l
 	if ok {
 		spscolor.Fill(gtx, spscolor.DynamicColor(curIdx), spscolor.DynamicColor(curIdx+1))
 	} else {
-		paint.Fill(gtx.Ops, win.Theme.Palette.Bg)
+		paint.Fill(gtx.Ops, theme.Palette.Bg)
 	}
 
 	// => bar
 	bar := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		thBar := *win.Theme
+		thBar := *theme
 		colorBar := spscolor.DynamicColor(3)
 		thBar.ContrastBg = colorBar
 		thBar.Palette.Bg = colorBar
@@ -172,7 +175,7 @@ func (p *Pages) Layout(win *Window, gtx layout.Context, param any, deco func() l
 				gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					if p.NavAnim.State == component.Disappearing {
-						dimensions := p.ModalNavDrawer.NavDrawer.Layout(gtx, win.Theme, &p.NavAnim)
+						dimensions := p.ModalNavDrawer.NavDrawer.Layout(gtx, theme, &p.NavAnim)
 
 						ratio := -(1 - float32(dimensions.Size.X)/float32(totalWidth>>1))
 						p.Split.Ratio = ratio
@@ -180,7 +183,7 @@ func (p *Pages) Layout(win *Window, gtx layout.Context, param any, deco func() l
 						return dimensions
 					}
 					if p.NavAnim.State == component.Appearing {
-						dimensions := p.ModalNavDrawer.NavDrawer.Layout(gtx, win.Theme, &p.NavAnim)
+						dimensions := p.ModalNavDrawer.NavDrawer.Layout(gtx, theme, &p.NavAnim)
 
 						ratioValue := 1 - float32(math.Abs(float64(DefaultNavRatio)))
 						gtxAnim := gtx
@@ -191,7 +194,7 @@ func (p *Pages) Layout(win *Window, gtx layout.Context, param any, deco func() l
 						return dimensions
 					}
 
-					return p.ModalNavDrawer.NavDrawer.Layout(gtx, win.Theme, &p.NavAnim)
+					return p.ModalNavDrawer.NavDrawer.Layout(gtx, theme, &p.NavAnim)
 				},
 				func(gtx layout.Context) layout.Dimensions {
 					return p.pages[p.current].Layout(win, gtx, param)
@@ -201,7 +204,7 @@ func (p *Pages) Layout(win *Window, gtx layout.Context, param any, deco func() l
 
 		children := []layout.FlexChild{
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return p.ModalNavDrawer.NavDrawer.Layout(gtx, win.Theme, &p.NavAnim)
+				return p.ModalNavDrawer.NavDrawer.Layout(gtx, theme, &p.NavAnim)
 			}),
 		}
 		if p.current != nil {
@@ -215,21 +218,21 @@ func (p *Pages) Layout(win *Window, gtx layout.Context, param any, deco func() l
 	// => Final
 	flex := layout.Flex{Axis: layout.Vertical}
 
-	if win.Pref.Settings.Decorated.Value {
-		if win.Pref.Settings.BottomBar.Value {
+	if pref.Settings.Decorated.Value {
+		if pref.Settings.BottomBar.Value {
 			flex.Layout(gtx, content, bar)
 		} else {
 			flex.Layout(gtx, bar, content)
 		}
 	} else {
 		decorations := deco()
-		if win.Pref.Settings.BottomBar.Value {
+		if pref.Settings.BottomBar.Value {
 			flex.Layout(gtx, decorations, content, bar)
 		} else {
 			flex.Layout(gtx, decorations, bar, content)
 		}
 	}
 
-	p.ModalLayer.Layout(gtx, win.Theme)
+	p.ModalLayer.Layout(gtx, theme)
 	return layout.Dimensions{Size: gtx.Constraints.Max}
 }

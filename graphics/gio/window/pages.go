@@ -83,6 +83,14 @@ func (p *Pages) SwitchTo(tag any) Page {
 	return page
 }
 
+func (p *Pages) Current() Page {
+	return p.pages[p.current]
+}
+
+func (p *Pages) Count() int {
+	return len(p.pages)
+}
+
 func (p *Pages) Start(tag any) Page {
 	page := p.SwitchTo(tag)
 

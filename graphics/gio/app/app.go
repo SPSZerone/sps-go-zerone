@@ -10,12 +10,12 @@ import (
 	"gioui.org/app"
 	"github.com/rs/zerolog"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
-	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
-func Run(newWindow NewWindow, opts ...Option) {
+func Run(newWindow spsgio.NewWindow, opts ...Option) {
 	if newWindow == nil {
 		return
 	}
@@ -36,7 +36,7 @@ func Run(newWindow NewWindow, opts ...Option) {
 	app.Main()
 }
 
-func NewApp(ctx context.Context, newWindow NewWindow, opts ...Option) *App {
+func NewApp(ctx context.Context, newWindow spsgio.NewWindow, opts ...Option) *App {
 	ctx, cancel := context.WithCancel(ctx)
 	a := &App{
 		Context:  ctx,
@@ -77,14 +77,18 @@ func (a *App) UpdateOpts(opts ...Option) {
 	}
 }
 
-func (a *App) Run(win *spswin.Window) {
+func (a *App) GetContext() context.Context {
+	return a.Context
+}
+
+func (a *App) Run(win spsgio.Window) {
 	// OnStart
 	a.Logger.Info().Msg("SPS Gio Hello!!")
 	if a.Opts.OnStart != nil {
 		a.Opts.OnStart(a)
 	}
 
-	a.NewWindow(win)
+	a.RunWindow(win)
 	a.waitGroup.Wait()
 
 	// OnStop
@@ -108,7 +112,7 @@ func (a *App) GoRun(run func()) {
 	}()
 }
 
-func (a *App) NewWindow(win *spswin.Window) {
+func (a *App) RunWindow(win spsgio.Window) {
 	a.GoRun(func() {
 		win.Run()
 	})

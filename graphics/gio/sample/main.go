@@ -6,6 +6,7 @@ import (
 	"gioui.org/app"
 	"gioui.org/io/event"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsapp "github.com/SPSZerone/sps-go-zerone/graphics/gio/app"
 	spsabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
@@ -28,8 +29,9 @@ func main() {
 	)
 }
 
-func NewWindow(app *spsapp.App) *spswin.Window {
-	return spswin.NewWindow(app.Context,
+func NewWindow(app spsgio.App) spsgio.Window {
+	return spswin.NewWindow(
+		app.GetContext(),
 		spswin.OptID("Main"),
 		spswin.OptTitle("SPS Sample"),
 		//spswin.OptStartAction(system.ActionMaximize),

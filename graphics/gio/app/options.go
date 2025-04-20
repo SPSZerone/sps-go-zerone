@@ -1,18 +1,16 @@
 package app
 
 import (
-	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
-func NewOptions(newWindow NewWindow, opts ...Option) Options {
+func NewOptions(newWindow spsgio.NewWindow, opts ...Option) Options {
 	o := Options{
 		NewWindow: newWindow,
 	}
 	o.Update(opts...)
 	return o
 }
-
-type NewWindow func(app *App) *spswin.Window
 
 type Option func(o *Options)
 
@@ -21,13 +19,11 @@ type OnStart func(app *App)
 type OnStop func(app *App)
 
 type Options struct {
-	NewWindow NewWindow
+	NewWindow spsgio.NewWindow
 
 	OnCreate OnCreate
 	OnStart  OnStart
 	OnStop   OnStop
-
-	//WinOpts   []spswin.Option
 }
 
 func (o *Options) Update(opts ...Option) {
@@ -54,14 +50,8 @@ func OptOnStop(value OnStop) Option {
 	}
 }
 
-func OptNewWindow(value NewWindow) Option {
+func OptNewWindow(value spsgio.NewWindow) Option {
 	return func(o *Options) {
 		o.NewWindow = value
 	}
 }
-
-//func OptWinOpts(value ...spswin.Option) Option {
-//	return func(o *Options) {
-//		o.WinOpts = value
-//	}
-//}

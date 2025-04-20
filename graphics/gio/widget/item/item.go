@@ -13,16 +13,14 @@ import (
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
 )
 
-func NewItem(data any, content LayoutContent, opts ...Option) Item {
+func NewItem(opts ...Option) Item {
 	i := Item{
-		Data: data,
-		Opts: NewOptions(content, opts...),
+		Opts: NewOptions(opts...),
 	}
 	return i
 }
 
 type Item struct {
-	Data any
 	Opts Options
 	UI   UI
 }

@@ -13,30 +13,30 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
+	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
-func NewItem(data any, theme *material.Theme) spsitem.Item {
-	dimensions := spsitem.NewDimensions()
-	dimensions.ContentWidth = 100
-	dimensions.ContentHeight = 100
-	highlightStyle := spsitem.HighlightStyleDefault
-	//highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
-	stackAlignment := layout.Center
-
-	item := spsitem.NewItem(
-		data,
-		LayoutContent,
-		spsitem.OptHighlightStyle(highlightStyle),
-		spsitem.OptStackAlignment(stackAlignment),
-		spsitem.OptDimensions(dimensions),
-		spsitem.OptLayoutDetail(LayoutDetail),
-	)
-	InitMenu(&item, theme)
-	return item
+func newItem(data Data) Item {
+	return Item{
+		UI:   NewUI(),
+		Data: data,
+	}
 }
 
-func InitMenu(item *spsitem.Item, theme *material.Theme) {
+type Item struct {
+	spsitem.Item
+	UI
+	Data
+}
+
+func (i *Item) Init(item spsitem.Item, theme *material.Theme) {
+	i.Item = item
+	i.InitMenu(theme)
+}
+
+func (i *Item) InitMenu(theme *material.Theme) {
+	item := &i.Item
 	item.UI.MenuItems = []widget.Clickable{
 		{},
 	}
@@ -51,10 +51,18 @@ func InitMenu(item *spsitem.Item, theme *material.Theme) {
 				return spsdivider.Divider{}.Layout(theme, gtx)
 			},
 			func(gtx layout.Context) layout.Dimensions {
-				return layout.Inset{
-					Left:  unit.Dp(16),
-					Right: unit.Dp(16),
-				}.Layout(gtx, material.H6(theme, fmt.Sprintf("%v", item.Data)).Layout)
+				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
+					func(gtx layout.Context) layout.Dimensions {
+						return i.LayoutContentProperty(theme, gtx, "Id", fmt.Sprintf(" %v", i.Id))
+					},
+				)
+			},
+			func(gtx layout.Context) layout.Dimensions {
+				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
+					func(gtx layout.Context) layout.Dimensions {
+						return i.LayoutContentProperty(theme, gtx, "Name", fmt.Sprintf(" %v", i.Name))
+					},
+				)
 			},
 			func(gtx layout.Context) layout.Dimensions {
 				return spsdivider.Divider{Subheading: "Action"}.Layout(theme, gtx)
@@ -66,19 +74,28 @@ func InitMenu(item *spsitem.Item, theme *material.Theme) {
 	}
 }
 
-func LayoutContent(
+func (i *Item) LayoutContent(
 	theme *material.Theme, gtx layout.Context,
 	item *spsitem.Item, layoutCtx spsitem.LayoutContext,
 ) layout.Dimensions {
-	baseInfo := material.Body1(theme, fmt.Sprintf("%v", item.Data))
-	baseInfo.Font.Style = font.Italic
-	baseInfo.Font.Weight = font.Bold
+	gtx.Constraints.Max = layoutCtx.Size
+
 	if item.UI.MenuItems[0].Clicked(gtx) {
 	}
-	return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
+	return layout.Flex{
+		Alignment: layout.Middle,
+		Axis:      layout.Vertical,
+	}.Layout(gtx,
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return material.H6(theme, fmt.Sprintf("%v", i.Id)).Layout(gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return material.H6(theme, i.Name).Layout(gtx)
+		}),
+	)
 }
 
-func LayoutDetail(
+func (i *Item) LayoutDetail(
 	theme *material.Theme, gtx layout.Context,
 	item *spsitem.Item,
 ) layout.Dimensions {
@@ -93,8 +110,90 @@ func LayoutDetail(
 			return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			baseInfo := material.H6(theme, fmt.Sprintf("%v", item.Data))
-			return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
+			return spssurface.NewSurface().Layout(theme, gtx, func(gtx layout.Context) layout.Dimensions {
+				return material.H6(theme, "Use ...").Layout(gtx)
+			})
 		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return spsdivider.Divider{}.Layout(theme, gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutUseEditor(theme, gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutUseSlider(theme, gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return material.H5(theme, "Info").Layout(gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return spsdivider.Divider{}.Layout(theme, gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, "Id", fmt.Sprintf("%v", i.Id))
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, "Name", fmt.Sprintf("%v", i.Name))
+		}),
+	)
+}
+
+func (i *Item) LayoutUseEditor(theme *material.Theme, gtx layout.Context) layout.Dimensions {
+	spacer := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+		return spsspacer.NewWidthSpacer(8).Layout(gtx)
+	})
+	return layout.Flex{
+		Axis: layout.Horizontal,
+	}.Layout(gtx,
+		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+			return i.UI.LayoutUseEditor(theme, gtx)
+		}),
+		spacer,
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.UI.LayoutUseEditorBtn(theme, gtx)
+		}),
+	)
+}
+
+func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout.Dimensions {
+	spacer := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+		return spsspacer.NewWidthSpacer(8).Layout(gtx)
+	})
+	return layout.Flex{
+		Axis: layout.Horizontal,
+	}.Layout(gtx,
+		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+			return i.UI.LayoutUseSlider(theme, gtx, func() {
+
+			})
+		}),
+		spacer,
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.UI.LayoutUseSliderBtn(theme, gtx)
+		}),
+	)
+}
+
+func (i *Item) LayoutContentProperty(theme *material.Theme, gtx layout.Context, name, value string) layout.Dimensions {
+	return layout.Flex{
+		Alignment: layout.Middle,
+		Axis:      layout.Horizontal,
+	}.Layout(gtx,
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return material.H6(theme, name).Layout(gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return material.H6(theme, value).Layout(gtx)
+		}),
+	)
+}
+
+func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, name, value string) layout.Dimensions {
+	return spslayout.FlexInset{
+		Ratio: 0.2,
+	}.LayoutABWidget(
+		gtx,
+		material.H6(theme, name).Layout,
+		material.Body1(theme, value).Layout,
 	)
 }

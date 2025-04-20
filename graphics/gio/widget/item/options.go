@@ -28,17 +28,18 @@ type LayoutDetail func(
 	theme *material.Theme, gtx layout.Context, item *Item,
 ) layout.Dimensions
 
-func NewOptions(content LayoutContent, opts ...Option) Options {
+func NewOptions(opts ...Option) Options {
 	o := Options{
 		Dimensions:     NewDimensions(),
 		StackAlignment: layout.Center,
 		BgColor:        spscolor.DynamicColor(2),
 		HighlightStyle: HighlightStyleStrokeRect,
-		LayoutContent:  content,
 	}
 	o.Update(opts...)
 	return o
 }
+
+type Option func(*Options)
 
 type Options struct {
 	Dimensions     Dimensions
@@ -48,6 +49,8 @@ type Options struct {
 
 	LayoutContent LayoutContent
 	LayoutDetail  LayoutDetail
+
+	Data any
 }
 
 func (p *Options) Update(opts ...Option) {
@@ -56,7 +59,11 @@ func (p *Options) Update(opts ...Option) {
 	}
 }
 
-type Option func(*Options)
+func OptData(value any) Option {
+	return func(o *Options) {
+		o.Data = value
+	}
+}
 
 func OptDimensions(value Dimensions) Option {
 	return func(o *Options) {

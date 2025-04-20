@@ -60,7 +60,7 @@ type Page struct {
 	Tabs spstab.Tabs
 
 	Bags    spsbag.Bags
-	BagData bag.Data
+	BagData bag.TestData
 }
 
 func (p *Page) Actions() []component.AppBarAction {

@@ -21,14 +21,14 @@ const (
 func main() {
 	spsapp.Run(
 		NewWindow,
-		spsapp.OptOnCreate(func(app *spsapp.App) {
-			app.Logger.Info().Msgf("Window %s Create", Name)
+		spsapp.OptOnCreate(func(app spsgio.App) {
+			app.GetLogger().Info().Msgf("Window %s Create", Name)
 		}),
-		spsapp.OptOnStart(func(app *spsapp.App) {
-			app.Logger.Info().Msgf("Window %s Start", Name)
+		spsapp.OptOnStart(func(app spsgio.App) {
+			app.GetLogger().Info().Msgf("Window %s Start", Name)
 		}),
-		spsapp.OptOnStop(func(app *spsapp.App) {
-			app.Logger.Info().Msgf("Window %s Stop", Name)
+		spsapp.OptOnStop(func(app spsgio.App) {
+			app.GetLogger().Info().Msgf("Window %s Stop", Name)
 		}),
 	)
 }

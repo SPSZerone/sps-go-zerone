@@ -13,13 +13,13 @@ type Options struct {
 	StartAction system.Action
 	LoopMode    LoopMode
 
-	OnInitPre   spsgio.OnInitPre
-	OnInitPost  spsgio.OnInitPost
+	OnInitPre   spsgio.OnWinInitPre
+	OnInitPost  spsgio.OnWinInitPost
 	OnStart     spsgio.OnStart
-	OnLoop      spsgio.OnLoop
+	OnLoop      spsgio.OnWinLoop
 	OnStop      spsgio.OnStop
-	OnEventPre  spsgio.OnEventPre
-	OnEventPost spsgio.OnEventPost
+	OnEventPre  spsgio.OnWinEventPre
+	OnEventPost spsgio.OnWinEventPost
 }
 
 func OptID(value any) Option {
@@ -52,13 +52,13 @@ func OptLoopMode(value LoopMode) Option {
 	}
 }
 
-func OptOnInitPre(value spsgio.OnInitPre) Option {
+func OptOnInitPre(value spsgio.OnWinInitPre) Option {
 	return func(win *Window) {
 		win.Opts.OnInitPre = value
 	}
 }
 
-func OptOnInitPost(value spsgio.OnInitPost) Option {
+func OptOnInitPost(value spsgio.OnWinInitPost) Option {
 	return func(win *Window) {
 		win.Opts.OnInitPost = value
 	}
@@ -70,7 +70,7 @@ func OptOnStart(value spsgio.OnStart) Option {
 	}
 }
 
-func OptOnLoop(value spsgio.OnLoop) Option {
+func OptOnLoop(value spsgio.OnWinLoop) Option {
 	return func(win *Window) {
 		win.Opts.OnLoop = value
 	}
@@ -82,13 +82,13 @@ func OptOnStop(value spsgio.OnStop) Option {
 	}
 }
 
-func OptOnEventPre(value spsgio.OnEventPre) Option {
+func OptOnEventPre(value spsgio.OnWinEventPre) Option {
 	return func(win *Window) {
 		win.Opts.OnEventPre = value
 	}
 }
 
-func OptOnEventPost(value spsgio.OnEventPost) Option {
+func OptOnEventPost(value spsgio.OnWinEventPost) Option {
 	return func(win *Window) {
 		win.Opts.OnEventPost = value
 	}

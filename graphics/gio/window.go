@@ -17,14 +17,14 @@ import (
 type (
 	NewWindow func(app App, fromWin Window) Window
 
-	OnInitPre  func(win Window)
-	OnInitPost func(win Window)
-	OnStart    func(win Window)
-	OnLoop     func(win Window) error
-	OnStop     func(win Window)
+	OnWinInitPre  func(win Window)
+	OnWinInitPost func(win Window)
+	OnStart       func(win Window)
+	OnWinLoop     func(win Window) error
+	OnStop        func(win Window)
 
-	OnEventPre  func(win Window, evt event.Event, param any)
-	OnEventPost func(win Window, evt event.Event, param any)
+	OnWinEventPre  func(win Window, evt event.Event, param any)
+	OnWinEventPost func(win Window, evt event.Event, param any)
 )
 
 type Window interface {

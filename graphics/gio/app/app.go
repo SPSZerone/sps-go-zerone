@@ -86,7 +86,7 @@ func (a *App) GetPref() *spspref.Preferences {
 }
 
 func (a *App) Run(win spsgio.Window) {
-	// OnStart
+	// OnAppStart
 	a.Logger.Info().Msg("SPS Gio Hello!!")
 	if a.Opts.OnStart != nil {
 		a.Opts.OnStart(a)
@@ -95,7 +95,7 @@ func (a *App) Run(win spsgio.Window) {
 	a.RunWindow(win)
 	a.waitGroup.Wait()
 
-	// OnStop
+	// OnAppStop
 	if a.Opts.OnStop != nil {
 		a.Opts.OnStop(a)
 	}
@@ -120,4 +120,8 @@ func (a *App) RunWindow(win spsgio.Window) {
 	a.GoRun(func() {
 		win.Run()
 	})
+}
+
+func (a *App) GetLogger() *zerolog.Logger {
+	return &a.Logger
 }

@@ -64,6 +64,14 @@ func (t *TestNoArg) Float64() float64 {
 	return math.MaxFloat64
 }
 
+func (t *TestNoArg) Complex64() complex64 {
+	return 1 + 1i
+}
+
+func (t *TestNoArg) Complex128() complex128 {
+	return 2 + 2i
+}
+
 func TestMethod(t *testing.T) {
 	var r TestNoArg
 	methods := Methods(&r)

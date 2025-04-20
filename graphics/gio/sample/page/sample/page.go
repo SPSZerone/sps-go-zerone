@@ -9,6 +9,7 @@ import (
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
@@ -53,7 +54,7 @@ func New(theme *material.Theme, pages *spswin.Pages) *Page {
 	return p
 }
 
-var _ spswin.Page = (*Page)(nil)
+var _ spsgio.Page = (*Page)(nil)
 
 type Page struct {
 	*spswin.Pages
@@ -78,20 +79,21 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) OnEventPre(win *spswin.Window, evt event.Event, param any) {
+func (p *Page) OnEventPre(win spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) OnEventPost(win *spswin.Window, evt event.Event, param any) {
+func (p *Page) OnEventPost(win spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) Layout(win *spswin.Window, gtx layout.Context, param any) layout.Dimensions {
-	return p.Tabs.Layout(win.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
+	theme := win.GetTheme()
+	return p.Tabs.Layout(theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		switch selected {
 		case TabIdxBags:
 			return p.Bags.Layout(
-				win.Theme, gtx, param,
+				theme, gtx, param,
 				func(index int) (items []spsitem.Item, itemUpdateTime time.Time) {
 					return p.BagData.GetItems(index)
 				},

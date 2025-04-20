@@ -10,6 +10,7 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/x/component"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
@@ -36,7 +37,7 @@ func NewPages(win *Window) Pages {
 		Ratio: DefaultNavRatio,
 	}
 	return Pages{
-		pages:          make(map[any]Page),
+		pages:          make(map[any]spsgio.Page),
 		Window:         win,
 		AppBar:         appBar,
 		ModalLayer:     modalLayer,
@@ -47,7 +48,7 @@ func NewPages(win *Window) Pages {
 }
 
 type Pages struct {
-	pages   map[any]Page
+	pages   map[any]spsgio.Page
 	current any
 
 	Window *Window
@@ -59,7 +60,7 @@ type Pages struct {
 	Split          spslayout.Split
 }
 
-func (p *Pages) Register(tag any, page Page) {
+func (p *Pages) Register(tag any, page spsgio.Page) {
 	p.pages[tag] = page
 	navItem := page.NavItem()
 	navItem.Tag = tag
@@ -71,7 +72,7 @@ func (p *Pages) Register(tag any, page Page) {
 	p.ModalNavDrawer.AddNavItem(navItem)
 }
 
-func (p *Pages) SwitchTo(tag any) Page {
+func (p *Pages) SwitchTo(tag any) spsgio.Page {
 	page, ok := p.pages[tag]
 	if !ok {
 		return nil
@@ -83,7 +84,7 @@ func (p *Pages) SwitchTo(tag any) Page {
 	return page
 }
 
-func (p *Pages) Current() Page {
+func (p *Pages) Current() spsgio.Page {
 	return p.pages[p.current]
 }
 
@@ -91,7 +92,7 @@ func (p *Pages) Count() int {
 	return len(p.pages)
 }
 
-func (p *Pages) Start(tag any) Page {
+func (p *Pages) Start(tag any) spsgio.Page {
 	page := p.SwitchTo(tag)
 
 	timeNow := time.Now()

@@ -4,11 +4,11 @@ import (
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
-	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
-func (p *Page) LayoutPref(win *spswin.Window, gtx layout.Context, param any) []layout.FlexChild {
+func (p *Page) LayoutPref(win spsgio.Window, gtx layout.Context, param any) []layout.FlexChild {
 	return []layout.FlexChild{
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.LayoutPrefTableStyle(win, gtx)
@@ -16,14 +16,17 @@ func (p *Page) LayoutPref(win *spswin.Window, gtx layout.Context, param any) []l
 	}
 }
 
-func (p *Page) LayoutPrefTableStyle(win *spswin.Window, gtx layout.Context) layout.Dimensions {
-	key := material.Body1(win.Theme, win.Pref.Pref.TableStyle.Name).Layout
+func (p *Page) LayoutPrefTableStyle(win spsgio.Window, gtx layout.Context) layout.Dimensions {
+	theme := win.GetTheme()
+	pref := win.GetPref()
+
+	key := material.Body1(theme, pref.Pref.TableStyle.Name).Layout
 	value := func(gtx layout.Context) layout.Dimensions {
 		return p.TableStyle(win, gtx)
 	}
 	var aWidget, bWidget layout.Widget
 	var ratio float32
-	if win.Pref.Settings.ValueInFront.Value {
+	if pref.Settings.ValueInFront.Value {
 		aWidget, bWidget = value, key
 		ratio = RatioValue
 	} else {
@@ -33,8 +36,12 @@ func (p *Page) LayoutPrefTableStyle(win *spswin.Window, gtx layout.Context) layo
 	return spslayout.FlexInset{Ratio: ratio}.LayoutABWidget(gtx, aWidget, bWidget)
 }
 
-func (p *Page) TableStyle(win *spswin.Window, gtx layout.Context) layout.Dimensions {
-	return win.Pref.Pref.TableStyle.LayoutSwitch(
-		win.Window, win.Theme, gtx,
+func (p *Page) TableStyle(win spsgio.Window, gtx layout.Context) layout.Dimensions {
+	window := win.GetWindow()
+	theme := win.GetTheme()
+	pref := win.GetPref()
+
+	return pref.Pref.TableStyle.LayoutSwitch(
+		window, theme, gtx,
 	)
 }

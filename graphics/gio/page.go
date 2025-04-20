@@ -1,4 +1,4 @@
-package window
+package gio
 
 import (
 	"gioui.org/io/event"
@@ -11,7 +11,7 @@ type Page interface {
 	Overflow() []component.OverflowAction
 	NavItem() component.NavItem
 
-	OnEventPre(win *Window, evt event.Event, param any)
-	OnEventPost(win *Window, evt event.Event, param any)
-	Layout(win *Window, gtx layout.Context, param any) layout.Dimensions
+	OnEventPre(win Window, evt event.Event, param any)
+	OnEventPost(win Window, evt event.Event, param any)
+	Layout(win Window, gtx layout.Context, param any) layout.Dimensions
 }

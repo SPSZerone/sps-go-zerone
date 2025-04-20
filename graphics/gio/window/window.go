@@ -91,12 +91,40 @@ func (w *Window) Init(opts ...Option) {
 	}
 }
 
+func (w *Window) GetId() any {
+	return w.ID
+}
+
+func (w *Window) GetTitle() string {
+	return w.Title
+}
+
 func (w *Window) GetContext() context.Context {
 	return w.Context
 }
 
 func (w *Window) GetPref() *spspref.Preferences {
 	return &w.Pref
+}
+
+func (w *Window) GetWindow() *app.Window {
+	return w.Window
+}
+
+func (w *Window) GetOps() *op.Ops {
+	return &w.Ops
+}
+
+func (w *Window) GetTheme() *material.Theme {
+	return w.Theme
+}
+
+func (w *Window) GetDeco() *widget.Decorations {
+	return &w.Deco
+}
+
+func (w *Window) GetLogger() *zerolog.Logger {
+	return &w.Logger
 }
 
 func (w *Window) Update(opts ...Option) {

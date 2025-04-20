@@ -33,7 +33,7 @@ func New(pages *spswin.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page 
 	return p
 }
 
-var _ spswin.Page = (*Page)(nil)
+var _ spsgio.Page = (*Page)(nil)
 
 type Page struct {
 	*spswin.Pages
@@ -75,24 +75,26 @@ func (p *Page) NavItem() component.NavItem {
 	}
 }
 
-func (p *Page) OnEventPre(win *spswin.Window, evt event.Event, param any) {
+func (p *Page) OnEventPre(win spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) OnEventPost(win *spswin.Window, evt event.Event, param any) {
+func (p *Page) OnEventPost(win spsgio.Window, evt event.Event, param any) {
 
 }
 
-func (p *Page) Layout(win *spswin.Window, gtx layout.Context, param any) layout.Dimensions {
-	return p.Tabs.Layout(win.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
-		if win.Pref.Pref.TableStyle.Value {
+func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
+	theme := win.GetTheme()
+	pref := win.GetPref()
+	return p.Tabs.Layout(theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
+		if pref.Pref.TableStyle.Value {
 			return p.LayoutTableStyle(win, gtx, param, selected)
 		}
 		return p.LayoutDefault(win, gtx, param, selected)
 	})
 }
 
-func (p *Page) LayoutDefault(win *spswin.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
+func (p *Page) LayoutDefault(win spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
 	switch selected {
 	case TabIdxSettings:
 		return layout.Flex{
@@ -109,7 +111,9 @@ func (p *Page) LayoutDefault(win *spswin.Window, gtx layout.Context, param any, 
 	}
 }
 
-func (p *Page) LayoutTableStyle(win *spswin.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
+func (p *Page) LayoutTableStyle(win spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
+	theme := win.GetTheme()
+
 	var count int
 	var cell spstable.Cell
 	switch selected {
@@ -131,11 +135,11 @@ func (p *Page) LayoutTableStyle(win *spswin.Window, gtx layout.Context, param an
 	dimensioner := func(axis layout.Axis, index, constraint, minSize, height int) int {
 		return tableDimension(win, gtx, axis, index, constraint, minSize, height)
 	}
-	return p.Table.Layout(win.Theme, gtx, count, dimensioner, cell)
+	return p.Table.Layout(theme, gtx, count, dimensioner, cell)
 }
 
-func (p *Page) UpdateTableHeaders(win *spswin.Window) {
-	if win.Pref.Settings.ValueInFront.Value {
+func (p *Page) UpdateTableHeaders(win spsgio.Window) {
+	if win.GetPref().Settings.ValueInFront.Value {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Value"}, {Text: "Key"}}...))
 	} else {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))

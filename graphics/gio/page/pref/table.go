@@ -7,14 +7,16 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget/material"
 
-	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
-func tableDimension(win *spswin.Window, gtx layout.Context, axis layout.Axis, index, constraint, minSize, height int) int {
+func tableDimension(win spsgio.Window, gtx layout.Context, axis layout.Axis, index, constraint, minSize, height int) int {
+	pref := win.GetPref()
+
 	switch axis {
 	case layout.Horizontal:
 		var widthUnit int
-		if win.Pref.Settings.ValueInFront.Value {
+		if pref.Settings.ValueInFront.Value {
 			switch index {
 			case TableColIdxKey:
 				widthUnit = gtx.Dp(unit.Dp(TableColWidthValue))
@@ -35,9 +37,11 @@ func tableDimension(win *spswin.Window, gtx layout.Context, axis layout.Axis, in
 	}
 }
 
-func settingsCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+func settingsCell(p *Page, win spsgio.Window, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+	pref := win.GetPref()
+
 	colIdx := TableColIdxValue
-	if win.Pref.Settings.ValueInFront.Value {
+	if pref.Settings.ValueInFront.Value {
 		colIdx = TableColIdxKey
 	}
 	switch row {
@@ -46,7 +50,7 @@ func settingsCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int,
 		case colIdx:
 			return p.NonModalDrawer(win, gtx)
 		default:
-			labelStyle.Text = win.Pref.Settings.ModalNavDrawer.Name
+			labelStyle.Text = pref.Settings.ModalNavDrawer.Name
 		}
 		return labelStyle.Layout(gtx)
 	case SettingsRowIdxTabAxis:
@@ -54,7 +58,7 @@ func settingsCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int,
 		case colIdx:
 			return p.TabAxis(win, gtx)
 		default:
-			labelStyle.Text = win.Pref.Settings.TabAxis.Name
+			labelStyle.Text = pref.Settings.TabAxis.Name
 		}
 		return labelStyle.Layout(gtx)
 	case SettingsRowIdxValueInFront:
@@ -62,7 +66,7 @@ func settingsCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int,
 		case colIdx:
 			return p.ValueInFront(win, gtx)
 		default:
-			labelStyle.Text = win.Pref.Settings.ValueInFront.Name
+			labelStyle.Text = pref.Settings.ValueInFront.Name
 		}
 		return labelStyle.Layout(gtx)
 	case SettingsRowIdxBottomBar:
@@ -70,7 +74,7 @@ func settingsCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int,
 		case colIdx:
 			return p.BottomBar(win, gtx)
 		default:
-			labelStyle.Text = win.Pref.Settings.BottomBar.Name
+			labelStyle.Text = pref.Settings.BottomBar.Name
 		}
 		return labelStyle.Layout(gtx)
 	case SettingsRowIdxDecorated:
@@ -78,7 +82,7 @@ func settingsCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int,
 		case colIdx:
 			return p.Decorated(win, gtx)
 		default:
-			labelStyle.Text = win.Pref.Settings.Decorated.Name
+			labelStyle.Text = pref.Settings.Decorated.Name
 		}
 		return labelStyle.Layout(gtx)
 	default:
@@ -88,18 +92,22 @@ func settingsCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int,
 	}
 }
 
-func prefCell(p *Page, win *spswin.Window, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+func prefCell(p *Page, win spsgio.Window, gtx layout.Context, row, col int, labelStyle material.LabelStyle) layout.Dimensions {
+	window := win.GetWindow()
+	theme := win.GetTheme()
+	pref := win.GetPref()
+
 	colIdx := TableColIdxValue
-	if win.Pref.Settings.ValueInFront.Value {
+	if pref.Settings.ValueInFront.Value {
 		colIdx = TableColIdxKey
 	}
 	switch row {
 	case PreferencesRowIdxTableStyle:
 		switch col {
 		case colIdx:
-			return win.Pref.Pref.TableStyle.LayoutSwitch(win.Window, win.Theme, gtx)
+			return pref.Pref.TableStyle.LayoutSwitch(window, theme, gtx)
 		default:
-			labelStyle.Text = win.Pref.Pref.TableStyle.Name
+			labelStyle.Text = pref.Pref.TableStyle.Name
 		}
 		return labelStyle.Layout(gtx)
 	default:

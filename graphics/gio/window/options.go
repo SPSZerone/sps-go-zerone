@@ -1,34 +1,25 @@
 package window
 
 import (
-	"gioui.org/io/event"
 	"gioui.org/io/system"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 )
 
 type Option func(win *Window)
 
-type OnInitPre func(win *Window)
-type OnInitPost func(win *Window)
-type OnStart func(win *Window)
-type OnLoop func(win *Window) error
-type OnStop func(win *Window)
-
-type OnEventPre func(win *Window, evt event.Event, param any)
-type OnEventPost func(win *Window, evt event.Event, param any)
-
 type Options struct {
 	StartAction system.Action
 	LoopMode    LoopMode
 
-	OnInitPre   OnInitPre
-	OnInitPost  OnInitPost
-	OnStart     OnStart
-	OnLoop      OnLoop
-	OnStop      OnStop
-	OnEventPre  OnEventPre
-	OnEventPost OnEventPost
+	OnInitPre   spsgio.OnInitPre
+	OnInitPost  spsgio.OnInitPost
+	OnStart     spsgio.OnStart
+	OnLoop      spsgio.OnLoop
+	OnStop      spsgio.OnStop
+	OnEventPre  spsgio.OnEventPre
+	OnEventPost spsgio.OnEventPost
 }
 
 func OptID(value any) Option {
@@ -61,43 +52,43 @@ func OptLoopMode(value LoopMode) Option {
 	}
 }
 
-func OptOnInitPre(value OnInitPre) Option {
+func OptOnInitPre(value spsgio.OnInitPre) Option {
 	return func(win *Window) {
 		win.Opts.OnInitPre = value
 	}
 }
 
-func OptOnInitPost(value OnInitPost) Option {
+func OptOnInitPost(value spsgio.OnInitPost) Option {
 	return func(win *Window) {
 		win.Opts.OnInitPost = value
 	}
 }
 
-func OptOnStart(value OnStart) Option {
+func OptOnStart(value spsgio.OnStart) Option {
 	return func(win *Window) {
 		win.Opts.OnStart = value
 	}
 }
 
-func OptOnLoop(value OnLoop) Option {
+func OptOnLoop(value spsgio.OnLoop) Option {
 	return func(win *Window) {
 		win.Opts.OnLoop = value
 	}
 }
 
-func OptOnStop(value OnStop) Option {
+func OptOnStop(value spsgio.OnStop) Option {
 	return func(win *Window) {
 		win.Opts.OnStop = value
 	}
 }
 
-func OptOnEventPre(value OnEventPre) Option {
+func OptOnEventPre(value spsgio.OnEventPre) Option {
 	return func(win *Window) {
 		win.Opts.OnEventPre = value
 	}
 }
 
-func OptOnEventPost(value OnEventPost) Option {
+func OptOnEventPost(value spsgio.OnEventPost) Option {
 	return func(win *Window) {
 		win.Opts.OnEventPost = value
 	}

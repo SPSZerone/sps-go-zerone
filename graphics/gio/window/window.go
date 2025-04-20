@@ -16,6 +16,7 @@ import (
 	"gioui.org/widget/material"
 	"github.com/rs/zerolog"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
@@ -105,6 +106,10 @@ func (w *Window) GetContext() context.Context {
 
 func (w *Window) GetPref() *spspref.Preferences {
 	return &w.Pref
+}
+
+func (w *Window) GetPages() spsgio.Pages {
+	return &w.Pages
 }
 
 func (w *Window) GetWindow() *app.Window {

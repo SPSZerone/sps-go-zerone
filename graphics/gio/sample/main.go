@@ -48,13 +48,13 @@ func NewWindow(app spsgio.App, fromWin spsgio.Window) spsgio.Window {
 		//spswin.OptLoopMode(spswin.LoopModeParam),
 		//spswin.OptLoopMode(spswin.LoopModeCustom),
 
-		spswin.OptOnInitPre(func(win *spswin.Window) {
-			win.Logger.Info().Msgf("%s InitPre", win.LogPrefix())
+		spswin.OptOnInitPre(func(win spsgio.Window) {
+			win.GetLogger().Info().Msgf("%s InitPre", win.LogPrefix())
 		}),
-		spswin.OptOnInitPost(func(win *spswin.Window) {
-			win.Logger.Info().Msgf("%s InitPost", win.LogPrefix())
+		spswin.OptOnInitPost(func(win spsgio.Window) {
+			win.GetLogger().Info().Msgf("%s InitPost", win.LogPrefix())
 
-			pages := &win.Pages
+			pages := win.GetPages()
 			pageTag := 0
 			pages.Register(pageTag, spsabout.New(pages))
 
@@ -67,32 +67,32 @@ func NewWindow(app spsgio.App, fromWin spsgio.Window) spsgio.Window {
 			pages.Register(pageTag, pref)
 
 			pageTag++
-			pages.Register(pageTag, spssample.New(win.Theme, pages))
+			pages.Register(pageTag, spssample.New(win.GetTheme(), pages))
 		}),
-		spswin.OptOnStart(func(win *spswin.Window) {
-			win.Logger.Info().Msgf("%s Start", win.LogPrefix())
-			win.Pages.Start(2)
+		spswin.OptOnStart(func(win spsgio.Window) {
+			win.GetLogger().Info().Msgf("%s Start", win.LogPrefix())
+			win.GetPages().Start(2)
 		}),
 		spswin.OptOnLoop(onLoop),
-		spswin.OptOnStop(func(win *spswin.Window) {
-			win.Logger.Info().Msgf("%s Stop", win.LogPrefix())
+		spswin.OptOnStop(func(win spsgio.Window) {
+			win.GetLogger().Info().Msgf("%s Stop", win.LogPrefix())
 		}),
 	)
 }
 
-func onLoop(win *spswin.Window) error {
-	win.Logger.Info().Msgf("%s Loop", win.LogPrefix())
+func onLoop(win spsgio.Window) error {
+	win.GetLogger().Info().Msgf("%s Loop", win.LogPrefix())
 
 	chanEvent := make(chan event.Event)
 	chanEventDone := make(chan struct{})
 
 	win.GoRun(func() {
 		for {
-			evt := win.Window.Event()
+			evt := win.GetWindow().Event()
 			chanEvent <- evt
 			<-chanEventDone
 			if _, ok := evt.(app.DestroyEvent); ok {
-				win.Logger.Info().Msgf("%s Loop loopCustom Window.Event app.DestroyEvent ...", win.LogPrefix())
+				win.GetLogger().Info().Msgf("%s Loop loopCustom Window.Event app.DestroyEvent ...", win.LogPrefix())
 				return
 			}
 		}
@@ -103,7 +103,7 @@ func onLoop(win *spswin.Window) error {
 		case evt := <-chanEvent:
 			switch e := evt.(type) {
 			case app.DestroyEvent:
-				win.Logger.Info().Msgf("%s loopCustom app.DestroyEvent ...", win.LogPrefix())
+				win.GetLogger().Info().Msgf("%s loopCustom app.DestroyEvent ...", win.LogPrefix())
 				chanEventDone <- struct{}{}
 				return e.Err
 			case app.FrameEvent:

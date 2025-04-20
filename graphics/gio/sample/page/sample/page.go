@@ -11,12 +11,10 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
+	"github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample/bag"
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
-	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
-
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample/bag"
 )
 
 const (
@@ -31,14 +29,15 @@ func GetTabName(index int) string {
 	return "Unknown"
 }
 
-func New(theme *material.Theme, pages *spswin.Pages) *Page {
+func New(theme *material.Theme, pages spsgio.Pages) *Page {
+	pref := pages.GetWindow().GetPref()
 	tabs := spstab.NewTabsByNames(
 		[]string{GetTabName(TabIdxBags)},
-		spstab.OptAxisSetting(&pages.Window.Pref.Settings.TabAxis),
+		spstab.OptAxisSetting(&pref.Settings.TabAxis),
 	)
 	bags := spsbag.NewBags()
 	bags.Tabs.Update(
-		spstab.OptAxisSetting(&pages.Window.Pref.Settings.TabAxis),
+		spstab.OptAxisSetting(&pref.Settings.TabAxis),
 	)
 	for i := 0; i < 32; i++ {
 		bags.AddBag(
@@ -57,7 +56,7 @@ func New(theme *material.Theme, pages *spswin.Pages) *Page {
 var _ spsgio.Page = (*Page)(nil)
 
 type Page struct {
-	*spswin.Pages
+	spsgio.Pages
 	Tabs spstab.Tabs
 
 	Bags    spsbag.Bags

@@ -15,6 +15,7 @@ import (
 
 func main() {
 	spsgio.Run(
+		NewWindow,
 		spsgio.OptOnCreate(func(app *spsgio.App) {
 			app.Logger.Info().Msg("Window SPS Sample Create")
 		}),
@@ -24,44 +25,47 @@ func main() {
 		spsgio.OptOnStop(func(app *spsgio.App) {
 			app.Logger.Info().Msg("Window SPS Sample Stop")
 		}),
-		spsgio.OptWinOpts(
-			spswin.OptID("Main"),
-			spswin.OptTitle("SPS Sample"),
-			//spswin.OptStartAction(system.ActionMaximize),
-			spswin.OptLoopMode(spswin.LoopModeSimple),
-			//spswin.OptLoopMode(spswin.LoopModeParam),
-			//spswin.OptLoopMode(spswin.LoopModeCustom),
+	)
+}
 
-			spswin.OptOnInitPre(func(win *spswin.Window) {
-				win.Logger.Info().Msgf("%s InitPre", win.LogPrefix())
-			}),
-			spswin.OptOnInitPost(func(win *spswin.Window) {
-				win.Logger.Info().Msgf("%s InitPost", win.LogPrefix())
+func NewWindow(app *spsgio.App) *spswin.Window {
+	return spswin.NewWindow(app.Context,
+		spswin.OptID("Main"),
+		spswin.OptTitle("SPS Sample"),
+		//spswin.OptStartAction(system.ActionMaximize),
+		spswin.OptLoopMode(spswin.LoopModeSimple),
+		//spswin.OptLoopMode(spswin.LoopModeParam),
+		//spswin.OptLoopMode(spswin.LoopModeCustom),
 
-				pages := &win.Pages
-				pageTag := 0
-				pages.Register(pageTag, spsabout.New(pages))
+		spswin.OptOnInitPre(func(win *spswin.Window) {
+			win.Logger.Info().Msgf("%s InitPre", win.LogPrefix())
+		}),
+		spswin.OptOnInitPost(func(win *spswin.Window) {
+			win.Logger.Info().Msgf("%s InitPost", win.LogPrefix())
 
-				pageTag++
-				pref := spspref.New(pages)
-				for i := 0; i < 20; i++ {
-					pref.Tabs.AddTabByNames(fmt.Sprintf("test-%d", i))
-				}
-				pref.Tabs.SetSelected(spspref.TabIdxSettings)
-				pages.Register(pageTag, pref)
+			pages := &win.Pages
+			pageTag := 0
+			pages.Register(pageTag, spsabout.New(pages))
 
-				pageTag++
-				pages.Register(pageTag, spssample.New(win.Theme, pages))
-			}),
-			spswin.OptOnStart(func(win *spswin.Window) {
-				win.Logger.Info().Msgf("%s Start", win.LogPrefix())
-				win.Pages.Start(2)
-			}),
-			spswin.OptOnLoop(onLoop),
-			spswin.OptOnStop(func(win *spswin.Window) {
-				win.Logger.Info().Msgf("%s Stop", win.LogPrefix())
-			}),
-		),
+			pageTag++
+			pref := spspref.New(pages)
+			for i := 0; i < 20; i++ {
+				pref.Tabs.AddTabByNames(fmt.Sprintf("test-%d", i))
+			}
+			pref.Tabs.SetSelected(spspref.TabIdxSettings)
+			pages.Register(pageTag, pref)
+
+			pageTag++
+			pages.Register(pageTag, spssample.New(win.Theme, pages))
+		}),
+		spswin.OptOnStart(func(win *spswin.Window) {
+			win.Logger.Info().Msgf("%s Start", win.LogPrefix())
+			win.Pages.Start(2)
+		}),
+		spswin.OptOnLoop(onLoop),
+		spswin.OptOnStop(func(win *spswin.Window) {
+			win.Logger.Info().Msgf("%s Stop", win.LogPrefix())
+		}),
 	)
 }
 

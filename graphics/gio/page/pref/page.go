@@ -1,8 +1,11 @@
 package pref
 
 import (
+	"image/color"
+
 	"gioui.org/io/event"
 	"gioui.org/layout"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
@@ -33,10 +36,25 @@ type Page struct {
 
 	Tabs  spstab.Tabs
 	Table spstable.Table
+
+	NewWindowBtn widget.Clickable
 }
 
 func (p *Page) Actions() []component.AppBarAction {
-	return []component.AppBarAction{}
+	return []component.AppBarAction{
+		{
+			OverflowAction: component.OverflowAction{
+				Name: "New Window",
+				Tag:  &p.NewWindowBtn,
+			},
+			Layout: func(gtx layout.Context, bg, fg color.NRGBA) layout.Dimensions {
+				if p.NewWindowBtn.Clicked(gtx) {
+				}
+				btn := component.SimpleIconButton(bg, fg, &p.NewWindowBtn, spsicon.ContentAdd)
+				return btn.Layout(gtx)
+			},
+		},
+	}
 }
 
 func (p *Page) Overflow() []component.OverflowAction {

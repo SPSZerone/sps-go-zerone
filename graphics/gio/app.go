@@ -15,26 +15,36 @@ import (
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
-func Run(opts ...Option) {
+func Run(newWindow NewWindow, opts ...Option) {
+	if newWindow == nil {
+		return
+	}
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	go func() {
-		a := NewApp(ctx, opts...)
-		a.Run(a.Opts.WinOpts...)
-		os.Exit(0)
+		defer os.Exit(0)
+
+		a := NewApp(ctx, newWindow, opts...)
+		win := newWindow(a)
+		if win == nil {
+			return
+		}
+		a.Run(win)
 	}()
 
 	app.Main()
 }
 
-func NewApp(ctx context.Context, opts ...Option) *App {
+func NewApp(ctx context.Context, newWindow NewWindow, opts ...Option) *App {
 	ctx, cancel := context.WithCancel(ctx)
 	a := &App{
 		Context:  ctx,
 		Shutdown: cancel,
 
 		Pref: spspref.NewPreferences(),
+
+		Opts: NewOptions(newWindow, opts...),
 
 		Logger: spslog.NewLogger(),
 	}
@@ -67,14 +77,14 @@ func (a *App) UpdateOpts(opts ...Option) {
 	}
 }
 
-func (a *App) Run(opts ...spswin.Option) {
+func (a *App) Run(win *spswin.Window) {
 	// OnStart
 	a.Logger.Info().Msg("SPS Gio Hello!!")
 	if a.Opts.OnStart != nil {
 		a.Opts.OnStart(a)
 	}
 
-	a.NewWindow(opts...)
+	a.NewWindow(win)
 	a.waitGroup.Wait()
 
 	// OnStop
@@ -98,9 +108,8 @@ func (a *App) GoRun(run func()) {
 	}()
 }
 
-func (a *App) NewWindow(opts ...spswin.Option) {
+func (a *App) NewWindow(win *spswin.Window) {
 	a.GoRun(func() {
-		a := spswin.NewWindow(a.Context, opts...)
-		a.Run()
+		win.Run()
 	})
 }

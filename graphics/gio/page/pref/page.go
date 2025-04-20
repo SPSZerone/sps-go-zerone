@@ -13,10 +13,14 @@ import (
 )
 
 func New(pages *spswin.Pages) *Page {
+	tabs := spstab.NewTabsByNames(
+		[]string{TabNameSettings, TabNamePreferences},
+		spstab.OptAxisSetting(&pages.Window.Pref.Settings.TabAxis),
+	)
 	p := &Page{
 		Pages: pages,
 
-		Tabs:  spstab.NewTabsByNames([]string{TabNameSettings, TabNamePreferences}),
+		Tabs:  tabs,
 		Table: spstable.NewTable(),
 	}
 	return p
@@ -55,7 +59,6 @@ func (p *Page) OnEventPost(win *spswin.Window, evt event.Event, param any) {
 }
 
 func (p *Page) Layout(win *spswin.Window, gtx layout.Context, param any) layout.Dimensions {
-	p.Tabs.Opts.Axis = win.Pref.Settings.TabAxis.GetAxis()
 	return p.Tabs.Layout(win.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		if win.Pref.Pref.TableStyle.Value {
 			return p.LayoutTableStyle(win, gtx, param, selected)

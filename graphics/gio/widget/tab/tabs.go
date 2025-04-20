@@ -169,9 +169,24 @@ func (t *Tabs) SetLastSelected() int {
 	return t.selected
 }
 
+func (t *Tabs) GetLayoutAxis() layout.Axis {
+	if t.Opts.AxisSetting != nil {
+		return t.Opts.AxisSetting.GetAxis()
+	}
+	return t.Opts.Axis
+}
+
+func (t *Tabs) IsHorizontal() bool {
+	return t.GetLayoutAxis() == layout.Horizontal
+}
+
+func (t *Tabs) IsVertical() bool {
+	return t.GetLayoutAxis() == layout.Vertical
+}
+
 func (t *Tabs) Layout(theme *material.Theme, gtx layout.Context, param any, content Content) layout.Dimensions {
 	axis := layout.Horizontal
-	if t.Opts.Axis == layout.Horizontal {
+	if t.IsHorizontal() {
 		axis = layout.Vertical
 	}
 	return layout.Flex{Axis: axis}.Layout(gtx,
@@ -187,14 +202,24 @@ func (t *Tabs) Layout(theme *material.Theme, gtx layout.Context, param any, cont
 }
 
 func (t *Tabs) doLayoutContent(theme *material.Theme, gtx layout.Context, param any, content Content) layout.Dimensions {
-	return t.Slider.Layout(t.Opts.Axis, gtx, func(gtx layout.Context) layout.Dimensions {
+	return t.Slider.Layout(t.GetLayoutAxis(), gtx, func(gtx layout.Context) layout.Dimensions {
 		spscolor.Fill(gtx, spscolor.DynamicColor(t.selected), spscolor.DynamicColor(t.selected+1))
 		return content(gtx, t.selected)
 	})
 }
 
 func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) layout.Dimensions {
-	t.List.Axis = t.Opts.Axis
+	// Axis
+	t.List.Axis = t.GetLayoutAxis()
+
+	// WidthWhenVertical
+	var width int
+	if t.Opts.WidthWhenVertical > 0 {
+		if t.IsVertical() {
+			width = gtx.Dp(unit.Dp(t.Opts.WidthWhenVertical))
+		}
+	}
+
 	return material.List(theme, &t.List).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
 		if tab.Clickable.Clicked(gtx) {
@@ -205,17 +230,33 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 			}
 			t.selected = tabIdx
 		}
-		var tabWidth int
+
+		var tabSize image.Point
 		return layout.Stack{Alignment: layout.S}.Layout(gtx,
 			// click area
 			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-				dims := material.Clickable(gtx, &tab.Clickable, func(gtx layout.Context) layout.Dimensions {
-					return layout.UniformInset(unit.Dp(12)).Layout(gtx,
-						material.H6(theme, tab.Name).Layout,
+				if width > 0 {
+					if t.IsVertical() {
+						gtx.Constraints.Max.X = width
+					}
+				}
+
+				return material.Clickable(gtx, &tab.Clickable, func(gtx layout.Context) layout.Dimensions {
+					dims := layout.UniformInset(unit.Dp(12)).Layout(
+						gtx,
+						func(gtx layout.Context) layout.Dimensions {
+							name := material.H6(theme, tab.Name)
+							return name.Layout(gtx)
+						},
 					)
+					tabSize = dims.Size
+					if width > 0 {
+						if t.IsVertical() {
+							tabSize.X = width
+						}
+					}
+					return layout.Dimensions{Size: tabSize}
 				})
-				tabWidth = dims.Size.X
-				return dims
 			}),
 			// highlight
 			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
@@ -223,12 +264,23 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 					return layout.Dimensions{}
 				}
 
-				highlightHeight := gtx.Dp(unit.Dp(4))
-				highlightRect := image.Rect(0, 0, tabWidth, highlightHeight)
-				paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
-				return layout.Dimensions{
-					Size: image.Point{X: tabWidth, Y: highlightHeight},
+				highlightThickness := gtx.Dp(unit.Dp(4))
+				var highlightRect image.Rectangle
+				var size image.Point
+				if t.GetLayoutAxis() == layout.Vertical {
+					size = image.Pt(highlightThickness, tabSize.Y)
+					// right
+					startX := tabSize.X>>1 - highlightThickness>>1
+					// left
+					//startX = -startX
+					highlightRect = image.Rect(startX, 0, startX+highlightThickness, tabSize.Y)
+				} else {
+					size = image.Pt(tabSize.X, highlightThickness)
+					highlightRect = image.Rect(0, 0, tabSize.X, highlightThickness)
 				}
+
+				paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
+				return layout.Dimensions{Size: size}
 			}),
 		)
 	})

@@ -1,6 +1,7 @@
 package sample
 
 import (
+	"fmt"
 	"time"
 
 	"gioui.org/io/event"
@@ -18,19 +19,34 @@ import (
 )
 
 const (
-	TabIdxGridAndItem = iota
+	TabIdxBags = iota
 )
 
-const (
-	TabNameGridAndItem = "Grid & Item"
-)
+func GetTabName(index int) string {
+	switch index {
+	case TabIdxBags:
+		return "Bags"
+	}
+	return "Unknown"
+}
 
 func New(theme *material.Theme, pages *spswin.Pages) *Page {
+	tabs := spstab.NewTabsByNames(
+		[]string{GetTabName(TabIdxBags)},
+		spstab.OptAxisSetting(&pages.Window.Pref.Settings.TabAxis),
+	)
 	bags := spsbag.NewBags()
-	bags.AddBag(spsbag.NewBag("Items A"), spsbag.NewBag("Items B"))
+	bags.Tabs.Update(
+		spstab.OptAxisSetting(&pages.Window.Pref.Settings.TabAxis),
+	)
+	for i := 0; i < 32; i++ {
+		bags.AddBag(
+			spsbag.NewBag(fmt.Sprintf("Bag %v", i)),
+		)
+	}
 	p := &Page{
 		Pages:   pages,
-		Tabs:    spstab.NewTabsByNames([]string{TabNameGridAndItem}),
+		Tabs:    tabs,
 		Bags:    bags,
 		BagData: bag.NewTestData(theme, bags.GetCount(), 100),
 	}
@@ -71,11 +87,9 @@ func (p *Page) OnEventPost(win *spswin.Window, evt event.Event, param any) {
 }
 
 func (p *Page) Layout(win *spswin.Window, gtx layout.Context, param any) layout.Dimensions {
-	p.Tabs.Opts.Axis = win.Pref.Settings.TabAxis.GetAxis()
 	return p.Tabs.Layout(win.Theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		switch selected {
-		case TabIdxGridAndItem:
-			p.Bags.Tabs.Opts.Axis = win.Pref.Settings.TabAxis.GetAxis()
+		case TabIdxBags:
 			return p.Bags.Layout(
 				win.Theme, gtx, param,
 				func(index int) (items []spsitem.Item, itemUpdateTime time.Time) {

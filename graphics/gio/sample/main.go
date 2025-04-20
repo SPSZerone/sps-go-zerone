@@ -16,13 +16,13 @@ import (
 func main() {
 	spsgio.Run(
 		spsgio.OptOnCreate(func(app *spsgio.App) {
-			app.Logger.Info().Msg("App SPS Sample Create")
+			app.Logger.Info().Msg("Window SPS Sample Create")
 		}),
 		spsgio.OptOnStart(func(app *spsgio.App) {
-			app.Logger.Info().Msg("App SPS Sample Start")
+			app.Logger.Info().Msg("Window SPS Sample Start")
 		}),
 		spsgio.OptOnStop(func(app *spsgio.App) {
-			app.Logger.Info().Msg("App SPS Sample Stop")
+			app.Logger.Info().Msg("Window SPS Sample Stop")
 		}),
 		spsgio.OptWinOpts(
 			spswin.OptID("Main"),

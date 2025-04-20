@@ -2,22 +2,48 @@ package tab
 
 import (
 	"gioui.org/layout"
+
+	"github.com/SPSZerone/sps-go-zerone/graphics/gio/pref/settings"
 )
 
-func NewOptions() Options {
-	return Options{
-		Axis: layout.Vertical,
+func NewOptions(opts ...Option) Options {
+	o := Options{
+		Axis:              layout.Vertical,
+		WidthWhenVertical: 128,
 	}
+	o.Update(opts...)
+	return o
 }
 
 type Options struct {
-	Axis layout.Axis
+	WidthWhenVertical int
+
+	Axis        layout.Axis
+	AxisSetting *settings.TabAxis
+}
+
+func (o *Options) Update(opts ...Option) {
+	for _, opt := range opts {
+		opt(o)
+	}
 }
 
 type Option func(*Options)
 
-func OptAxis(axis layout.Axis) Option {
+func OptWidthWhenVertical(value int) Option {
 	return func(o *Options) {
-		o.Axis = axis
+		o.WidthWhenVertical = value
+	}
+}
+
+func OptAxis(value layout.Axis) Option {
+	return func(o *Options) {
+		o.Axis = value
+	}
+}
+
+func OptAxisSetting(value *settings.TabAxis) Option {
+	return func(o *Options) {
+		o.AxisSetting = value
 	}
 }

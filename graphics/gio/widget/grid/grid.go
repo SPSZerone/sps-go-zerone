@@ -15,6 +15,7 @@ func NewGrid() Grid {
 			},
 		},
 
+		Wrap:      true,
 		Axis:      layout.Horizontal,
 		Alignment: layout.Start,
 		Num:       5,

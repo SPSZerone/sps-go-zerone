@@ -14,17 +14,21 @@ import (
 	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
+const (
+	Name = "SPS Gio Sample"
+)
+
 func main() {
 	spsapp.Run(
 		NewWindow,
 		spsapp.OptOnCreate(func(app *spsapp.App) {
-			app.Logger.Info().Msg("Window SPS Sample Create")
+			app.Logger.Info().Msgf("Window %s Create", Name)
 		}),
 		spsapp.OptOnStart(func(app *spsapp.App) {
-			app.Logger.Info().Msg("Window SPS Sample Start")
+			app.Logger.Info().Msgf("Window %s Start", Name)
 		}),
 		spsapp.OptOnStop(func(app *spsapp.App) {
-			app.Logger.Info().Msg("Window SPS Sample Stop")
+			app.Logger.Info().Msgf("Window %s Stop", Name)
 		}),
 	)
 }
@@ -37,7 +41,7 @@ func NewWindow(app spsgio.App, fromWin spsgio.Window) spsgio.Window {
 	return spswin.NewWindow(
 		app.GetContext(),
 		spswin.OptID("Main"),
-		spswin.OptTitle("SPS Sample"),
+		spswin.OptTitle(Name),
 		spswin.OptPref(*pref),
 		//spswin.OptStartAction(system.ActionMaximize),
 		spswin.OptLoopMode(spswin.LoopModeSimple),

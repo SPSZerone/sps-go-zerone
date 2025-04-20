@@ -11,7 +11,7 @@ type Page interface {
 	Overflow() []component.OverflowAction
 	NavItem() component.NavItem
 
-	OnEventPre(app *Window, evt event.Event, param any)
-	OnEventPost(app *Window, evt event.Event, param any)
-	Layout(app *Window, gtx layout.Context, param any) layout.Dimensions
+	OnEventPre(win *Window, evt event.Event, param any)
+	OnEventPost(win *Window, evt event.Event, param any)
+	Layout(win *Window, gtx layout.Context, param any) layout.Dimensions
 }

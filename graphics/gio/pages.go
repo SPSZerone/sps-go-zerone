@@ -3,9 +3,17 @@ package gio
 import (
 	"gioui.org/io/event"
 	"gioui.org/layout"
+	"gioui.org/x/component"
 )
 
 type Pages interface {
+	GetWindow() Window
+
+	GetAppBar() *component.AppBar
+	GetModalNavDrawer() *component.ModalNavDrawer
+	GetModalLayer() *component.ModalLayer
+	GetNavAnim() *component.VisibilityAnimation
+
 	Register(tag any, page Page)
 	SwitchTo(tag any) Page
 	Start(tag any) Page

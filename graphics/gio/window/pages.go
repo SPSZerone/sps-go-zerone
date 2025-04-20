@@ -60,6 +60,26 @@ type Pages struct {
 	Split          spslayout.Split
 }
 
+func (p *Pages) GetWindow() spsgio.Window {
+	return p.Window
+}
+
+func (p *Pages) GetAppBar() *component.AppBar {
+	return p.AppBar
+}
+
+func (p *Pages) GetModalNavDrawer() *component.ModalNavDrawer {
+	return p.ModalNavDrawer
+}
+
+func (p *Pages) GetModalLayer() *component.ModalLayer {
+	return p.ModalLayer
+}
+
+func (p *Pages) GetNavAnim() *component.VisibilityAnimation {
+	return &p.NavAnim
+}
+
 func (p *Pages) Register(tag any, page spsgio.Page) {
 	p.pages[tag] = page
 	navItem := page.NavItem()

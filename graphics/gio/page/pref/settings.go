@@ -41,7 +41,7 @@ func (p *Page) LayoutSettingsNonModalDrawer(win spsgio.Window, gtx layout.Contex
 	return pref.Settings.ModalNavDrawer.Layout(
 		window, theme, gtx,
 		pref.Settings.ValueInFront.Value, ratio,
-		&p.Pages.NavAnim,
+		p.Pages.GetNavAnim(),
 	)
 }
 
@@ -120,7 +120,7 @@ func (p *Page) NonModalDrawer(win spsgio.Window, gtx layout.Context) layout.Dime
 
 	return pref.Settings.ModalNavDrawer.LayoutSwitch(
 		window, theme, gtx,
-		&p.Pages.NavAnim,
+		p.Pages.GetNavAnim(),
 	)
 }
 
@@ -153,11 +153,11 @@ func (p *Page) BottomBar(win spsgio.Window, gtx layout.Context) layout.Dimension
 		window, theme, gtx,
 		func() {
 			if pref.Settings.BottomBar.Value {
-				p.Pages.ModalNavDrawer.Anchor = component.Bottom
-				p.Pages.AppBar.Anchor = component.Bottom
+				p.Pages.GetModalNavDrawer().Anchor = component.Bottom
+				p.Pages.GetAppBar().Anchor = component.Bottom
 			} else {
-				p.Pages.ModalNavDrawer.Anchor = component.Top
-				p.Pages.AppBar.Anchor = component.Top
+				p.Pages.GetModalNavDrawer().Anchor = component.Top
+				p.Pages.GetAppBar().Anchor = component.Top
 			}
 		},
 	)

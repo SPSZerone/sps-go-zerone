@@ -10,7 +10,6 @@ import (
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
-	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
 const (
@@ -20,7 +19,7 @@ const (
 	HomePage = "https://github.com/SPSZerone"
 )
 
-func New(pages *spswin.Pages) *Page {
+func New(pages spsgio.Pages) *Page {
 	return &Page{
 		Pages: pages,
 	}
@@ -30,7 +29,7 @@ var _ spsgio.Page = (*Page)(nil)
 
 type Page struct {
 	widget.List
-	*spswin.Pages
+	spsgio.Pages
 }
 
 func (p *Page) Actions() []component.AppBarAction {

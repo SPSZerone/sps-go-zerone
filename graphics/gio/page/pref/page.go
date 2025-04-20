@@ -13,13 +13,12 @@ import (
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
-	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
-func New(pages *spswin.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page {
+func New(pages spsgio.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page {
 	tabs := spstab.NewTabsByNames(
 		[]string{TabNameSettings, TabNamePreferences},
-		spstab.OptAxisSetting(&pages.Window.Pref.Settings.TabAxis),
+		spstab.OptAxisSetting(&pages.GetWindow().GetPref().Settings.TabAxis),
 	)
 	p := &Page{
 		Pages: pages,
@@ -36,7 +35,7 @@ func New(pages *spswin.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page 
 var _ spsgio.Page = (*Page)(nil)
 
 type Page struct {
-	*spswin.Pages
+	spsgio.Pages
 
 	Tabs  spstab.Tabs
 	Table spstable.Table
@@ -150,7 +149,7 @@ func (p *Page) RunWindow() {
 	if p.app == nil || p.newWindow == nil {
 		return
 	}
-	win := p.newWindow(p.app, p.Pages.Window)
+	win := p.newWindow(p.app, p.Pages.GetWindow())
 	if win == nil {
 		return
 	}

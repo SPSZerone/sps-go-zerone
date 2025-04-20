@@ -9,13 +9,14 @@ import (
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
+	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
 	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
 )
 
-func New(pages *spswin.Pages) *Page {
+func New(pages *spswin.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page {
 	tabs := spstab.NewTabsByNames(
 		[]string{TabNameSettings, TabNamePreferences},
 		spstab.OptAxisSetting(&pages.Window.Pref.Settings.TabAxis),
@@ -25,6 +26,9 @@ func New(pages *spswin.Pages) *Page {
 
 		Tabs:  tabs,
 		Table: spstable.NewTable(),
+
+		app:       app,
+		newWindow: newWindow,
 	}
 	return p
 }
@@ -37,6 +41,8 @@ type Page struct {
 	Tabs  spstab.Tabs
 	Table spstable.Table
 
+	app          spsgio.App
+	newWindow    spsgio.NewWindow
 	NewWindowBtn widget.Clickable
 }
 
@@ -49,6 +55,7 @@ func (p *Page) Actions() []component.AppBarAction {
 			},
 			Layout: func(gtx layout.Context, bg, fg color.NRGBA) layout.Dimensions {
 				if p.NewWindowBtn.Clicked(gtx) {
+					p.RunWindow()
 				}
 				btn := component.SimpleIconButton(bg, fg, &p.NewWindowBtn, spsicon.ContentAdd)
 				return btn.Layout(gtx)
@@ -133,4 +140,15 @@ func (p *Page) UpdateTableHeaders(win *spswin.Window) {
 	} else {
 		p.Table.Update(spstable.OptHeaders([]spstable.Header{{Text: "Key"}, {Text: "Value"}}...))
 	}
+}
+
+func (p *Page) RunWindow() {
+	if p.app == nil || p.newWindow == nil {
+		return
+	}
+	win := p.newWindow(p.app, p.Pages.Window)
+	if win == nil {
+		return
+	}
+	p.app.RunWindow(win)
 }

@@ -29,11 +29,16 @@ func main() {
 	)
 }
 
-func NewWindow(app spsgio.App) spsgio.Window {
+func NewWindow(app spsgio.App, fromWin spsgio.Window) spsgio.Window {
+	pref := app.GetPref()
+	if fromWin != nil {
+		pref = fromWin.GetPref()
+	}
 	return spswin.NewWindow(
 		app.GetContext(),
 		spswin.OptID("Main"),
 		spswin.OptTitle("SPS Sample"),
+		spswin.OptPref(*pref),
 		//spswin.OptStartAction(system.ActionMaximize),
 		spswin.OptLoopMode(spswin.LoopModeSimple),
 		//spswin.OptLoopMode(spswin.LoopModeParam),
@@ -50,7 +55,7 @@ func NewWindow(app spsgio.App) spsgio.Window {
 			pages.Register(pageTag, spsabout.New(pages))
 
 			pageTag++
-			pref := spspref.New(pages)
+			pref := spspref.New(pages, app, NewWindow)
 			for i := 0; i < 20; i++ {
 				pref.Tabs.AddTabByNames(fmt.Sprintf("test-%d", i))
 			}

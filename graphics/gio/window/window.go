@@ -42,6 +42,9 @@ const (
 )
 
 type Window struct {
+	ID    any
+	Title string
+
 	Context   context.Context
 	Shutdown  func()
 	waitGroup sync.WaitGroup
@@ -66,10 +69,7 @@ type Window struct {
 func (w *Window) Init(opts ...Option) {
 	// default init
 	w.Opts.StartAction = system.ActionMaximize
-
-	for _, opt := range opts {
-		opt(&w.Opts)
-	}
+	w.Update(opts...)
 
 	if w.Opts.OnInitPre != nil {
 		w.Opts.OnInitPre(w)
@@ -84,15 +84,29 @@ func (w *Window) Init(opts ...Option) {
 	w.Pages = NewPages(w)
 	w.Window = new(app.Window)
 
-	w.Window.Option(app.Title(w.Opts.Title), app.Decorated(w.Pref.Settings.Decorated.Value))
+	w.Window.Option(app.Title(w.Title), app.Decorated(w.Pref.Settings.Decorated.Value))
 
 	if w.Opts.OnInitPost != nil {
 		w.Opts.OnInitPost(w)
 	}
 }
 
+func (w *Window) GetContext() context.Context {
+	return w.Context
+}
+
+func (w *Window) GetPref() *spspref.Preferences {
+	return &w.Pref
+}
+
+func (w *Window) Update(opts ...Option) {
+	for _, opt := range opts {
+		opt(w)
+	}
+}
+
 func (w *Window) LogPrefix() string {
-	return fmt.Sprintf("Window {ID: %v Title: %s}", w.Opts.ID, w.Opts.Title)
+	return fmt.Sprintf("Window {ID: %v Title: %s}", w.ID, w.Title)
 }
 
 func (w *Window) Run() {
@@ -243,7 +257,7 @@ func (w *Window) Layout(gtx layout.Context, param any) {
 
 func (w *Window) decorationsFlexChild() layout.FlexChild {
 	return layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		return material.Decorations(w.Theme, &w.Deco, ^system.Action(0), w.Opts.Title).Layout(gtx)
+		return material.Decorations(w.Theme, &w.Deco, ^system.Action(0), w.Title).Layout(gtx)
 	})
 }
 

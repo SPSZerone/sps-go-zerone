@@ -26,7 +26,7 @@ func Run(newWindow spsgio.NewWindow, opts ...Option) {
 		defer os.Exit(0)
 
 		a := NewApp(ctx, newWindow, opts...)
-		win := newWindow(a)
+		win := newWindow(a, nil)
 		if win == nil {
 			return
 		}
@@ -79,6 +79,10 @@ func (a *App) UpdateOpts(opts ...Option) {
 
 func (a *App) GetContext() context.Context {
 	return a.Context
+}
+
+func (a *App) GetPref() *spspref.Preferences {
+	return &a.Pref
 }
 
 func (a *App) Run(win spsgio.Window) {

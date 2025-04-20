@@ -18,7 +18,7 @@ func NewBag(name string) Bag {
 			Flex: layout.Flex{
 				Axis: layout.Horizontal,
 			},
-			Ratio: 0.2,
+			Ratio: 0,
 		},
 
 		Grid: NewGrid(),

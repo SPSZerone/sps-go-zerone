@@ -1,5 +1,9 @@
 package generic
 
+type Byte interface {
+	~byte
+}
+
 type SInt interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64
 }
@@ -14,6 +18,14 @@ type Integer interface {
 
 type Float interface {
 	~float32 | ~float64
+}
+
+type Complex interface {
+	~complex64 | ~complex128
+}
+
+type Numeric interface {
+	Byte | Integer | Float
 }
 
 type List[T any] []T

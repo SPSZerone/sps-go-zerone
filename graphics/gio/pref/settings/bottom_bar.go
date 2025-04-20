@@ -3,26 +3,22 @@ package settings
 import (
 	"gioui.org/app"
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
+	spsbool "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/wgtbool"
 )
 
 func NewBottomBar() BottomBar {
 	return BottomBar{
-		Bool: setting.Bool{
-			Name: "Bottom Bar",
-			Desc: "Use Bottom Bar",
-			Bool: widget.Bool{
-				Value: false,
-			},
-		},
+		Bool: spsbool.NewBool(
+			spsbool.OptName("Bottom Bar"),
+			spsbool.OptDesc("Use Bottom Bar"),
+		),
 	}
 }
 
 type BottomBar struct {
-	setting.Bool
+	spsbool.Bool
 }
 
 func (b *BottomBar) FlexChild(

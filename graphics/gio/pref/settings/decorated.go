@@ -3,26 +3,22 @@ package settings
 import (
 	"gioui.org/app"
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
+	spsbool "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/wgtbool"
 )
 
 func NewDecorated() Decorated {
 	return Decorated{
-		Bool: setting.Bool{
-			Name: "Decorated",
-			Desc: "Use decorated",
-			Bool: widget.Bool{
-				Value: false,
-			},
-		},
+		Bool: spsbool.NewBool(
+			spsbool.OptName("Decorated"),
+			spsbool.OptDesc("Use decorated"),
+		),
 	}
 }
 
 type Decorated struct {
-	setting.Bool
+	spsbool.Bool
 }
 
 func (d *Decorated) FlexChild(

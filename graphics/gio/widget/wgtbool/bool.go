@@ -1,4 +1,4 @@
-package setting
+package wgtbool
 
 import (
 	"gioui.org/layout"
@@ -8,10 +8,26 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
+func NewBool(opts ...Option) Bool {
+	b := newBool()
+	b.Update(opts...)
+	return b
+}
+
+func newBool() Bool {
+	return Bool{}
+}
+
 type Bool struct {
 	widget.Bool
 	Name string
 	Desc string
+}
+
+func (b *Bool) Update(opts ...Option) {
+	for _, opt := range opts {
+		opt(b)
+	}
 }
 
 func (b *Bool) Layout(

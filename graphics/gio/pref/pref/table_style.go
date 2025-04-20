@@ -6,12 +6,12 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
+	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/wgtbool"
 )
 
 func NewTableStyle() TableStyle {
 	return TableStyle{
-		Bool: setting.Bool{
+		Bool: wgtbool.Bool{
 			Name: "TableStyle",
 			Desc: "TableStyle",
 			Bool: widget.Bool{
@@ -22,7 +22,7 @@ func NewTableStyle() TableStyle {
 }
 
 type TableStyle struct {
-	setting.Bool
+	wgtbool.Bool
 }
 
 func (s *TableStyle) FlexChild(

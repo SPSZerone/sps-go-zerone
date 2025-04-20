@@ -3,26 +3,23 @@ package settings
 import (
 	"gioui.org/app"
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
+	spsbool "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/wgtbool"
 )
 
 func NewValueInFront() ValueInFront {
 	return ValueInFront{
-		Bool: setting.Bool{
-			Name: "Value In Front",
-			Desc: "Use Value In Front",
-			Bool: widget.Bool{
-				Value: true,
-			},
-		},
+		Bool: spsbool.NewBool(
+			spsbool.OptName("Value In Front"),
+			spsbool.OptDesc("Use Value In Front"),
+			spsbool.OptValue(true),
+		),
 	}
 }
 
 type ValueInFront struct {
-	setting.Bool
+	spsbool.Bool
 }
 
 func (f *ValueInFront) FlexChild(

@@ -3,27 +3,24 @@ package settings
 import (
 	"gioui.org/app"
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
+	spsbool "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/wgtbool"
 )
 
 func NewModalNavDrawer() ModalNavDrawer {
 	return ModalNavDrawer{
-		Bool: setting.Bool{
-			Name: "Use non-modal drawer",
-			Desc: "Use Non-Modal Navigation Drawer",
-			Bool: widget.Bool{
-				Value: true,
-			},
-		},
+		Bool: spsbool.NewBool(
+			spsbool.OptName("Use non-modal drawer"),
+			spsbool.OptDesc("Use Non-Modal Navigation Drawer"),
+			spsbool.OptValue(true),
+		),
 	}
 }
 
 type ModalNavDrawer struct {
-	setting.Bool
+	spsbool.Bool
 }
 
 func (d *ModalNavDrawer) FlexChild(

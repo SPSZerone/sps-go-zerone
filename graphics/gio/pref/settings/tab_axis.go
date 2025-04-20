@@ -3,26 +3,22 @@ package settings
 import (
 	"gioui.org/app"
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/setting"
+	spsbool "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/wgtbool"
 )
 
 func NewTabAxis() TabAxis {
 	return TabAxis{
-		Bool: setting.Bool{
-			Name: "TabAxis Horizontal",
-			Desc: "TabAxis Horizontal",
-			Bool: widget.Bool{
-				Value: false,
-			},
-		},
+		Bool: spsbool.NewBool(
+			spsbool.OptName("TabAxis Horizontal"),
+			spsbool.OptDesc("TabAxis Horizontal"),
+		),
 	}
 }
 
 type TabAxis struct {
-	setting.Bool
+	spsbool.Bool
 }
 
 func (a *TabAxis) GetAxis() layout.Axis {

@@ -6,7 +6,7 @@ import (
 	"gioui.org/app"
 	"gioui.org/io/event"
 
-	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
+	spsapp "github.com/SPSZerone/sps-go-zerone/graphics/gio/app"
 	spsabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
 	spssample "github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample"
@@ -14,21 +14,21 @@ import (
 )
 
 func main() {
-	spsgio.Run(
+	spsapp.Run(
 		NewWindow,
-		spsgio.OptOnCreate(func(app *spsgio.App) {
+		spsapp.OptOnCreate(func(app *spsapp.App) {
 			app.Logger.Info().Msg("Window SPS Sample Create")
 		}),
-		spsgio.OptOnStart(func(app *spsgio.App) {
+		spsapp.OptOnStart(func(app *spsapp.App) {
 			app.Logger.Info().Msg("Window SPS Sample Start")
 		}),
-		spsgio.OptOnStop(func(app *spsgio.App) {
+		spsapp.OptOnStop(func(app *spsapp.App) {
 			app.Logger.Info().Msg("Window SPS Sample Stop")
 		}),
 	)
 }
 
-func NewWindow(app *spsgio.App) *spswin.Window {
+func NewWindow(app *spsapp.App) *spswin.Window {
 	return spswin.NewWindow(app.Context,
 		spswin.OptID("Main"),
 		spswin.OptTitle("SPS Sample"),

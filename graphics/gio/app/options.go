@@ -1,4 +1,4 @@
-package gio
+package app
 
 import (
 	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"

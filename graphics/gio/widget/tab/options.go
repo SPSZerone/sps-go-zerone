@@ -3,7 +3,7 @@ package tab
 import (
 	"gioui.org/layout"
 
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/pref/settings"
+	spssettings "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref/settings"
 )
 
 func NewOptions(opts ...Option) Options {
@@ -19,7 +19,7 @@ type Options struct {
 	WidthWhenVertical int
 
 	Axis        layout.Axis
-	AxisSetting *settings.TabAxis
+	AxisSetting *spssettings.TabAxis
 }
 
 func (o *Options) Update(opts ...Option) {
@@ -42,7 +42,7 @@ func OptAxis(value layout.Axis) Option {
 	}
 }
 
-func OptAxisSetting(value *settings.TabAxis) Option {
+func OptAxisSetting(value *spssettings.TabAxis) Option {
 	return func(o *Options) {
 		o.AxisSetting = value
 	}

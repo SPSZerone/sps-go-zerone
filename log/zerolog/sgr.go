@@ -1,8 +1,9 @@
 package zerolog
 
 import (
-	"github.com/SPSZerone/sps-go-zerone/ansi"
 	"github.com/rs/zerolog"
+
+	"github.com/SPSZerone/sps-go-zerone/ansi"
 )
 
 func SGRTimestamp() ansi.SGR {

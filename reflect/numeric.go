@@ -3,20 +3,20 @@ package reflect
 import (
 	"reflect"
 
-	"github.com/SPSZerone/sps-go-zerone/generic"
+	spsgeneric "github.com/SPSZerone/sps-go-zerone/generic"
 )
 
-func NumericByName[T generic.Numeric](a any, name string, args ...any) (t T) {
+func NumericByName[T spsgeneric.Numeric](a any, name string, args ...any) (t T) {
 	result := CallResultByName(a, name, args...)
 	return Numeric[T](result)
 }
 
-func NumericByIndex[T generic.Numeric](a any, index int, args ...any) (t T) {
+func NumericByIndex[T spsgeneric.Numeric](a any, index int, args ...any) (t T) {
 	result := CallResultByIndex(a, index, args...)
 	return Numeric[T](result)
 }
 
-func Numeric[T generic.Numeric](v reflect.Value) (t T) {
+func Numeric[T spsgeneric.Numeric](v reflect.Value) (t T) {
 	switch v.Kind() {
 	case reflect.Float32, reflect.Float64:
 		return T(v.Float())

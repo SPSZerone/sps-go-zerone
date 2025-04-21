@@ -18,13 +18,16 @@ type Bags struct {
 	Bags []Bag
 }
 
-func (b *Bags) Layout(theme *material.Theme, gtx layout.Context, param any, bagData Data) layout.Dimensions {
+func (b *Bags) Layout(
+	theme *material.Theme, gtx layout.Context, param any,
+	itemDataSource ItemDataSource,
+) layout.Dimensions {
 	return b.Tabs.Layout(theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		bag := b.GetBag(selected)
 		if bag == nil {
 			return layout.Dimensions{}
 		}
-		bag.UpdateItems(bagData(selected))
+		bag.UpdateItems(itemDataSource(selected))
 		return bag.Layout(theme, gtx, param)
 	})
 }

@@ -47,9 +47,6 @@ type Options struct {
 	BgColor        color.NRGBA
 	HighlightStyle HighlightStyle
 
-	LayoutContent LayoutContent
-	LayoutDetail  LayoutDetail
-
 	Data any
 }
 
@@ -86,17 +83,5 @@ func OptBgColor(value color.NRGBA) Option {
 func OptHighlightStyle(value HighlightStyle) Option {
 	return func(o *Options) {
 		o.HighlightStyle = value
-	}
-}
-
-func OptLayoutContent(value LayoutContent) Option {
-	return func(o *Options) {
-		o.LayoutContent = value
-	}
-}
-
-func OptLayoutDetail(value LayoutDetail) Option {
-	return func(o *Options) {
-		o.LayoutDetail = value
 	}
 }

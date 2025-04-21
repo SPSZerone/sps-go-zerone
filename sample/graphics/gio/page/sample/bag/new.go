@@ -7,16 +7,10 @@ import (
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 )
 
-func NewItem(data Data, theme *material.Theme) Item {
+func NewItem(data Data, theme *material.Theme) *Item {
 	item := newItem(data)
-	item.Init(
-		NewSPSItem(
-			spsitem.OptData(item),
-			spsitem.OptLayoutContent(item.LayoutContent),
-			spsitem.OptLayoutDetail(item.LayoutDetail),
-		),
-		theme,
-	)
+	spsItem := NewSPSItem(spsitem.OptData(item))
+	item.Init(spsItem, theme)
 	return item
 }
 

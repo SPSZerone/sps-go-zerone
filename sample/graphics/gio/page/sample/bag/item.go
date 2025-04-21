@@ -11,6 +11,7 @@ import (
 	"gioui.org/x/component"
 
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spsslider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/slider"
@@ -18,12 +19,14 @@ import (
 	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
-func newItem(data Data) Item {
-	return Item{
+func newItem(data Data) *Item {
+	return &Item{
 		UI:   NewUI(),
 		Data: data,
 	}
 }
+
+var _ spsbag.Item = (*Item)(nil)
 
 type Item struct {
 	spsitem.Item
@@ -75,6 +78,12 @@ func (i *Item) InitMenu(theme *material.Theme) {
 	}
 }
 
+func (i *Item) Layout(
+	theme *material.Theme, gtx layout.Context, highlight bool,
+) (dimensions layout.Dimensions, clicked bool) {
+	return i.Item.Layout(theme, gtx, highlight, i.LayoutContent)
+}
+
 func (i *Item) LayoutContent(
 	theme *material.Theme, gtx layout.Context,
 	item *spsitem.Item, layoutCtx spsitem.LayoutContext,
@@ -98,7 +107,6 @@ func (i *Item) LayoutContent(
 
 func (i *Item) LayoutDetail(
 	theme *material.Theme, gtx layout.Context,
-	item *spsitem.Item,
 ) layout.Dimensions {
 	return layout.Flex{
 		Alignment: layout.Middle,

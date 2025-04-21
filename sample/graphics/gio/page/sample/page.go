@@ -12,7 +12,6 @@ import (
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
-	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 
 	"github.com/SPSZerone/sps-go-zerone/sample/graphics/gio/page/sample/bag"
@@ -94,7 +93,7 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 		case TabIdxBags:
 			return p.Bags.Layout(
 				theme, gtx, param,
-				func(index int) (items []spsitem.Item, itemUpdateTime time.Time) {
+				func(index int) (items []spsbag.Item, itemUpdateTime time.Time) {
 					return p.BagData.GetItems(index)
 				},
 			)

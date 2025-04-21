@@ -33,6 +33,7 @@ func (i *Item) Update(opts ...Option) {
 
 func (i *Item) Layout(
 	theme *material.Theme, gtx layout.Context, highlight bool,
+	layoutContent LayoutContent,
 ) (dimensions layout.Dimensions, clicked bool) {
 	layoutCtx := LayoutContext{
 		ContentWidth:       gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentWidth)),
@@ -77,10 +78,10 @@ func (i *Item) Layout(
 		}),
 		// content
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			if i.Opts.LayoutContent == nil {
+			if layoutContent == nil {
 				return layout.Dimensions{}
 			}
-			return i.Opts.LayoutContent(theme, gtx, i, layoutCtx)
+			return layoutContent(theme, gtx, i, layoutCtx)
 		}),
 		// highlight
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {

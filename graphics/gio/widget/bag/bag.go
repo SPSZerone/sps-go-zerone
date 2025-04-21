@@ -7,7 +7,6 @@ import (
 	"gioui.org/widget/material"
 
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
-	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
@@ -25,8 +24,6 @@ func NewBag(name string) Bag {
 		DetailList: spslist.NewList(),
 	}
 }
-
-type Data func(index int) (items []spsitem.Item, itemUpdateTime time.Time)
 
 type Bag struct {
 	Name  string
@@ -57,11 +54,7 @@ func (b *Bag) Layout(
 						if b.Grid.ItemSelected == nil {
 							return layout.Dimensions{}
 						}
-						layoutDetail := b.Grid.ItemSelected.Opts.LayoutDetail
-						if layoutDetail == nil {
-							return layout.Dimensions{}
-						}
-						return layoutDetail(theme, gtx, b.Grid.ItemSelected)
+						return b.Grid.ItemSelected.LayoutDetail(theme, gtx)
 					})
 				},
 			)
@@ -69,6 +62,6 @@ func (b *Bag) Layout(
 	)
 }
 
-func (b *Bag) UpdateItems(items []spsitem.Item, itemUpdateTime time.Time) {
+func (b *Bag) UpdateItems(items []Item, itemUpdateTime time.Time) {
 	b.Grid.UpdateItems(items, itemUpdateTime)
 }

@@ -45,7 +45,7 @@ func (b *Bool) Layout(
 	} else {
 		aWidget, bWidget = key, value
 	}
-	return spslayout.FlexInset{Ratio: ratioInFront}.LayoutABWidget(gtx, aWidget, bWidget)
+	return spslayout.FlexInset{}.LayoutFlexedWidgetAB(gtx, ratioInFront, aWidget, bWidget)
 }
 
 func (b *Bool) LayoutSwitch(

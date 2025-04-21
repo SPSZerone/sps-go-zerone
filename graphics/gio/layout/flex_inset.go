@@ -7,44 +7,64 @@ import (
 
 var DefaultInset = layout.UniformInset(unit.Dp(4))
 
+type FlexedWidget func() (weight float32, widget layout.Widget)
+
 type FlexInset struct {
 	Flex  layout.Flex
 	Inset layout.Inset
-
-	Ratio float32
 }
 
-func (f FlexInset) LayoutABWidget(gtx layout.Context, aWidget, bWidget layout.Widget) layout.Dimensions {
-	if f.Ratio == 0 {
-		f.Ratio = 0.333
+func (f FlexInset) LayoutRigidWidgets(gtx layout.Context, widgets ...layout.Widget) layout.Dimensions {
+	inset := f.GetInset()
+	children := make([]layout.FlexChild, len(widgets))
+	for i, widget := range widgets {
+		children[i] = layout.Rigid(
+			func(gtx layout.Context) layout.Dimensions {
+				return inset.Layout(gtx, widget)
+			},
+		)
 	}
-	if f.Inset == (layout.Inset{}) {
-		f.Inset = DefaultInset
+	return f.Flex.Layout(gtx, children...)
+}
+
+func (f FlexInset) LayoutFlexedWidgetAB(
+	gtx layout.Context,
+	ratio float32,
+	aWidget, bWidget layout.Widget,
+) layout.Dimensions {
+	if ratio == 0 {
+		ratio = 0.333
 	}
+	inset := f.GetInset()
 	return f.Flex.Layout(
 		gtx,
-		layout.Flexed(f.Ratio, func(gtx layout.Context) layout.Dimensions {
-			return f.Inset.Layout(gtx, aWidget)
+		layout.Flexed(ratio, func(gtx layout.Context) layout.Dimensions {
+			return inset.Layout(gtx, aWidget)
 		}),
-		layout.Flexed(1-f.Ratio, func(gtx layout.Context) layout.Dimensions {
-			return f.Inset.Layout(gtx, bWidget)
+		layout.Flexed(1-ratio, func(gtx layout.Context) layout.Dimensions {
+			return inset.Layout(gtx, bWidget)
 		}),
 	)
 }
 
-func (f FlexInset) LayoutWidgets(gtx layout.Context, widgets ...func() (float32, layout.Widget)) layout.Dimensions {
-	if f.Inset == (layout.Inset{}) {
-		f.Inset = DefaultInset
-	}
-	flexChildren := make([]layout.FlexChild, len(widgets))
+func (f FlexInset) LayoutFlexedWidgets(gtx layout.Context, widgets ...FlexedWidget) layout.Dimensions {
+	inset := f.GetInset()
+	children := make([]layout.FlexChild, len(widgets))
 	for i, customWidget := range widgets {
 		ratio, widget := customWidget()
-		flexChildren[i] = layout.Flexed(
+		children[i] = layout.Flexed(
 			ratio,
 			func(gtx layout.Context) layout.Dimensions {
-				return f.Inset.Layout(gtx, widget)
+				return inset.Layout(gtx, widget)
 			},
 		)
 	}
-	return f.Flex.Layout(gtx, flexChildren...)
+	return f.Flex.Layout(gtx, children...)
+}
+
+func (f FlexInset) GetInset() layout.Inset {
+	if f.Inset == (layout.Inset{}) {
+		return DefaultInset
+	}
+	return f.Inset
 }

@@ -80,10 +80,9 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 }
 
 func (p *Page) LayoutInfo(theme *material.Theme, gtx layout.Context, name, value string) layout.Dimensions {
-	return spslayout.FlexInset{
-		Ratio: 0.2,
-	}.LayoutABWidget(
+	return spslayout.FlexInset{}.LayoutFlexedWidgetAB(
 		gtx,
+		0.2,
 		material.H6(theme, name).Layout,
 		material.Body1(theme, value).Layout,
 	)

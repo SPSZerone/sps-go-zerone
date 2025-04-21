@@ -33,7 +33,7 @@ func (p *Page) LayoutPrefTableStyle(win spsgio.Window, gtx layout.Context) layou
 		aWidget, bWidget = key, value
 		ratio = RatioKey
 	}
-	return spslayout.FlexInset{Ratio: ratio}.LayoutABWidget(gtx, aWidget, bWidget)
+	return spslayout.FlexInset{}.LayoutFlexedWidgetAB(gtx, ratio, aWidget, bWidget)
 }
 
 func (p *Page) TableStyle(win spsgio.Window, gtx layout.Context) layout.Dimensions {

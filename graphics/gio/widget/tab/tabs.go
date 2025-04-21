@@ -237,7 +237,7 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 					}
 				}
 
-				return material.Clickable(gtx, &tab.Clickable, func(gtx layout.Context) layout.Dimensions {
+				return tab.Clickable.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 					dims := layout.UniformInset(unit.Dp(12)).Layout(
 						gtx,
 						func(gtx layout.Context) layout.Dimensions {

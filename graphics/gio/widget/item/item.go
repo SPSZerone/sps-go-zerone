@@ -66,12 +66,14 @@ func (i *Item) Layout(
 			if i.UI.Clickable.Clicked(gtx) {
 				clicked = true
 			}
-			clickDimensions := material.Clickable(gtx, &i.UI.Clickable, func(gtx layout.Context) layout.Dimensions {
-				return layout.Dimensions{
-					Size: layoutCtx.Size,
-				}
-			})
-			return clickDimensions
+			return i.UI.Clickable.Layout(
+				gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					return layout.Dimensions{
+						Size: layoutCtx.Size,
+					}
+				},
+			)
 		}),
 		// content
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {

@@ -10,8 +10,8 @@ import (
 	spsapp "github.com/SPSZerone/sps-go-zerone/graphics/gio/app"
 	spsabout "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/about"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/page/pref"
-	spssample "github.com/SPSZerone/sps-go-zerone/graphics/gio/sample/page/sample"
 	spswin "github.com/SPSZerone/sps-go-zerone/graphics/gio/window"
+	spssample "github.com/SPSZerone/sps-go-zerone/sample/page/sample"
 )
 
 const (

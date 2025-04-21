@@ -27,7 +27,6 @@ func NewBag(name string) Bag {
 }
 
 type Data func(index int) (items []spsitem.Item, itemUpdateTime time.Time)
-type ItemData func() (items []spsitem.Item, itemUpdateTime time.Time)
 
 type Bag struct {
 	Name  string
@@ -39,7 +38,6 @@ type Bag struct {
 
 func (b *Bag) Layout(
 	theme *material.Theme, gtx layout.Context, param any,
-	itemData ItemData,
 ) layout.Dimensions {
 	return layout.Flex{
 		Alignment: layout.Middle,
@@ -50,7 +48,7 @@ func (b *Bag) Layout(
 				gtx,
 				// item grid
 				func(gtx layout.Context) layout.Dimensions {
-					return b.Grid.Layout(theme, gtx, itemData)
+					return b.Grid.Layout(theme, gtx)
 				},
 				// item detail
 				func(gtx layout.Context) layout.Dimensions {
@@ -69,4 +67,8 @@ func (b *Bag) Layout(
 			)
 		}),
 	)
+}
+
+func (b *Bag) UpdateItems(items []spsitem.Item, itemUpdateTime time.Time) {
+	b.Grid.UpdateItems(items, itemUpdateTime)
 }

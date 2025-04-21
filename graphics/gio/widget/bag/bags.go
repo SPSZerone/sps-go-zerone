@@ -1,12 +1,9 @@
 package bag
 
 import (
-	"time"
-
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
-	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 )
 
@@ -27,9 +24,8 @@ func (b *Bags) Layout(theme *material.Theme, gtx layout.Context, param any, bagD
 		if bag == nil {
 			return layout.Dimensions{}
 		}
-		return bag.Layout(theme, gtx, param, func() (items []spsitem.Item, itemUpdateTime time.Time) {
-			return bagData(selected)
-		})
+		bag.UpdateItems(bagData(selected))
+		return bag.Layout(theme, gtx, param)
 	})
 }
 

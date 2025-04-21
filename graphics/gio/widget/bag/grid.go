@@ -26,9 +26,7 @@ type Grid struct {
 	ItemSelected   *spsitem.Item
 }
 
-func (g *Grid) Layout(theme *material.Theme, gtx layout.Context, itemData ItemData) layout.Dimensions {
-	g.UpdateItems(itemData())
-
+func (g *Grid) Layout(theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	return g.Grid.Layout(theme, gtx, g.GetItemCount(), func(gtx layout.Context, index int) layout.Dimensions {
 		curItem := g.GetItem(index)
 		highlight := curItem == g.ItemSelected

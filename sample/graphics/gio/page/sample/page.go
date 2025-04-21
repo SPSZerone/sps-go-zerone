@@ -15,7 +15,7 @@ import (
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 
-	"github.com/SPSZerone/sps-go-zerone/sample/page/sample/bag"
+	"github.com/SPSZerone/sps-go-zerone/sample/graphics/gio/page/sample/bag"
 )
 
 const (

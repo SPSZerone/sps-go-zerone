@@ -41,7 +41,7 @@ func New(theme *material.Theme, pages spsgio.Pages) *Page {
 	)
 	for i := 0; i < 32; i++ {
 		bags.AddBag(
-			spsbag.NewBag(fmt.Sprintf("Bag %v", i)),
+			spsbag.NewBag(i, fmt.Sprintf("Bag %v", i)),
 		)
 	}
 	p := &Page{

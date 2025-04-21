@@ -78,9 +78,9 @@ func (t *Tabs) UpdateTabs(cb func(idx int, tab *Tab) (stop bool)) {
 	}
 }
 
-func (t *Tabs) GetTab(cb func(idx int, tab Tab) (ok bool)) *Tab {
+func (t *Tabs) GetTab(cb func(idx int, tab *Tab) (ok bool)) *Tab {
 	for i := 0; i < len(t.Tabs); i++ {
-		if cb(i, t.Tabs[i]) {
+		if cb(i, &t.Tabs[i]) {
 			return &t.Tabs[i]
 		}
 	}
@@ -98,14 +98,14 @@ func (t *Tabs) GetTabByIdx(index int) *Tab {
 	return &t.Tabs[index]
 }
 
-func (t *Tabs) DelTab(cb func(idx int, tab Tab) (del bool)) {
+func (t *Tabs) DelTab(cb func(idx int, tab *Tab) (del bool)) {
 	if len(t.Tabs) == 0 {
 		return
 	}
 
 	delIndexes := make([]int, len(t.Tabs))
 	for i, tab := range t.Tabs {
-		if cb(i, tab) {
+		if cb(i, &tab) {
 			delIndexes = append(delIndexes, i)
 		}
 	}

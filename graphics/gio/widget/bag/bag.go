@@ -10,7 +10,7 @@ import (
 	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
-func NewBag(name string) Bag {
+func NewBag(id any, name string) Bag {
 	return Bag{
 		Name: name,
 		Split: spslayout.Split{
@@ -26,7 +26,9 @@ func NewBag(name string) Bag {
 }
 
 type Bag struct {
-	Name  string
+	Id   any
+	Name string
+
 	Split spslayout.Split
 
 	Grid       Grid

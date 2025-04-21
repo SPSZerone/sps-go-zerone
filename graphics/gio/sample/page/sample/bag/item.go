@@ -145,6 +145,7 @@ func (i *Item) LayoutUseEditor(theme *material.Theme, gtx layout.Context) layout
 	return layout.Flex{
 		Axis: layout.Horizontal,
 	}.Layout(gtx,
+		spacer,
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 			return i.UI.LayoutUseEditor(theme, gtx)
 		}),
@@ -152,6 +153,7 @@ func (i *Item) LayoutUseEditor(theme *material.Theme, gtx layout.Context) layout
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return i.UI.LayoutUseEditorBtn(theme, gtx)
 		}),
+		spacer,
 	)
 }
 
@@ -162,6 +164,7 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 	return layout.Flex{
 		Axis: layout.Horizontal,
 	}.Layout(gtx,
+		spacer,
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 			return i.UI.LayoutUseSlider(theme, gtx, func() {
 
@@ -171,6 +174,7 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return i.UI.LayoutUseSliderBtn(theme, gtx)
 		}),
+		spacer,
 	)
 }
 

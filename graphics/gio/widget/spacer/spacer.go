@@ -34,5 +34,5 @@ type Spacer struct {
 }
 
 func (s Spacer) Layout(gtx layout.Context) layout.Dimensions {
-	return layout.Spacer{Height: unit.Dp(8)}.Layout(gtx)
+	return s.Spacer.Layout(gtx)
 }

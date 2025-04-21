@@ -7,11 +7,11 @@ import (
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/unit"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 
 	spsslice "github.com/SPSZerone/sps-go-zerone/generic/slice"
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
+	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
 func NewTabsByNames(names []string, opts ...Option) Tabs {
@@ -35,11 +35,7 @@ func NewTabs(opts ...Option) Tabs {
 func newTabs() Tabs {
 	return Tabs{
 		Opts: NewOptions(),
-		List: widget.List{
-			List: layout.List{
-				Axis: layout.Vertical,
-			},
-		},
+		List: spslist.NewList(),
 	}
 }
 
@@ -48,7 +44,7 @@ type Content func(gtx layout.Context, selected int) layout.Dimensions
 type Tabs struct {
 	Opts Options
 
-	List widget.List
+	List spslist.List
 	Tabs []Tab
 
 	selected int
@@ -220,7 +216,7 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 		}
 	}
 
-	return material.List(theme, &t.List).Layout(gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
+	return t.List.Layout(theme, gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
 		if tab.Clickable.Clicked(gtx) {
 			if t.selected < tabIdx {

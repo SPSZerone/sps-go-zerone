@@ -3,13 +3,13 @@ package about
 import (
 	"gioui.org/io/event"
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
 const (
@@ -28,7 +28,7 @@ func New(pages spsgio.Pages) *Page {
 var _ spsgio.Page = (*Page)(nil)
 
 type Page struct {
-	widget.List
+	spslist.List
 	spsgio.Pages
 }
 
@@ -58,7 +58,7 @@ func (p *Page) OnEventPost(win spsgio.Window, evt event.Event, param any) {
 func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
 	p.List.Axis = layout.Vertical
 	theme := win.GetTheme()
-	return material.List(theme, &p.List).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+	return p.List.Layout(theme, gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return layout.Flex{
 			Alignment: layout.Middle,
 			Axis:      layout.Vertical,

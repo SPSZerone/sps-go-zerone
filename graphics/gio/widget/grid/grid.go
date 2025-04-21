@@ -2,18 +2,15 @@ package grid
 
 import (
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/outlay"
+
+	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
 func NewGrid() Grid {
 	return Grid{
-		list: widget.List{
-			List: layout.List{
-				Axis: layout.Vertical,
-			},
-		},
+		list: spslist.NewList(),
 
 		Wrap:      true,
 		Axis:      layout.Horizontal,
@@ -23,7 +20,7 @@ func NewGrid() Grid {
 }
 
 type Grid struct {
-	list widget.List
+	list spslist.List
 
 	Axis      layout.Axis
 	Alignment layout.Alignment
@@ -32,7 +29,7 @@ type Grid struct {
 }
 
 func (g *Grid) Layout(theme *material.Theme, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
-	return material.List(theme, &g.list).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+	return g.list.Layout(theme, gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 		return g.LayoutContent(theme, gtx, num, element)
 	})
 }

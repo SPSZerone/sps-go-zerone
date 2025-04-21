@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"gioui.org/layout"
-	"gioui.org/widget"
 	"gioui.org/widget/material"
 
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
+	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
 func NewBag(name string) Bag {
@@ -21,12 +21,8 @@ func NewBag(name string) Bag {
 			Ratio: 0,
 		},
 
-		Grid: NewGrid(),
-		DetailList: widget.List{
-			List: layout.List{
-				Axis: layout.Vertical,
-			},
-		},
+		Grid:       NewGrid(),
+		DetailList: spslist.NewList(),
 	}
 }
 
@@ -38,7 +34,7 @@ type Bag struct {
 	Split spslayout.Split
 
 	Grid       Grid
-	DetailList widget.List
+	DetailList spslist.List
 }
 
 func (b *Bag) Layout(
@@ -59,7 +55,7 @@ func (b *Bag) Layout(
 				// item detail
 				func(gtx layout.Context) layout.Dimensions {
 					b.DetailList.Axis = layout.Vertical
-					return material.List(theme, &b.DetailList).Layout(gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+					return b.DetailList.Layout(theme, gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
 						if b.Grid.ItemSelected == nil {
 							return layout.Dimensions{}
 						}

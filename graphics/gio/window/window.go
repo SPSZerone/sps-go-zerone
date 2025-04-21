@@ -21,14 +21,16 @@ import (
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
-func NewWindow(ctx context.Context, opts ...Option) *Window {
-	ctx, cancel := context.WithCancel(ctx)
+func NewWindow(app spsgio.App, opts ...Option) *Window {
+	ctx, cancel := context.WithCancel(app.GetContext())
 	a := &Window{
 		Context:  ctx,
 		Shutdown: cancel,
 		Logger:   spslog.NewLogger(),
 
 		Pref: spspref.NewPreferences(),
+
+		App: app,
 	}
 	a.Init(opts...)
 	return a
@@ -53,12 +55,13 @@ type Window struct {
 	Pref spspref.Preferences
 	Opts Options
 
-	Window *app.Window
-	Pages  Pages
+	App   spsgio.App
+	Pages Pages
 
-	Ops   op.Ops
-	Theme *material.Theme
-	Deco  widget.Decorations
+	Window *app.Window
+	Ops    op.Ops
+	Theme  *material.Theme
+	Deco   widget.Decorations
 
 	ChanParam chan any
 
@@ -106,6 +109,10 @@ func (w *Window) GetContext() context.Context {
 
 func (w *Window) GetPref() *spspref.Preferences {
 	return &w.Pref
+}
+
+func (w *Window) GetApp() spsgio.App {
+	return w.App
 }
 
 func (w *Window) GetPages() spsgio.Pages {

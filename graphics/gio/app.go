@@ -20,6 +20,7 @@ type App interface {
 
 	Run(win Window)
 	RunWindow(win Window)
+	GetWindows() []Window
 
 	GetLogger() *zerolog.Logger
 }

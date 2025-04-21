@@ -10,6 +10,7 @@ import (
 	"gioui.org/app"
 	"github.com/rs/zerolog"
 
+	spsslice "github.com/SPSZerone/sps-go-zerone/generic/slice"
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
@@ -43,7 +44,6 @@ func NewApp(ctx context.Context, newWindow spsgio.NewWindow, opts ...Option) *Ap
 		Shutdown: cancel,
 
 		Pref: spspref.NewPreferences(),
-
 		Opts: NewOptions(newWindow, opts...),
 
 		Logger: spslog.NewLogger(),
@@ -59,6 +59,9 @@ type App struct {
 
 	Pref spspref.Preferences
 	Opts Options
+
+	Windows []spsgio.Window
+	WinLock sync.RWMutex
 
 	Logger zerolog.Logger
 }
@@ -117,9 +120,42 @@ func (a *App) GoRun(run func()) {
 }
 
 func (a *App) RunWindow(win spsgio.Window) {
+	a.AddWindows(win)
+
 	a.GoRun(func() {
+		defer a.DelWindows(win)
+
 		win.Run()
 	})
+}
+
+func (a *App) GetWindows() []spsgio.Window {
+	return a.Windows
+}
+
+func (a *App) AddWindows(win spsgio.Window) []spsgio.Window {
+	a.WinLock.Lock()
+	defer a.WinLock.Unlock()
+
+	a.Windows = append(a.Windows, win)
+	return a.Windows
+}
+
+func (a *App) DelWindows(win spsgio.Window) []spsgio.Window {
+	a.WinLock.Lock()
+	defer a.WinLock.Unlock()
+
+	rmIdx := -1
+	for i, w := range a.Windows {
+		if w != win {
+			continue
+		}
+		rmIdx = i
+		break
+	}
+
+	a.Windows = spsslice.RemoveFast(a.Windows, rmIdx)
+	return a.Windows
 }
 
 func (a *App) GetLogger() *zerolog.Logger {

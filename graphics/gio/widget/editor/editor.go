@@ -24,8 +24,8 @@ func NewEditor(opts ...Option) Editor {
 	}
 }
 
-type OnSubmit func(e *Editor)
-type Style func(e *Editor, s *material.EditorStyle)
+type OnSubmit func(editor *Editor)
+type Style func(editor *Editor, style *material.EditorStyle)
 
 type Editor struct {
 	widget.Editor

@@ -42,8 +42,8 @@ func (u *UI) LayoutUseEditorBtn(theme *material.Theme, gtx layout.Context) layou
 	return material.Button(theme, &u.UseEditorBtn, "Use").Layout(gtx)
 }
 
-func (u *UI) LayoutUseSlider(theme *material.Theme, gtx layout.Context, onValueChanged spsslider.OnValueChanged) layout.Dimensions {
-	return u.UseSlider.LayoutSlider(theme, gtx, onValueChanged)
+func (u *UI) LayoutUseSlider(theme *material.Theme, gtx layout.Context, style spsslider.Style, onValueChanged spsslider.OnValueChanged) layout.Dimensions {
+	return u.UseSlider.LayoutSlider(theme, gtx, style, onValueChanged)
 }
 
 func (u *UI) LayoutUseSliderBtn(theme *material.Theme, gtx layout.Context) layout.Dimensions {

@@ -13,6 +13,7 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
+	spsslider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/slider"
 	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
@@ -166,9 +167,15 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 	}.Layout(gtx,
 		spacer,
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-			return i.UI.LayoutUseSlider(theme, gtx, func() {
+			return i.UI.LayoutUseSlider(
+				theme, gtx,
+				func(slider *spsslider.Slider, style *material.SliderStyle) {
 
-			})
+				},
+				func(slider *spsslider.Slider) {
+
+				},
+			)
 		}),
 		spacer,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {

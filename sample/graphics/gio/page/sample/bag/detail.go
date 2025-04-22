@@ -104,15 +104,15 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 }
 
 func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, property *Property) layout.Dimensions {
-	ratio := float32(0.2)
+	ratio := float32(0.5)
 	remainRatio := 1 - ratio
 	return property.LayoutFlexWidgets(
 		gtx,
 		func() (weight float32, widget layout.Widget) {
-			weight = remainRatio
+			weight = ratio
 			widget = func(gtx layout.Context) layout.Dimensions {
-				//return property.LayoutRigidKey(theme, gtx)
-				return property.LayoutFlexedKey(theme, gtx, 0.7)
+				return property.LayoutRigidKey(theme, gtx)
+				//return property.LayoutFlexedKey(theme, gtx, 0.7)
 			}
 			return
 		},

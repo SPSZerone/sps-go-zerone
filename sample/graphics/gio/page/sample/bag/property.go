@@ -51,7 +51,7 @@ func (p *Property) LayoutFlexedValue(theme *material.Theme, gtx layout.Context, 
 }
 
 func LayoutFlexed(theme *material.Theme, gtx layout.Context, copy *spscopy.Copy, ratio float32, content string) layout.Dimensions {
-	return copy.LayoutCopyFlexedContent(
+	return copy.LayoutFlexedContent(
 		gtx,
 		1-ratio,
 		func(gtx layout.Context) layout.Dimensions {
@@ -71,10 +71,10 @@ func LayoutFlexed(theme *material.Theme, gtx layout.Context, copy *spscopy.Copy,
 }
 
 func LayoutRigid(theme *material.Theme, gtx layout.Context, copy *spscopy.Copy, content string) layout.Dimensions {
-	return copy.LayoutCopyRigidContent(
+	return copy.LayoutRigidContent(
 		gtx,
 		func(gtx layout.Context) layout.Dimensions {
-			return material.Button(theme, copy.GetClickable(), "Copy").Layout(gtx)
+			return copy.LayoutCopyWidget(theme, gtx)
 		},
 		func() string {
 			return content

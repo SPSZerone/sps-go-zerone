@@ -6,11 +6,6 @@ import (
 	"gioui.org/widget"
 )
 
-var NavigationMenu = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.NavigationMenu)
-	return icon
-}()
-
 var ActionCompareArrows = func() *widget.Icon {
 	icon, _ := widget.NewIcon(icons.ActionCompareArrows)
 	return icon
@@ -243,75 +238,5 @@ var ActionZoomIn = func() *widget.Icon {
 
 var ActionZoomOut = func() *widget.Icon {
 	icon, _ := widget.NewIcon(icons.ActionZoomOut)
-	return icon
-}()
-
-var ImageCompare = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ImageCompare)
-	return icon
-}()
-
-var EditorMergeType = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.EditorMergeType)
-	return icon
-}()
-
-var EditorModeEdit = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.EditorModeEdit)
-	return icon
-}()
-
-var EditorPublish = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.EditorPublish)
-	return icon
-}()
-
-var ContentArchive = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentArchive)
-	return icon
-}()
-
-var ContentClear = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentClear)
-	return icon
-}()
-
-var ContentCreate = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentCreate)
-	return icon
-}()
-
-var ContentAdd = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentAdd)
-	return icon
-}()
-
-var ContentAddBox = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentAddBox)
-	return icon
-}()
-
-var ContentAddCircle = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentAddCircle)
-	return icon
-}()
-
-var ContentAddCircleOutline = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentAddCircleOutline)
-	return icon
-}()
-
-var ContentSave = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.ContentSave)
-	return icon
-}()
-
-var FileFolder = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.FileFolder)
-	return icon
-}()
-
-var FileFolderOpen = func() *widget.Icon {
-	icon, _ := widget.NewIcon(icons.FileFolderOpen)
 	return icon
 }()

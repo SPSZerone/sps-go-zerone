@@ -68,7 +68,8 @@ func (c *Copy) LayoutCopyRigidContent(
 }
 
 func (c *Copy) doLayoutCopyRigidContent(
-	gtx layout.Context, clickWidget layout.Widget,
+	gtx layout.Context,
+	clickWidget layout.Widget,
 	onCopy OnCopy,
 	contentWidgets ...layout.Widget,
 ) layout.Dimensions {
@@ -83,6 +84,41 @@ func (c *Copy) doLayoutCopyRigidContent(
 	}
 	widgets = append(widgets, copyWidget)
 	return c.LayoutRigidWidgets(gtx, widgets...)
+}
+
+func (c *Copy) LayoutCopyFlexedContent(
+	gtx layout.Context,
+	clickWidget layout.Widget,
+	onCopy OnCopy,
+	contentWidgets ...spslayout.FlexedWidget,
+) layout.Dimensions {
+	if c.WithBorder {
+		return c.Border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+			return c.doLayoutCopyFlexedContent(gtx, clickWidget, onCopy, contentWidgets...)
+		})
+	}
+	return c.doLayoutCopyFlexedContent(gtx, clickWidget, onCopy, contentWidgets...)
+}
+
+func (c *Copy) doLayoutCopyFlexedContent(
+	gtx layout.Context,
+	clickWidget layout.Widget,
+	onCopy OnCopy,
+	contentWidgets ...spslayout.FlexedWidget,
+) layout.Dimensions {
+	widgets := make([]spslayout.FlexedWidget, 0, len(contentWidgets)+1)
+	for _, contentWidget := range contentWidgets {
+		widgets = append(widgets, contentWidget)
+	}
+	copyWidget := func() (weight float32, widget layout.Widget) {
+		weight = 0.3
+		widget = func(gtx layout.Context) layout.Dimensions {
+			return c.LayoutCopy(gtx, clickWidget, onCopy)
+		}
+		return
+	}
+	widgets = append(widgets, copyWidget)
+	return c.LayoutFlexedWidgets(gtx, widgets...)
 }
 
 func (c *Copy) NewSpacer() (spacer spsspacer.Spacer) {

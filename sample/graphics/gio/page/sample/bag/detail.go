@@ -111,14 +111,16 @@ func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, p
 		func() (weight float32, widget layout.Widget) {
 			weight = remainRatio
 			widget = func(gtx layout.Context) layout.Dimensions {
-				return property.LayoutKey(theme, gtx)
+				//return property.LayoutRigidKey(theme, gtx)
+				return property.LayoutFlexedKey(theme, gtx, 0.8)
 			}
 			return
 		},
 		func() (weight float32, widget layout.Widget) {
 			weight = remainRatio
 			widget = func(gtx layout.Context) layout.Dimensions {
-				return property.LayoutValue(theme, gtx)
+				//return property.LayoutRigidValue(theme, gtx)
+				return property.LayoutFlexedValue(theme, gtx, 0.8)
 			}
 			return
 		},

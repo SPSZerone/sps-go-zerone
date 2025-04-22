@@ -8,14 +8,22 @@ import (
 )
 
 func NewWithUniformSpacer(spacer int) Property {
-	return New(spacer, spacer, spacer)
+	return NewWithSpacer(spacer, spacer, spacer)
 }
 
 func NewWithStartEndSpacer(spacerStart, spacerEnd int) Property {
-	return New(spacerStart, 0, spacerEnd)
+	return NewWithSpacer(spacerStart, 0, spacerEnd)
 }
 
-func New(spacerStart, spacerMiddle, spacerEnd int) Property {
+func NewWithSpacer(spacerStart, spacerMiddle, spacerEnd int) Property {
+	p := New()
+	p.SpacerStart = spacerStart
+	p.SpacerMiddle = spacerMiddle
+	p.SpacerEnd = spacerEnd
+	return p
+}
+
+func New() Property {
 	return Property{
 		FlexInset: spslayout.FlexInset{
 			Flex: layout.Flex{
@@ -23,9 +31,6 @@ func New(spacerStart, spacerMiddle, spacerEnd int) Property {
 				Alignment: layout.Baseline,
 			},
 		},
-		SpacerStart:  spacerStart,
-		SpacerMiddle: spacerMiddle,
-		SpacerEnd:    spacerEnd,
 	}
 }
 

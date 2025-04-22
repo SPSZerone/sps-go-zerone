@@ -22,10 +22,16 @@ func (i *Item) LayoutContent(
 		Axis:      layout.Vertical,
 	}.Layout(gtx,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return material.H6(theme, fmt.Sprintf("%v", i.Id)).Layout(gtx)
+			property := i.Data.GetProperty(PropertyKeyId)
+			return material.H6(theme, fmt.Sprintf("%v", property.Value)).Layout(gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return material.H6(theme, i.Name).Layout(gtx)
+			property := i.Data.GetProperty(PropertyKeyName)
+			return material.H6(theme, fmt.Sprintf("%v", property.Value)).Layout(gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			property := i.Data.GetProperty(PropertyKeyIcon)
+			return material.H6(theme, fmt.Sprintf("%v", property.Value)).Layout(gtx)
 		}),
 	)
 }

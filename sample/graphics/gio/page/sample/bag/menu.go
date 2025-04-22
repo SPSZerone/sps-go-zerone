@@ -31,14 +31,33 @@ func (i *Item) InitMenu(theme *material.Theme) {
 			func(gtx layout.Context) layout.Dimensions {
 				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
 					func(gtx layout.Context) layout.Dimensions {
-						return i.LayoutContentProperty(theme, gtx, "Id", fmt.Sprintf(" %v", i.Id))
+						property := i.Data.GetProperty(PropertyKeyId)
+						return i.LayoutContentProperty(theme, gtx,
+							fmt.Sprintf("%v", property.Key),
+							fmt.Sprintf(" %v", property.Value),
+						)
 					},
 				)
 			},
 			func(gtx layout.Context) layout.Dimensions {
 				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
 					func(gtx layout.Context) layout.Dimensions {
-						return i.LayoutContentProperty(theme, gtx, "Name", fmt.Sprintf(" %v", i.Name))
+						property := i.Data.GetProperty(PropertyKeyName)
+						return i.LayoutContentProperty(theme, gtx,
+							fmt.Sprintf("%v", property.Key),
+							fmt.Sprintf(" %v", property.Value),
+						)
+					},
+				)
+			},
+			func(gtx layout.Context) layout.Dimensions {
+				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
+					func(gtx layout.Context) layout.Dimensions {
+						property := i.Data.GetProperty(PropertyKeyIcon)
+						return i.LayoutContentProperty(theme, gtx,
+							fmt.Sprintf("%v", property.Key),
+							fmt.Sprintf(" %v", property.Value),
+						)
 					},
 				)
 			},

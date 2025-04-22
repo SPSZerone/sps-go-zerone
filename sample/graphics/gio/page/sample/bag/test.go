@@ -9,23 +9,73 @@ import (
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 )
 
+type PropertyKey int
+
+const (
+	PropertyKeyId PropertyKey = iota
+	PropertyKeyName
+	PropertyKeyIcon
+	PropertyKeyMAX
+)
+
 func NewTestData(theme *material.Theme, groupCount, count int) TestData {
-	d := TestData{
+	testData := TestData{
 		UpdateTime: time.Now(),
 	}
-	d.Items = make([][]spsbag.Item, groupCount)
+	testData.Items = make([][]spsbag.Item, groupCount)
 	for i := 0; i < groupCount; i++ {
-		d.Items[i] = make([]spsbag.Item, count)
+		testData.Items[i] = make([]spsbag.Item, count)
 		for j := 0; j < count; j++ {
-			id := fmt.Sprintf("%v-%v", i, j)
-			name := fmt.Sprintf("n-%v-%v", i, j)
-			d.Items[i][j] = NewItem(NewData(id, name), theme)
+			data := NewData()
+			data.AddProperties(NewTestProperties(i, j)...)
+			testData.Items[i][j] = NewItem(data, theme)
 		}
 	}
-	return d
+	return testData
+}
+
+func NewTestProperties(i, j int) []Property {
+	properties := make([]Property, PropertyKeyMAX)
+	for key := PropertyKey(0); key < PropertyKeyMAX; key++ {
+		properties[key] = NewProperty(GetTestKey(key), GetTestValue(key, i, j))
+	}
+	return properties
+}
+
+func GetTestKey(key PropertyKey) any {
+	switch key {
+	case PropertyKeyId:
+		return "Id"
+	case PropertyKeyName:
+		return "Name"
+	case PropertyKeyIcon:
+		return "Icon"
+	default:
+	}
+	return ""
+}
+
+func GetTestValue(key PropertyKey, i, j int) any {
+	switch key {
+	case PropertyKeyId:
+		return fmt.Sprintf("id-%v-%v", i, j)
+	case PropertyKeyName:
+		return fmt.Sprintf("name-%v-%v", i, j)
+	case PropertyKeyIcon:
+		return fmt.Sprintf("icon-%v-%v", i, j)
+	default:
+	}
+	return ""
 }
 
 type TestData struct {
 	Items      [][]spsbag.Item
 	UpdateTime time.Time
+}
+
+func (d *TestData) GetItems(index int) ([]spsbag.Item, time.Time) {
+	if index < 0 || index >= len(d.Items) {
+		return nil, d.UpdateTime
+	}
+	return d.Items[index], d.UpdateTime
 }

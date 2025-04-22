@@ -1,7 +1,11 @@
 package copy
 
 import (
+	"image/color"
+
 	"gioui.org/layout"
+	"gioui.org/unit"
+	"gioui.org/widget"
 
 	spsclipboard "github.com/SPSZerone/sps-go-zerone/clipboard"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
@@ -12,33 +16,59 @@ import (
 type Widget func() (widget layout.Widget)
 type OnCopy func() string
 
+func New() Copy {
+	return Copy{
+		FlexInset: spslayout.New(),
+		Spacer:    4,
+		Clickable: spsclickable.New(),
+		Border: widget.Border{
+			Color: color.NRGBA{A: 255},
+			Width: unit.Dp(2),
+		},
+	}
+}
+
 type Copy struct {
 	spslayout.FlexInset
 
+	Border widget.Border
 	Spacer int
 
 	Clickable spsclickable.Clickable
 }
 
-func (c *Copy) Layout(
-	gtx layout.Context,
-	contentWidget, clickWidget layout.Widget,
-	onCopy OnCopy,
+func (c *Copy) GetClickable() *widget.Clickable {
+	return c.Clickable.GetClickable()
+}
+
+func (c *Copy) LayoutCopy(
+	gtx layout.Context, clickWidget layout.Widget, onCopy OnCopy,
+) layout.Dimensions {
+	if c.Clickable.Clicked(gtx) {
+		if onCopy != nil {
+			spsclipboard.WriteTextString(onCopy())
+		}
+	}
+	return c.Clickable.Layout(gtx, clickWidget)
+}
+
+func (c *Copy) LayoutCopyRigidContent(
+	gtx layout.Context, clickWidget layout.Widget, onCopy OnCopy,
+	contentWidgets ...layout.Widget,
 ) layout.Dimensions {
 	spacer := c.NewSpacer()
-	return c.LayoutRigidWidgets(
-		gtx,
-		contentWidget,
-		spacer.Layout,
-		func(gtx layout.Context) layout.Dimensions {
-			if c.Clickable.Clicked(gtx) {
-				if onCopy != nil {
-					spsclipboard.WriteTextString(onCopy())
-				}
-			}
-			return c.Clickable.Layout(gtx, clickWidget)
-		},
-	)
+	return c.Border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+		widgets := make([]layout.Widget, 0, len(contentWidgets)+1)
+		for _, contentWidget := range contentWidgets {
+			widgets = append(widgets, contentWidget)
+			widgets = append(widgets, spacer.Layout)
+		}
+		copyWidget := func(gtx layout.Context) layout.Dimensions {
+			return c.LayoutCopy(gtx, clickWidget, onCopy)
+		}
+		widgets = append(widgets, copyWidget)
+		return c.LayoutRigidWidgets(gtx, widgets...)
+	})
 }
 
 func (c *Copy) NewSpacer() (spacer spsspacer.Spacer) {

@@ -9,6 +9,15 @@ var DefaultInset = layout.UniformInset(unit.Dp(4))
 
 type FlexedWidget func() (weight float32, widget layout.Widget)
 
+func New() FlexInset {
+	return FlexInset{
+		Flex: layout.Flex{
+			Axis:      layout.Horizontal,
+			Alignment: layout.Baseline,
+		},
+	}
+}
+
 type FlexInset struct {
 	Flex  layout.Flex
 	Inset layout.Inset

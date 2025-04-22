@@ -1,16 +1,12 @@
 package bag
 
 import (
-	"fmt"
-
 	"gioui.org/font"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
-	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/clickable"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
-	spsproperty "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/property"
 	spsslider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/slider"
 	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
@@ -50,10 +46,13 @@ func (i *Item) LayoutDetail(
 			return spsdivider.Divider{}.Layout(theme, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return i.LayoutDetailProperty(theme, gtx, "Id", fmt.Sprintf("%v", i.Id))
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyId))
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return i.LayoutDetailProperty(theme, gtx, "Name", fmt.Sprintf("%v", i.Name))
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyName))
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyIcon))
 		}),
 	)
 }
@@ -104,30 +103,22 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 	)
 }
 
-func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, name, value string) layout.Dimensions {
-	property := spsproperty.NewWithStartEndSpacer(4, 4)
+func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, property *Property) layout.Dimensions {
 	ratio := float32(0.2)
 	remainRatio := 1 - ratio
 	return property.LayoutFlexWidgets(
 		gtx,
 		func() (weight float32, widget layout.Widget) {
-			weight = ratio
-			widget = material.H6(theme, name).Layout
-			return
-		},
-		func() (weight float32, widget layout.Widget) {
-			weight = remainRatio * 0.8
-			widget = material.Body1(theme, value).Layout
-			return
-		},
-		func() (weight float32, widget layout.Widget) {
-			weight = remainRatio * 0.2
+			weight = remainRatio
 			widget = func(gtx layout.Context) layout.Dimensions {
-				// TODO
-				copyClickable := clickable.Clickable{}
-				return copyClickable.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-					return material.Button(theme, &copyClickable.Clickable, "Copy").Layout(gtx)
-				})
+				return property.LayoutKey(theme, gtx)
+			}
+			return
+		},
+		func() (weight float32, widget layout.Widget) {
+			weight = remainRatio
+			widget = func(gtx layout.Context) layout.Dimensions {
+				return property.LayoutValue(theme, gtx)
 			}
 			return
 		},

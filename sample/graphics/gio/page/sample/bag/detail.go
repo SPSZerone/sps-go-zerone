@@ -104,17 +104,10 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 }
 
 func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, name, value string) layout.Dimensions {
-	property := spsproperty.NewWithUniformSpacer(4)
-	return property.LayoutRigidWidgets(
+	property := spsproperty.NewWithStartEndSpacer(4, 4)
+	return property.LayoutFlexWidgetAB(
 		gtx,
-		material.H6(theme, name).Layout,
-		material.Body1(theme, value).Layout,
-	)
-}
-
-func (i *Item) LayoutDetailProperty1(theme *material.Theme, gtx layout.Context, name, value string) layout.Dimensions {
-	return spslayout.FlexInset{}.LayoutFlexedWidgetAB(
-		gtx, 0.2,
+		0.2,
 		material.H6(theme, name).Layout,
 		material.Body1(theme, value).Layout,
 	)

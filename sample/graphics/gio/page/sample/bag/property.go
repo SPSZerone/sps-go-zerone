@@ -12,9 +12,11 @@ import (
 
 func NewProperty(key, value any) Property {
 	return Property{
-		Property: spsproperty.New(),
-		Key:      key,
-		Value:    value,
+		Property:  spsproperty.New(),
+		CopyKey:   spscopy.New(),
+		CopyValue: spscopy.New(),
+		Key:       key,
+		Value:     value,
 	}
 }
 

@@ -25,14 +25,16 @@ func New() Copy {
 			Color: color.NRGBA{A: 255},
 			Width: unit.Dp(2),
 		},
+		WithBorder: true,
 	}
 }
 
 type Copy struct {
 	spslayout.FlexInset
 
-	Border widget.Border
-	Spacer int
+	Border     widget.Border
+	WithBorder bool
+	Spacer     int
 
 	Clickable spsclickable.Clickable
 }
@@ -53,22 +55,34 @@ func (c *Copy) LayoutCopy(
 }
 
 func (c *Copy) LayoutCopyRigidContent(
-	gtx layout.Context, clickWidget layout.Widget, onCopy OnCopy,
+	gtx layout.Context, clickWidget layout.Widget,
+	onCopy OnCopy,
+	contentWidgets ...layout.Widget,
+) layout.Dimensions {
+	if c.WithBorder {
+		return c.Border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+			return c.doLayoutCopyRigidContent(gtx, clickWidget, onCopy, contentWidgets...)
+		})
+	}
+	return c.doLayoutCopyRigidContent(gtx, clickWidget, onCopy, contentWidgets...)
+}
+
+func (c *Copy) doLayoutCopyRigidContent(
+	gtx layout.Context, clickWidget layout.Widget,
+	onCopy OnCopy,
 	contentWidgets ...layout.Widget,
 ) layout.Dimensions {
 	spacer := c.NewSpacer()
-	return c.Border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-		widgets := make([]layout.Widget, 0, len(contentWidgets)+1)
-		for _, contentWidget := range contentWidgets {
-			widgets = append(widgets, contentWidget)
-			widgets = append(widgets, spacer.Layout)
-		}
-		copyWidget := func(gtx layout.Context) layout.Dimensions {
-			return c.LayoutCopy(gtx, clickWidget, onCopy)
-		}
-		widgets = append(widgets, copyWidget)
-		return c.LayoutRigidWidgets(gtx, widgets...)
-	})
+	widgets := make([]layout.Widget, 0, len(contentWidgets)+1)
+	for _, contentWidget := range contentWidgets {
+		widgets = append(widgets, contentWidget)
+		widgets = append(widgets, spacer.Layout)
+	}
+	copyWidget := func(gtx layout.Context) layout.Dimensions {
+		return c.LayoutCopy(gtx, clickWidget, onCopy)
+	}
+	widgets = append(widgets, copyWidget)
+	return c.LayoutRigidWidgets(gtx, widgets...)
 }
 
 func (c *Copy) NewSpacer() (spacer spsspacer.Spacer) {

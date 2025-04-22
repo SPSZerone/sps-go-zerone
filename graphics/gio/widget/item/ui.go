@@ -5,8 +5,6 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
-
-	spsclickable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/clickable"
 )
 
 func NewUI() UI {
@@ -14,7 +12,7 @@ func NewUI() UI {
 }
 
 type UI struct {
-	Clickable   spsclickable.Clickable
+	Clickable   widget.Clickable
 	Menu        component.MenuState
 	MenuItems   []widget.Clickable
 	ContextArea component.ContextArea

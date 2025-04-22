@@ -112,7 +112,7 @@ func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, p
 			weight = remainRatio
 			widget = func(gtx layout.Context) layout.Dimensions {
 				//return property.LayoutRigidKey(theme, gtx)
-				return property.LayoutFlexedKey(theme, gtx, 0.8)
+				return property.LayoutFlexedKey(theme, gtx, 0.7)
 			}
 			return
 		},
@@ -120,7 +120,7 @@ func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, p
 			weight = remainRatio
 			widget = func(gtx layout.Context) layout.Dimensions {
 				//return property.LayoutRigidValue(theme, gtx)
-				return property.LayoutFlexedValue(theme, gtx, 0.8)
+				return property.LayoutFlexedValue(theme, gtx, 0.7)
 			}
 			return
 		},

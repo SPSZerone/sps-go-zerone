@@ -9,7 +9,6 @@ import (
 
 	spsclipboard "github.com/SPSZerone/sps-go-zerone/clipboard"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
-	spsclickable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/clickable"
 	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 )
 
@@ -20,7 +19,6 @@ func New() Copy {
 	return Copy{
 		FlexInset: spslayout.New(),
 		Spacer:    4,
-		Clickable: spsclickable.New(),
 		Border: widget.Border{
 			Color: color.NRGBA{A: 255},
 			Width: unit.Dp(2),
@@ -30,17 +28,17 @@ func New() Copy {
 }
 
 type Copy struct {
-	spslayout.FlexInset
+	FlexInset spslayout.FlexInset
 
 	Border     widget.Border
 	WithBorder bool
 	Spacer     int
 
-	Clickable spsclickable.Clickable
+	Clickable widget.Clickable
 }
 
 func (c *Copy) GetClickable() *widget.Clickable {
-	return c.Clickable.GetClickable()
+	return &c.Clickable
 }
 
 func (c *Copy) LayoutCopy(
@@ -55,21 +53,22 @@ func (c *Copy) LayoutCopy(
 }
 
 func (c *Copy) LayoutCopyRigidContent(
-	gtx layout.Context, clickWidget layout.Widget,
+	gtx layout.Context,
+	copyWidget layout.Widget,
 	onCopy OnCopy,
 	contentWidgets ...layout.Widget,
 ) layout.Dimensions {
 	if c.WithBorder {
 		return c.Border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-			return c.doLayoutCopyRigidContent(gtx, clickWidget, onCopy, contentWidgets...)
+			return c.doLayoutCopyRigidContent(gtx, copyWidget, onCopy, contentWidgets...)
 		})
 	}
-	return c.doLayoutCopyRigidContent(gtx, clickWidget, onCopy, contentWidgets...)
+	return c.doLayoutCopyRigidContent(gtx, copyWidget, onCopy, contentWidgets...)
 }
 
 func (c *Copy) doLayoutCopyRigidContent(
 	gtx layout.Context,
-	clickWidget layout.Widget,
+	copyWidget layout.Widget,
 	onCopy OnCopy,
 	contentWidgets ...layout.Widget,
 ) layout.Dimensions {
@@ -79,30 +78,31 @@ func (c *Copy) doLayoutCopyRigidContent(
 		widgets = append(widgets, contentWidget)
 		widgets = append(widgets, spacer.Layout)
 	}
-	copyWidget := func(gtx layout.Context) layout.Dimensions {
-		return c.LayoutCopy(gtx, clickWidget, onCopy)
-	}
-	widgets = append(widgets, copyWidget)
-	return c.LayoutRigidWidgets(gtx, widgets...)
+	widgets = append(widgets, func(gtx layout.Context) layout.Dimensions {
+		return c.LayoutCopy(gtx, copyWidget, onCopy)
+	})
+	return c.FlexInset.LayoutRigidWidgets(gtx, widgets...)
 }
 
 func (c *Copy) LayoutCopyFlexedContent(
 	gtx layout.Context,
-	clickWidget layout.Widget,
+	copyWeight float32,
+	copyWidget layout.Widget,
 	onCopy OnCopy,
 	contentWidgets ...spslayout.FlexedWidget,
 ) layout.Dimensions {
 	if c.WithBorder {
 		return c.Border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-			return c.doLayoutCopyFlexedContent(gtx, clickWidget, onCopy, contentWidgets...)
+			return c.doLayoutCopyFlexedContent(gtx, copyWeight, copyWidget, onCopy, contentWidgets...)
 		})
 	}
-	return c.doLayoutCopyFlexedContent(gtx, clickWidget, onCopy, contentWidgets...)
+	return c.doLayoutCopyFlexedContent(gtx, copyWeight, copyWidget, onCopy, contentWidgets...)
 }
 
 func (c *Copy) doLayoutCopyFlexedContent(
 	gtx layout.Context,
-	clickWidget layout.Widget,
+	copyWeight float32,
+	copyWidget layout.Widget,
 	onCopy OnCopy,
 	contentWidgets ...spslayout.FlexedWidget,
 ) layout.Dimensions {
@@ -110,19 +110,18 @@ func (c *Copy) doLayoutCopyFlexedContent(
 	for _, contentWidget := range contentWidgets {
 		widgets = append(widgets, contentWidget)
 	}
-	copyWidget := func() (weight float32, widget layout.Widget) {
-		weight = 0.3
+	widgets = append(widgets, func() (weight float32, widget layout.Widget) {
+		weight = copyWeight
 		widget = func(gtx layout.Context) layout.Dimensions {
-			return c.LayoutCopy(gtx, clickWidget, onCopy)
+			return c.LayoutCopy(gtx, copyWidget, onCopy)
 		}
 		return
-	}
-	widgets = append(widgets, copyWidget)
-	return c.LayoutFlexedWidgets(gtx, widgets...)
+	})
+	return c.FlexInset.LayoutFlexedWidgets(gtx, widgets...)
 }
 
 func (c *Copy) NewSpacer() (spacer spsspacer.Spacer) {
-	if c.Flex.Axis == layout.Horizontal {
+	if c.FlexInset.Flex.Axis == layout.Horizontal {
 		spacer = spsspacer.NewWidthSpacer(c.Spacer)
 	} else {
 		spacer = spsspacer.NewHeightSpacer(c.Spacer)

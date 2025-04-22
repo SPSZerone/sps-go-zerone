@@ -53,6 +53,7 @@ func (p *Property) LayoutFlexedValue(theme *material.Theme, gtx layout.Context, 
 func LayoutFlexed(theme *material.Theme, gtx layout.Context, copy *spscopy.Copy, ratio float32, content string) layout.Dimensions {
 	return copy.LayoutCopyFlexedContent(
 		gtx,
+		1-ratio,
 		func(gtx layout.Context) layout.Dimensions {
 			return material.Button(theme, copy.GetClickable(), "Copy").Layout(gtx)
 		},

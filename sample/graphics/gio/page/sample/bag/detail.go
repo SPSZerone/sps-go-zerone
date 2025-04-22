@@ -8,6 +8,7 @@ import (
 	"gioui.org/widget/material"
 
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+	"github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/clickable"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsproperty "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/property"
 	spsslider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/slider"
@@ -105,10 +106,30 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 
 func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, name, value string) layout.Dimensions {
 	property := spsproperty.NewWithStartEndSpacer(4, 4)
-	return property.LayoutFlexWidgetAB(
+	ratio := float32(0.2)
+	remainRatio := 1 - ratio
+	return property.LayoutFlexWidgets(
 		gtx,
-		0.2,
-		material.H6(theme, name).Layout,
-		material.Body1(theme, value).Layout,
+		func() (weight float32, widget layout.Widget) {
+			weight = ratio
+			widget = material.H6(theme, name).Layout
+			return
+		},
+		func() (weight float32, widget layout.Widget) {
+			weight = remainRatio * 0.8
+			widget = material.Body1(theme, value).Layout
+			return
+		},
+		func() (weight float32, widget layout.Widget) {
+			weight = remainRatio * 0.2
+			widget = func(gtx layout.Context) layout.Dimensions {
+				// TODO
+				copyClickable := clickable.Clickable{}
+				return copyClickable.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+					return material.Button(theme, &copyClickable.Clickable, "Copy").Layout(gtx)
+				})
+			}
+			return
+		},
 	)
 }

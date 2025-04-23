@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"gioui.org/layout"
+	"gioui.org/unit"
 	"gioui.org/widget/material"
 
 	spscopy "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/copy"
@@ -28,6 +29,36 @@ type Property struct {
 
 	Key   any
 	Value any
+}
+
+func (p *Property) FormatKey() string {
+	return fmt.Sprintf("%v", p.Key)
+}
+
+func (p *Property) FormatValue() string {
+	return fmt.Sprintf("%s", p.Value)
+}
+
+func (p *Property) Layout(theme *material.Theme, gtx layout.Context) layout.Dimensions {
+	return p.CopyValue.LayoutCopyFlexChild(
+		theme,
+		gtx,
+		func() string {
+			return p.FormatValue()
+		},
+		layout.Flexed(0.2, func(gtx layout.Context) layout.Dimensions {
+			return layout.Inset{
+				Left:  unit.Dp(8),
+				Right: unit.Dp(8),
+			}.Layout(gtx, material.H6(theme, p.FormatKey()).Layout)
+		}),
+		layout.Flexed(0.8, func(gtx layout.Context) layout.Dimensions {
+			return layout.Inset{
+				Left:  unit.Dp(8),
+				Right: unit.Dp(8),
+			}.Layout(gtx, material.Body1(theme, p.FormatValue()).Layout)
+		}),
+	)
 }
 
 func (p *Property) LayoutRigidKey(theme *material.Theme, gtx layout.Context) layout.Dimensions {
@@ -74,7 +105,7 @@ func LayoutRigid(theme *material.Theme, gtx layout.Context, copy *spscopy.Copy, 
 	return copy.LayoutRigidContent(
 		gtx,
 		func(gtx layout.Context) layout.Dimensions {
-			return copy.LayoutCopyWidget(theme, gtx)
+			return copy.LayoutCopyIcon(theme, gtx)
 		},
 		func() string {
 			return content

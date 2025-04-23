@@ -104,6 +104,14 @@ func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout
 }
 
 func (i *Item) LayoutDetailProperty(theme *material.Theme, gtx layout.Context, property *Property) layout.Dimensions {
+	return i.LayoutDetailProperty1(theme, gtx, property)
+}
+
+func (i *Item) LayoutDetailProperty1(theme *material.Theme, gtx layout.Context, property *Property) layout.Dimensions {
+	return property.Layout(theme, gtx)
+}
+
+func (i *Item) LayoutDetailProperty2(theme *material.Theme, gtx layout.Context, property *Property) layout.Dimensions {
 	ratio := float32(0.5)
 	remainRatio := 1 - ratio
 	return property.LayoutFlexWidgets(

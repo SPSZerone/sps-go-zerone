@@ -14,6 +14,8 @@ func New() FlexInset {
 		Flex: layout.Flex{
 			Axis:      layout.Horizontal,
 			Alignment: layout.Baseline,
+			Spacing:   layout.SpaceEvenly,
+			WeightSum: 1,
 		},
 	}
 }

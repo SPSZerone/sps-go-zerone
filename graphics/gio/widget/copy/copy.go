@@ -58,24 +58,40 @@ func (c *Copy) Layout(
 
 func (c *Copy) LayoutCopy(
 	theme *material.Theme,
-	gtx layout.Context, onCopy OnCopy,
+	gtx layout.Context,
+	onCopy OnCopy,
 ) layout.Dimensions {
 	return c.Layout(
 		gtx,
 		func(gtx layout.Context) layout.Dimensions {
-			return c.LayoutCopyWidget(theme, gtx)
+			return c.LayoutCopyIcon(theme, gtx)
 		},
 		onCopy,
 	)
 }
 
-func (c *Copy) LayoutCopyWidget(theme *material.Theme, gtx layout.Context) layout.Dimensions {
+func (c *Copy) LayoutCopyIcon(theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	return material.IconButton(
 		theme,
 		&c.Clickable,
 		spsicon.ContentContentCopy,
 		"Copy",
 	).Layout(gtx)
+}
+
+func (c *Copy) LayoutCopyFlexChild(
+	theme *material.Theme,
+	gtx layout.Context,
+	onCopy OnCopy,
+	children ...layout.FlexChild,
+) layout.Dimensions {
+	copyChild := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+		return c.LayoutCopy(theme, gtx, onCopy)
+	})
+	var finalChildren []layout.FlexChild
+	finalChildren = append(finalChildren, children...)
+	finalChildren = append(finalChildren, copyChild)
+	return c.FlexInset.Flex.Layout(gtx, finalChildren...)
 }
 
 func (c *Copy) LayoutRigidContent(

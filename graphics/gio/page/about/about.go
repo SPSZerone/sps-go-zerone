@@ -7,6 +7,7 @@ import (
 	"gioui.org/x/component"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
+	spsnerdfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font/nerdfont"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
@@ -75,6 +76,7 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				return p.LayoutInfo(theme, gtx, "HomePage", HomePage)
 			}),
+			//children...,
 		)
 	})
 }
@@ -83,7 +85,15 @@ func (p *Page) LayoutInfo(theme *material.Theme, gtx layout.Context, name, value
 	return spslayout.FlexInset{}.LayoutFlexedWidgetAB(
 		gtx,
 		0.2,
-		material.H6(theme, name).Layout,
-		material.Body1(theme, value).Layout,
+		func(gtx layout.Context) layout.Dimensions {
+			labelStyle := material.H6(theme, name)
+			labelStyle.Font.Typeface = spsnerdfont.MesloLGSNerdFontMono
+			return labelStyle.Layout(gtx)
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			labelStyle := material.Body1(theme, value)
+			labelStyle.Font.Typeface = spsnerdfont.MesloLGSNerdFontMono
+			return labelStyle.Layout(gtx)
+		},
 	)
 }

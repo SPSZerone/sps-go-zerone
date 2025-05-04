@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"gioui.org/app"
-	"gioui.org/font/gofont"
 	"gioui.org/io/event"
 	"gioui.org/io/system"
 	"gioui.org/layout"
@@ -17,6 +16,7 @@ import (
 	"github.com/rs/zerolog"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
+	spsfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
@@ -82,7 +82,7 @@ func (w *Window) Init(opts ...Option) {
 	w.startAction = w.Opts.StartAction
 
 	theme := material.NewTheme()
-	theme.Shaper = text.NewShaper(text.WithCollection(gofont.Collection()))
+	theme.Shaper = text.NewShaper(text.WithCollection(spsfont.Collection()))
 	w.Theme = theme
 
 	w.Pages = NewPages(w)

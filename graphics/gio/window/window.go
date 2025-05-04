@@ -17,6 +17,7 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font"
+	spsnerdfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font/nerdfont"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
@@ -83,6 +84,7 @@ func (w *Window) Init(opts ...Option) {
 
 	theme := material.NewTheme()
 	theme.Shaper = text.NewShaper(text.WithCollection(spsfont.Collection()))
+	theme.Face = spsnerdfont.MesloLGSNerdFontMono
 	w.Theme = theme
 
 	w.Pages = NewPages(w)

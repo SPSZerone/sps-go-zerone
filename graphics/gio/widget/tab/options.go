@@ -11,7 +11,7 @@ import (
 func NewOptions(opts ...Option) Options {
 	o := Options{
 		Axis:              layout.Vertical,
-		WidthWhenVertical: 100,
+		WidthWhenVertical: 128,
 		Font:              spsnerdfont.MesloLGSNerdFontMono,
 	}
 	o.Update(opts...)

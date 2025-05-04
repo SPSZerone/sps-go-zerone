@@ -43,7 +43,7 @@ func (a *TabAxis) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return a.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
+	return a.Bool.LayoutDefaultKeyWidget(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
 func (a *TabAxis) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {

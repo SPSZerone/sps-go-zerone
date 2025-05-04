@@ -37,7 +37,7 @@ func (f *ValueInFront) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return f.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
+	return f.Bool.LayoutDefaultKeyWidget(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
 func (f *ValueInFront) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {

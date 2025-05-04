@@ -5,6 +5,7 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
+	spsnerdfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font/nerdfont"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
@@ -32,20 +33,41 @@ func (b *Bool) Update(opts ...Option) {
 
 func (b *Bool) Layout(
 	theme *material.Theme, gtx layout.Context,
+	keyWidget layout.Widget,
 	valueInFront bool, ratioInFront float32,
 	onValueChanged func(),
 ) layout.Dimensions {
-	key := material.Body1(theme, b.Name).Layout
-	value := func(gtx layout.Context) layout.Dimensions {
+	if keyWidget == nil {
+		keyWidget = func(gtx layout.Context) layout.Dimensions {
+			labelStyle := material.Body1(theme, b.Name)
+			labelStyle.Font.Typeface = spsnerdfont.MesloLGSNerdFontMono
+			return labelStyle.Layout(gtx)
+		}
+	}
+
+	valueWidget := func(gtx layout.Context) layout.Dimensions {
 		return b.LayoutSwitch(theme, gtx, onValueChanged)
 	}
+
 	var aWidget, bWidget layout.Widget
 	if valueInFront {
-		aWidget, bWidget = value, key
+		aWidget, bWidget = valueWidget, keyWidget
 	} else {
-		aWidget, bWidget = key, value
+		aWidget, bWidget = keyWidget, valueWidget
 	}
 	return spslayout.FlexInset{}.LayoutFlexedWidgetAB(gtx, ratioInFront, aWidget, bWidget)
+}
+
+func (b *Bool) LayoutDefaultKeyWidget(
+	theme *material.Theme, gtx layout.Context,
+	valueInFront bool, ratioInFront float32,
+	onValueChanged func(),
+) layout.Dimensions {
+	return b.Layout(
+		theme, gtx,
+		nil,
+		valueInFront, ratioInFront,
+		onValueChanged)
 }
 
 func (b *Bool) LayoutSwitch(

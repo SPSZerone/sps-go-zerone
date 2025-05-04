@@ -36,7 +36,7 @@ func (b *BottomBar) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return b.Bool.Layout(
+	return b.Bool.LayoutDefaultKeyWidget(
 		theme, gtx,
 		valueInFront, ratioInFront,
 		func() {

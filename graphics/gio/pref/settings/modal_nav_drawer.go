@@ -40,7 +40,7 @@ func (d *ModalNavDrawer) Layout(
 	valueInFront bool, ratioInFront float32,
 	navAnim *component.VisibilityAnimation,
 ) layout.Dimensions {
-	return d.Bool.Layout(
+	return d.Bool.LayoutDefaultKeyWidget(
 		theme, gtx,
 		valueInFront, ratioInFront,
 		func() {

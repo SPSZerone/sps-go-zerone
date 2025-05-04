@@ -242,6 +242,7 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 						gtx,
 						func(gtx layout.Context) layout.Dimensions {
 							name := material.H6(theme, tab.Name)
+							name.Font.Typeface = t.Opts.Font
 							return name.Layout(gtx)
 						},
 					)

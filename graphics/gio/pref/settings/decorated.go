@@ -36,7 +36,7 @@ func (d *Decorated) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return d.Bool.Layout(
+	return d.Bool.LayoutDefaultKeyWidget(
 		theme, gtx,
 		valueInFront, ratioInFront,
 		func() {

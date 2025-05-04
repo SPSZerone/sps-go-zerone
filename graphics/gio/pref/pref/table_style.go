@@ -40,7 +40,7 @@ func (s *TableStyle) Layout(
 	window *app.Window, theme *material.Theme, gtx layout.Context,
 	valueInFront bool, ratioInFront float32,
 ) layout.Dimensions {
-	return s.Bool.Layout(theme, gtx, valueInFront, ratioInFront, nil)
+	return s.Bool.LayoutDefaultKeyWidget(theme, gtx, valueInFront, ratioInFront, nil)
 }
 
 func (s *TableStyle) LayoutSwitch(window *app.Window, theme *material.Theme, gtx layout.Context) layout.Dimensions {

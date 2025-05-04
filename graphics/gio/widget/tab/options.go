@@ -1,8 +1,10 @@
 package tab
 
 import (
+	"gioui.org/font"
 	"gioui.org/layout"
 
+	spsnerdfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font/nerdfont"
 	spssettings "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref/settings"
 )
 
@@ -10,6 +12,7 @@ func NewOptions(opts ...Option) Options {
 	o := Options{
 		Axis:              layout.Vertical,
 		WidthWhenVertical: 100,
+		Font:              spsnerdfont.MesloLGSNerdFontMono,
 	}
 	o.Update(opts...)
 	return o
@@ -20,6 +23,8 @@ type Options struct {
 
 	Axis        layout.Axis
 	AxisSetting *spssettings.TabAxis
+
+	Font font.Typeface
 }
 
 func (o *Options) Update(opts ...Option) {
@@ -45,5 +50,11 @@ func OptAxis(value layout.Axis) Option {
 func OptAxisSetting(value *spssettings.TabAxis) Option {
 	return func(o *Options) {
 		o.AxisSetting = value
+	}
+}
+
+func OptFont(value font.Typeface) Option {
+	return func(o *Options) {
+		o.Font = value
 	}
 }

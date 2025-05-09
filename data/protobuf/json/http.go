@@ -6,6 +6,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	spshttp "github.com/SPSZerone/sps-go-zerone/net/http"
+	spsheader "github.com/SPSZerone/sps-go-zerone/net/http/header"
 )
 
 func NewHttpWriter(msg proto.Message, opts ...MarshalOption) *HttpWriter {
@@ -26,7 +27,7 @@ func (w *HttpWriter) Render(writer http.ResponseWriter) error {
 }
 
 func (w *HttpWriter) WriteContentType(writer http.ResponseWriter) {
-	spshttp.HeaderSetContentTypeJsonUtf8(writer)
+	spsheader.SetContentTypeJsonUtf8(writer)
 }
 
 func WriteJsonUtf8(w http.ResponseWriter, msg proto.Message, opts ...MarshalOption) (int, error) {

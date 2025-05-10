@@ -8,7 +8,6 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/unit"
 	"gioui.org/widget/material"
-	"gioui.org/x/component"
 
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
 )
@@ -103,12 +102,7 @@ func (i *Item) Layout(
 			}
 		}),
 		// menu
-		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
-			return i.UI.ContextArea.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				gtx.Constraints.Min = image.Point{}
-				return component.Menu(theme, &i.UI.Menu).Layout(gtx)
-			})
-		}),
+		i.UI.Menu.LayoutExpandedContextArea(theme, gtx),
 	)
 
 	return

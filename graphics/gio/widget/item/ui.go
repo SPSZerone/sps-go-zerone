@@ -7,6 +7,7 @@ import (
 	"gioui.org/x/component"
 
 	spsclickable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/clickable"
+	spsmenu "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/menu"
 )
 
 func NewUI() UI {
@@ -14,10 +15,9 @@ func NewUI() UI {
 }
 
 type UI struct {
-	Clickable   spsclickable.Clickable
-	Menu        component.MenuState
-	MenuItems   []widget.Clickable
-	ContextArea component.ContextArea
+	Clickable spsclickable.Clickable
+	Menu      spsmenu.Menu
+	MenuItems []widget.Clickable
 }
 
 func Divider(theme *material.Theme, gtx layout.Context, item *Item, layoutCtx LayoutContext) layout.Dimensions {

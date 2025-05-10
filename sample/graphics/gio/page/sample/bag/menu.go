@@ -18,55 +18,53 @@ func (i *Item) InitMenu(theme *material.Theme) {
 	item.UI.MenuItems = []widget.Clickable{
 		{},
 	}
-	item.UI.Menu = component.MenuState{
-		Options: []func(gtx layout.Context) layout.Dimensions{
-			func(gtx layout.Context) layout.Dimensions {
-				return spssurface.NewSurface().Layout(theme, gtx, func(gtx layout.Context) layout.Dimensions {
-					return material.H6(theme, "Item Info").Layout(gtx)
-				})
-			},
-			func(gtx layout.Context) layout.Dimensions {
-				return spsdivider.Divider{}.Layout(theme, gtx)
-			},
-			func(gtx layout.Context) layout.Dimensions {
-				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
-					func(gtx layout.Context) layout.Dimensions {
-						property := i.Data.GetProperty(PropertyKeyId)
-						return i.LayoutContentProperty(theme, gtx,
-							fmt.Sprintf("%v", property.Key),
-							fmt.Sprintf(" %v", property.Value),
-						)
-					},
-				)
-			},
-			func(gtx layout.Context) layout.Dimensions {
-				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
-					func(gtx layout.Context) layout.Dimensions {
-						property := i.Data.GetProperty(PropertyKeyName)
-						return i.LayoutContentProperty(theme, gtx,
-							fmt.Sprintf("%v", property.Key),
-							fmt.Sprintf(" %v", property.Value),
-						)
-					},
-				)
-			},
-			func(gtx layout.Context) layout.Dimensions {
-				return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
-					func(gtx layout.Context) layout.Dimensions {
-						property := i.Data.GetProperty(PropertyKeyIcon)
-						return i.LayoutContentProperty(theme, gtx,
-							fmt.Sprintf("%v", property.Key),
-							fmt.Sprintf(" %v", property.Value),
-						)
-					},
-				)
-			},
-			func(gtx layout.Context) layout.Dimensions {
-				return spsdivider.Divider{Subheading: "Action"}.Layout(theme, gtx)
-			},
-			func(gtx layout.Context) layout.Dimensions {
-				return component.MenuItem(theme, &item.UI.MenuItems[0], "Use").Layout(gtx)
-			},
+	item.UI.Menu.AddWidgets(
+		func(gtx layout.Context) layout.Dimensions {
+			return spssurface.NewSurface().Layout(theme, gtx, func(gtx layout.Context) layout.Dimensions {
+				return material.H6(theme, "Item Info").Layout(gtx)
+			})
 		},
-	}
+		func(gtx layout.Context) layout.Dimensions {
+			return spsdivider.Divider{}.Layout(theme, gtx)
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					property := i.Data.GetProperty(PropertyKeyId)
+					return i.LayoutContentProperty(theme, gtx,
+						fmt.Sprintf("%v", property.Key),
+						fmt.Sprintf(" %v", property.Value),
+					)
+				},
+			)
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					property := i.Data.GetProperty(PropertyKeyName)
+					return i.LayoutContentProperty(theme, gtx,
+						fmt.Sprintf("%v", property.Key),
+						fmt.Sprintf(" %v", property.Value),
+					)
+				},
+			)
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return layout.Inset{Left: unit.Dp(16), Right: unit.Dp(16)}.Layout(gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					property := i.Data.GetProperty(PropertyKeyIcon)
+					return i.LayoutContentProperty(theme, gtx,
+						fmt.Sprintf("%v", property.Key),
+						fmt.Sprintf(" %v", property.Value),
+					)
+				},
+			)
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return spsdivider.Divider{Subheading: "Action"}.Layout(theme, gtx)
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return component.MenuItem(theme, &item.UI.MenuItems[0], "Use").Layout(gtx)
+		},
+	)
 }

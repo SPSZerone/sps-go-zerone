@@ -14,20 +14,27 @@ import (
 
 func NewUI() UI {
 	return UI{
-		MenuDetail: spsmenu.New(),
-		UseEditor:  spseditor.NewEditor(spseditor.OptHint("use count")),
-		UseSlider:  spsslider.NewSlider(),
+		UseEditor: spseditor.NewEditor(spseditor.OptHint("use count")),
+		UseSlider: spsslider.NewSlider(),
 	}
 }
 
 type UI struct {
-	MenuDetail spsmenu.Menu
+	MenuDetail []spsmenu.Menu
 
 	UseEditor    spseditor.Editor
 	UseEditorBtn widget.Clickable
 
 	UseSlider    spsslider.Slider
 	UseSliderBtn widget.Clickable
+}
+
+func (u *UI) GetMenuDetail(index int) *spsmenu.Menu {
+	if index < 0 || index >= len(u.MenuDetail) {
+		u.MenuDetail = append(u.MenuDetail, spsmenu.New())
+		return &u.MenuDetail[len(u.MenuDetail)-1]
+	}
+	return &u.MenuDetail[index]
 }
 
 func (u *UI) LayoutUseEditor(theme *material.Theme, gtx layout.Context) layout.Dimensions {

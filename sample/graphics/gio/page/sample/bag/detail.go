@@ -16,6 +16,17 @@ import (
 func (i *Item) LayoutDetail(
 	theme *material.Theme, gtx layout.Context,
 ) layout.Dimensions {
+	menuWidgets := []func(gtx layout.Context) layout.Dimensions{
+		func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyId))
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyName))
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyIcon))
+		},
+	}
 	return layout.Flex{
 		Alignment: layout.Middle,
 		Axis:      layout.Vertical,
@@ -27,12 +38,22 @@ func (i *Item) LayoutDetail(
 			return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return i.UI.MenuDetail.Layout(
+			return i.UI.GetMenuDetail(0).SetWidgets(menuWidgets...).Layout(
 				theme, gtx,
 				layout.W,
 				image.Pt(gtx.Constraints.Max.X>>1, 0),
 				func(gtx layout.Context) layout.Dimensions {
 					return material.H6(theme, "Menu ...").Layout(gtx)
+				},
+			)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return i.UI.GetMenuDetail(1).SetWidgets(menuWidgets...).Layout(
+				theme, gtx,
+				layout.W,
+				image.Pt(gtx.Constraints.Max.X>>2, 0),
+				func(gtx layout.Context) layout.Dimensions {
+					return material.H6(theme, "Menu ...Menu ...Menu ...Menu ...Menu ...Menu ...").Layout(gtx)
 				},
 			)
 		}),

@@ -19,8 +19,14 @@ type Menu struct {
 	ContextArea component.ContextArea
 }
 
-func (m *Menu) AddWidgets(widgets ...func(gtx layout.Context) layout.Dimensions) {
+func (m *Menu) AddWidgets(widgets ...func(gtx layout.Context) layout.Dimensions) *Menu {
 	m.MenuState.Options = append(m.MenuState.Options, widgets...)
+	return m
+}
+
+func (m *Menu) SetWidgets(widgets ...func(gtx layout.Context) layout.Dimensions) *Menu {
+	m.MenuState.Options = widgets
+	return m
 }
 
 func (m *Menu) Layout(

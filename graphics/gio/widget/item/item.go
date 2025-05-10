@@ -102,7 +102,7 @@ func (i *Item) Layout(
 			}
 		}),
 		// menu
-		i.UI.Menu.LayoutExpandedContextArea(theme, gtx),
+		i.UI.Menu.LayoutExpandedContextArea(theme, image.Point{}),
 	)
 
 	return

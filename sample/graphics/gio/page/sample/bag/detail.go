@@ -1,6 +1,8 @@
 package bag
 
 import (
+	"image"
+
 	"gioui.org/font"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
@@ -9,7 +11,6 @@ import (
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsslider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/slider"
 	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
-	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
 func (i *Item) LayoutDetail(
@@ -26,9 +27,14 @@ func (i *Item) LayoutDetail(
 			return spslayout.DefaultInset.Layout(gtx, baseInfo.Layout)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return spssurface.NewSurface().Layout(theme, gtx, func(gtx layout.Context) layout.Dimensions {
-				return material.H6(theme, "Use ...").Layout(gtx)
-			})
+			return i.UI.MenuDetail.Layout(
+				theme, gtx,
+				layout.W,
+				image.Pt(gtx.Constraints.Max.X>>1, 0),
+				func(gtx layout.Context) layout.Dimensions {
+					return material.H6(theme, "Menu ...").Layout(gtx)
+				},
+			)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return spsdivider.Divider{}.Layout(theme, gtx)

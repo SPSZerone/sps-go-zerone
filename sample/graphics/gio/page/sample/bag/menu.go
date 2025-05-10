@@ -14,6 +14,11 @@ import (
 )
 
 func (i *Item) InitMenu(theme *material.Theme) {
+	i.InitMenuItem(theme)
+	i.InitMenuDetail(theme)
+}
+
+func (i *Item) InitMenuItem(theme *material.Theme) {
 	item := &i.Item
 	item.UI.MenuItems = []widget.Clickable{
 		{},
@@ -65,6 +70,20 @@ func (i *Item) InitMenu(theme *material.Theme) {
 		},
 		func(gtx layout.Context) layout.Dimensions {
 			return component.MenuItem(theme, &item.UI.MenuItems[0], "Use").Layout(gtx)
+		},
+	)
+}
+
+func (i *Item) InitMenuDetail(theme *material.Theme) {
+	i.UI.MenuDetail.AddWidgets(
+		func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyId))
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyName))
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyIcon))
 		},
 	)
 }

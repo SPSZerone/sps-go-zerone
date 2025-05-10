@@ -8,17 +8,21 @@ import (
 	"gioui.org/widget/material"
 
 	spseditor "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/editor"
+	spsmenu "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/menu"
 	spsslider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/slider"
 )
 
 func NewUI() UI {
 	return UI{
-		UseEditor: spseditor.NewEditor(spseditor.OptHint("use count")),
-		UseSlider: spsslider.NewSlider(),
+		MenuDetail: spsmenu.New(),
+		UseEditor:  spseditor.NewEditor(spseditor.OptHint("use count")),
+		UseSlider:  spsslider.NewSlider(),
 	}
 }
 
 type UI struct {
+	MenuDetail spsmenu.Menu
+
 	UseEditor    spseditor.Editor
 	UseEditorBtn widget.Clickable
 

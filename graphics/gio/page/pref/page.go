@@ -11,12 +11,14 @@ import (
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
+	spsdiscloser "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/discloser"
+	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 	spstable "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/table"
 )
 
 func New(pages spsgio.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page {
-	tabs := spstab.NewTabsByNames(
+	tabs := spstab.NewByNames(
 		[]string{TabNameSettings, TabNamePreferences},
 		spstab.OptAxisSetting(&pages.GetWindow().GetPref().Settings.TabAxis),
 	)
@@ -24,10 +26,14 @@ func New(pages spsgio.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page {
 		Pages: pages,
 
 		Tabs:  tabs,
-		Table: spstable.NewTable(),
+		Table: spstable.New(),
 
 		app:       app,
 		newWindow: newWindow,
+
+		List:                   spslist.New(),
+		SettingsDiscloserMajor: spsdiscloser.New(true),
+		SettingsDiscloserMinor: spsdiscloser.New(true),
 	}
 	return p
 }
@@ -43,6 +49,10 @@ type Page struct {
 	app          spsgio.App
 	newWindow    spsgio.NewWindow
 	NewWindowBtn widget.Clickable
+
+	List                   spslist.List
+	SettingsDiscloserMajor spsdiscloser.Discloser
+	SettingsDiscloserMinor spsdiscloser.Discloser
 }
 
 func (p *Page) Actions() []component.AppBarAction {
@@ -94,20 +104,16 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 }
 
 func (p *Page) LayoutDefault(win spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {
-	switch selected {
-	case TabIdxSettings:
-		return layout.Flex{
-			Alignment: layout.Middle,
-			Axis:      layout.Vertical,
-		}.Layout(gtx, p.LayoutSettings(win, gtx, param)...)
-	case TabIdxPreferences:
-		return layout.Flex{
-			Alignment: layout.Middle,
-			Axis:      layout.Vertical,
-		}.Layout(gtx, p.LayoutPref(win, gtx, param)...)
-	default:
-		return layout.Dimensions{}
-	}
+	return p.List.Layout(win.GetTheme(), gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+		switch selected {
+		case TabIdxSettings:
+			return p.LayoutSettings(win, gtx, param)
+		case TabIdxPreferences:
+			return p.LayoutPref(win, gtx, param)
+		default:
+			return layout.Dimensions{}
+		}
+	})
 }
 
 func (p *Page) LayoutTableStyle(win spsgio.Window, gtx layout.Context, param any, selected int) layout.Dimensions {

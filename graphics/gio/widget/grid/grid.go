@@ -10,7 +10,7 @@ import (
 
 func NewGrid() Grid {
 	return Grid{
-		list: spslist.NewList(),
+		list: spslist.New(),
 
 		Wrap:      true,
 		Axis:      layout.Horizontal,

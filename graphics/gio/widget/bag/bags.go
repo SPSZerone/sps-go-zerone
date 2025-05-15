@@ -10,7 +10,7 @@ import (
 
 func NewBags() Bags {
 	return Bags{
-		Tabs: spstab.NewTabs(),
+		Tabs: spstab.New(),
 	}
 }
 

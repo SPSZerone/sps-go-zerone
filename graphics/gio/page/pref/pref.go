@@ -8,12 +8,16 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
-func (p *Page) LayoutPref(win spsgio.Window, gtx layout.Context, param any) []layout.FlexChild {
-	return []layout.FlexChild{
+func (p *Page) LayoutPref(win spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
+	return layout.Flex{
+		Alignment: layout.Middle,
+		Axis:      layout.Vertical,
+	}.Layout(
+		gtx,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.LayoutPrefTableStyle(win, gtx)
 		}),
-	}
+	)
 }
 
 func (p *Page) LayoutPrefTableStyle(win spsgio.Window, gtx layout.Context) layout.Dimensions {

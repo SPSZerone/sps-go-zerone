@@ -6,7 +6,7 @@ import (
 	"gioui.org/widget/material"
 )
 
-func NewList() List {
+func New() List {
 	return List{
 		List: widget.List{
 			List: layout.List{

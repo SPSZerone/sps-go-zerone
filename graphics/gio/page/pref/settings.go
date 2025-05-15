@@ -2,13 +2,78 @@ package pref
 
 import (
 	"gioui.org/layout"
+	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 )
 
-func (p *Page) LayoutSettings(win spsgio.Window, gtx layout.Context, param any) []layout.FlexChild {
-	return []layout.FlexChild{
+func (p *Page) LayoutSettings(win spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
+	return p.LayoutSettingsByDiscloser(win, gtx, param)
+	//return p.LayoutSettingsByNormal(win, gtx, param)
+}
+
+func (p *Page) LayoutSettingsByDiscloser(win spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
+	theme := win.GetTheme()
+	return layout.Flex{
+		Alignment: layout.Middle,
+		Axis:      layout.Vertical,
+	}.Layout(
+		gtx,
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return p.SettingsDiscloserMajor.LayoutWithDefaultControl(
+				theme,
+				gtx,
+				material.Body1(theme, "Major").Layout,
+				func(gtx layout.Context) layout.Dimensions {
+					return layout.Flex{
+						Alignment: layout.Middle,
+						Axis:      layout.Vertical,
+					}.Layout(
+						gtx,
+						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+							return p.LayoutSettingsNonModalDrawer(win, gtx)
+						}),
+						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+							return p.LayoutSettingsTabAxis(win, gtx)
+						}),
+						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+							return p.LayoutSettingsBottomBar(win, gtx)
+						}),
+					)
+				},
+			)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return p.SettingsDiscloserMinor.LayoutWithDefaultControl(
+				theme,
+				gtx,
+				material.Body1(theme, "Minor").Layout,
+				func(gtx layout.Context) layout.Dimensions {
+					return layout.Flex{
+						Alignment: layout.Middle,
+						Axis:      layout.Vertical,
+					}.Layout(
+						gtx,
+						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+							return p.LayoutSettingsDecorated(win, gtx)
+						}),
+						layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+							return p.LayoutSettingsValueInFront(win, gtx)
+						}),
+					)
+				},
+			)
+		}),
+	)
+}
+
+func (p *Page) LayoutSettingsByNormal(win spsgio.Window, gtx layout.Context, param any) layout.Dimensions {
+	return layout.Flex{
+		Alignment: layout.Middle,
+		Axis:      layout.Vertical,
+	}.Layout(
+		gtx,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.LayoutSettingsNonModalDrawer(win, gtx)
 		}),
@@ -16,15 +81,16 @@ func (p *Page) LayoutSettings(win spsgio.Window, gtx layout.Context, param any) 
 			return p.LayoutSettingsTabAxis(win, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return p.LayoutSettingsValueInFront(win, gtx)
-		}),
-		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.LayoutSettingsBottomBar(win, gtx)
 		}),
+
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return p.LayoutSettingsDecorated(win, gtx)
 		}),
-	}
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return p.LayoutSettingsValueInFront(win, gtx)
+		}),
+	)
 }
 
 func (p *Page) LayoutSettingsNonModalDrawer(win spsgio.Window, gtx layout.Context) layout.Dimensions {

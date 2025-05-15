@@ -15,7 +15,7 @@ import (
 	"gioui.org/x/outlay"
 )
 
-func NewTable(opts ...Option) Table {
+func New(opts ...Option) Table {
 	t := Table{
 		MinSize: 200,
 		Border: widget.Border{

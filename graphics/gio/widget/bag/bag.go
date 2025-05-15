@@ -21,7 +21,7 @@ func NewBag(id any, name string) Bag {
 		},
 
 		Grid:       NewGrid(),
-		DetailList: spslist.NewList(),
+		DetailList: spslist.New(),
 	}
 }
 

@@ -24,7 +24,7 @@ func (i *Item) InitMenuItem(theme *material.Theme) {
 	}
 	item.UI.Menu.AddWidgets(
 		func(gtx layout.Context) layout.Dimensions {
-			return spssurface.NewSurface().Layout(theme, gtx, func(gtx layout.Context) layout.Dimensions {
+			return spssurface.New().Layout(theme, gtx, func(gtx layout.Context) layout.Dimensions {
 				return material.H6(theme, "Item Info").Layout(gtx)
 			})
 		},

@@ -6,7 +6,7 @@ import (
 	"gioui.org/widget/material"
 )
 
-func NewLoader() Loader {
+func New() Loader {
 	return Loader{
 		Inset: layout.Inset{
 			Top:    unit.Dp(4),

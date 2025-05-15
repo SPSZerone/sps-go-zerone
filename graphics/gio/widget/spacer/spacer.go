@@ -5,13 +5,13 @@ import (
 	"gioui.org/unit"
 )
 
-func NewWidthSpacer(value int) Spacer {
+func NewWithWidth(value int) Spacer {
 	return Spacer{
 		layout.Spacer{Width: unit.Dp(value)},
 	}
 }
 
-func NewHeightSpacer(value int) Spacer {
+func NewWithHeight(value int) Spacer {
 	return Spacer{
 		layout.Spacer{Height: unit.Dp(value)},
 	}

@@ -75,22 +75,22 @@ func (p *Property) LayoutFlexWidgets(gtx layout.Context, widgets ...spslayout.Fl
 
 func (p *Property) NewSpacers() (start, middle, end spsspacer.Spacer) {
 	if p.Flex.Axis == layout.Horizontal {
-		start = spsspacer.NewWidthSpacer(p.SpacerStart)
-		middle = spsspacer.NewWidthSpacer(p.SpacerMiddle)
-		end = spsspacer.NewWidthSpacer(p.SpacerEnd)
+		start = spsspacer.NewWithWidth(p.SpacerStart)
+		middle = spsspacer.NewWithWidth(p.SpacerMiddle)
+		end = spsspacer.NewWithWidth(p.SpacerEnd)
 	} else {
-		start = spsspacer.NewHeightSpacer(p.SpacerStart)
-		middle = spsspacer.NewHeightSpacer(p.SpacerMiddle)
-		end = spsspacer.NewHeightSpacer(p.SpacerEnd)
+		start = spsspacer.NewWithHeight(p.SpacerStart)
+		middle = spsspacer.NewWithHeight(p.SpacerMiddle)
+		end = spsspacer.NewWithHeight(p.SpacerEnd)
 	}
 	return
 }
 
 func (p *Property) NewSpacer(spacer int) spsspacer.Spacer {
 	if p.Flex.Axis == layout.Horizontal {
-		return spsspacer.NewWidthSpacer(spacer)
+		return spsspacer.NewWithWidth(spacer)
 	}
-	return spsspacer.NewHeightSpacer(spacer)
+	return spsspacer.NewWithHeight(spacer)
 }
 
 func (p *Property) FlexAppendSpacer(widgets []spslayout.FlexedWidget, spacer int) []spslayout.FlexedWidget {

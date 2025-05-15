@@ -22,7 +22,7 @@ func NewSPSItem(opts ...spsitem.Option) spsitem.Item {
 	//highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
 	stackAlignment := layout.Center
 
-	item := spsitem.NewItem(
+	item := spsitem.New(
 		spsitem.OptHighlightStyle(highlightStyle),
 		spsitem.OptStackAlignment(stackAlignment),
 		spsitem.OptDimensions(dimensions),

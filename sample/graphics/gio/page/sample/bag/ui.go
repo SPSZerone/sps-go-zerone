@@ -14,8 +14,8 @@ import (
 
 func NewUI() UI {
 	return UI{
-		UseEditor: spseditor.NewEditor(spseditor.OptHint("use count")),
-		UseSlider: spsslider.NewSlider(),
+		UseEditor: spseditor.New(spseditor.OptHint("use count")),
+		UseSlider: spsslider.New(),
 	}
 }
 

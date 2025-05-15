@@ -12,7 +12,7 @@ import (
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
 )
 
-func NewItem(opts ...Option) Item {
+func New(opts ...Option) Item {
 	i := Item{
 		Opts: NewOptions(opts...),
 	}

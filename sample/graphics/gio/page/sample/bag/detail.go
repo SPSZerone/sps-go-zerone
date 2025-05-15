@@ -86,7 +86,7 @@ func (i *Item) LayoutDetail(
 
 func (i *Item) LayoutUseEditor(theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	spacer := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		return spsspacer.NewWidthSpacer(8).Layout(gtx)
+		return spsspacer.NewWithWidth(8).Layout(gtx)
 	})
 	return layout.Flex{
 		Axis: layout.Horizontal,
@@ -105,7 +105,7 @@ func (i *Item) LayoutUseEditor(theme *material.Theme, gtx layout.Context) layout
 
 func (i *Item) LayoutUseSlider(theme *material.Theme, gtx layout.Context) layout.Dimensions {
 	spacer := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		return spsspacer.NewWidthSpacer(8).Layout(gtx)
+		return spsspacer.NewWithWidth(8).Layout(gtx)
 	})
 	return layout.Flex{
 		Axis: layout.Horizontal,

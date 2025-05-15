@@ -10,7 +10,7 @@ import (
 )
 
 func NewGrid() Grid {
-	g := spsgrid.NewGrid()
+	g := spsgrid.New()
 	g.Num = 4
 	return Grid{
 		Grid: g,

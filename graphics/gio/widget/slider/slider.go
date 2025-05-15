@@ -10,7 +10,7 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
-func NewSlider(opts ...Option) Slider {
+func New(opts ...Option) Slider {
 	s := Slider{
 		Min: 0,
 		Max: 1,

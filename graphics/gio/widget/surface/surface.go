@@ -7,7 +7,7 @@ import (
 	"gioui.org/x/component"
 )
 
-func NewSurface() Surface {
+func New() Surface {
 	return Surface{
 		InnerInset: layout.UniformInset(unit.Dp(8)),
 		OuterInset: layout.UniformInset(unit.Dp(8)),

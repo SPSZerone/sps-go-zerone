@@ -164,9 +164,9 @@ func (c *Copy) doLayoutFlexedContent(
 
 func (c *Copy) NewSpacer() (spacer spsspacer.Spacer) {
 	if c.FlexInset.Flex.Axis == layout.Horizontal {
-		spacer = spsspacer.NewWidthSpacer(c.Spacer)
+		spacer = spsspacer.NewWithWidth(c.Spacer)
 	} else {
-		spacer = spsspacer.NewHeightSpacer(c.Spacer)
+		spacer = spsspacer.NewWithHeight(c.Spacer)
 	}
 	return
 }

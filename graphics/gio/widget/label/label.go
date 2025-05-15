@@ -6,7 +6,7 @@ import (
 	"gioui.org/widget/material"
 )
 
-func NewLabel() Label {
+func New() Label {
 	return Label{}
 }
 

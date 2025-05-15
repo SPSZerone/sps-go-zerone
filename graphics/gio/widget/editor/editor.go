@@ -10,7 +10,7 @@ import (
 	"gioui.org/widget/material"
 )
 
-func NewEditor(opts ...Option) Editor {
+func New(opts ...Option) Editor {
 	return Editor{
 		Editor: widget.Editor{
 			SingleLine: true,

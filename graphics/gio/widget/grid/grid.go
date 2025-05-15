@@ -8,7 +8,7 @@ import (
 	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
-func NewGrid() Grid {
+func New() Grid {
 	return Grid{
 		list: spslist.New(),
 

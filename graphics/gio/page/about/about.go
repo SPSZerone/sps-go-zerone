@@ -1,9 +1,12 @@
 package about
 
 import (
+	"image/color"
+
 	"gioui.org/io/event"
 	"gioui.org/layout"
 	"gioui.org/unit"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
@@ -21,16 +24,28 @@ const (
 )
 
 func New(pages spsgio.Pages) *Page {
-	return &Page{
+	p := &Page{
 		Pages: pages,
 	}
+	pages.RegisterAppBarEvent(p, p.OnAppBarEvent)
+	return p
 }
 
 var _ spsgio.Page = (*Page)(nil)
 
+type Contextual struct {
+	Clickable widget.Clickable
+
+	AppBarActionFavorite widget.Clickable
+	OverflowActionA      widget.Clickable
+	OverflowActionB      widget.Clickable
+}
+
 type Page struct {
 	spslist.List
 	spsgio.Pages
+
+	Contextual Contextual
 
 	CopyName     spscopy.Copy
 	CopyAuthor   spscopy.Copy
@@ -50,6 +65,20 @@ func (p *Page) NavItem() component.NavItem {
 	return component.NavItem{
 		Name: "About",
 		Icon: spsicon.ActionHelp,
+	}
+}
+
+func (p *Page) OnAppBarEvent(pages spsgio.Pages, tag any, event component.AppBarEvent) {
+	p.Pages.GetWindow().GetLogger().Info().Msgf("%v | Page:About | AppBarEvent | pages:%v tag:%v | event:%v",
+		p.Pages.GetWindow().LogPrefix(), pages == p.Pages, tag == p, event)
+
+	switch evt := event.(type) {
+	case component.AppBarOverflowActionClicked:
+		p.Pages.GetWindow().GetLogger().Info().Msgf("%v | Page:About | AppBarOverflowActionClicked | OverflowActionA:%v OverflowActionB:%v",
+			p.Pages.GetWindow().LogPrefix(),
+			evt.Tag == &p.Contextual.OverflowActionA,
+			evt.Tag == &p.Contextual.OverflowActionB,
+		)
 	}
 }
 
@@ -80,6 +109,42 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 			}),
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				return p.LayoutInfo(theme, gtx, "HomePage", HomePage, &p.CopyHomePage)
+			}),
+			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+				if p.Contextual.Clickable.Clicked(gtx) {
+					// AppBarActions
+					appBarActions := []component.AppBarAction{
+						{
+							OverflowAction: component.OverflowAction{
+								Name: "Favorite",
+								Tag:  &p.Contextual.AppBarActionFavorite,
+							},
+							Layout: func(gtx layout.Context, bg, fg color.NRGBA) layout.Dimensions {
+								if p.Contextual.AppBarActionFavorite.Clicked(gtx) {
+									p.Pages.GetWindow().GetLogger().Info().Msg("Favorite")
+								}
+								btn := component.SimpleIconButton(bg, fg, &p.Contextual.AppBarActionFavorite, spsicon.ActionFavorite)
+								return btn.Layout(gtx)
+							},
+						},
+					}
+
+					// OverflowActions
+					overflowActions := []component.OverflowAction{
+						{
+							Name: "OverflowAction A",
+							Tag:  &p.Contextual.OverflowActionA,
+						},
+						{
+							Name: "OverflowAction B",
+							Tag:  &p.Contextual.OverflowActionB,
+						},
+					}
+
+					p.Pages.GetAppBar().SetContextualActions(appBarActions, overflowActions)
+					p.Pages.GetAppBar().ToggleContextual(gtx.Now, "Contextual Title")
+				}
+				return material.Button(theme, &p.Contextual.Clickable, "Contextual").Layout(gtx)
 			}),
 			//children...,
 		)

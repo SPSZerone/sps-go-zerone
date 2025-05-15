@@ -6,6 +6,8 @@ import (
 	"gioui.org/x/component"
 )
 
+type AppBarEvent func(pages Pages, tag any, event component.AppBarEvent)
+
 type Pages interface {
 	GetWindow() Window
 
@@ -13,6 +15,8 @@ type Pages interface {
 	GetModalNavDrawer() *component.ModalNavDrawer
 	GetModalLayer() *component.ModalLayer
 	GetNavAnim() *component.VisibilityAnimation
+
+	RegisterAppBarEvent(tag any, appBarEvent AppBarEvent)
 
 	Register(tag any, page Page)
 	SwitchTo(tag any) Page

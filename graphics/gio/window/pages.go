@@ -1,7 +1,6 @@
 package window
 
 import (
-	"log"
 	"math"
 	"time"
 
@@ -38,6 +37,7 @@ func NewPages(win *Window) Pages {
 	}
 	return Pages{
 		pages:          make(map[any]spsgio.Page),
+		appBarEvents:   make(map[any]spsgio.AppBarEvent),
 		Window:         win,
 		AppBar:         appBar,
 		ModalLayer:     modalLayer,
@@ -50,6 +50,8 @@ func NewPages(win *Window) Pages {
 type Pages struct {
 	pages   map[any]spsgio.Page
 	current any
+
+	appBarEvents map[any]spsgio.AppBarEvent
 
 	Window *Window
 
@@ -78,6 +80,10 @@ func (p *Pages) GetModalLayer() *component.ModalLayer {
 
 func (p *Pages) GetNavAnim() *component.VisibilityAnimation {
 	return &p.NavAnim
+}
+
+func (p *Pages) RegisterAppBarEvent(tag any, fn spsgio.AppBarEvent) {
+	p.appBarEvents[tag] = fn
 }
 
 func (p *Pages) Register(tag any, page spsgio.Page) {
@@ -157,9 +163,12 @@ func (p *Pages) Layout(win spsgio.Window, gtx layout.Context, param any, deco fu
 				p.NavAnim.Disappear(gtx.Now)
 			}
 		case component.AppBarContextMenuDismissed:
-			log.Printf("Context menu dismissed: %v", e)
+			p.GetWindow().GetLogger().Info().Msgf("%v | Pages AppBarEvent | AppBarContextMenuDismissed | %v", p.Window.LogPrefix(), e)
 		case component.AppBarOverflowActionClicked:
-			log.Printf("Overflow action selected: %v", e)
+			p.GetWindow().GetLogger().Info().Msgf("%v | Pages AppBarEvent | AppBarOverflowActionClicked | %v", p.Window.LogPrefix(), e)
+		}
+		for tag, appBarEvent := range p.appBarEvents {
+			appBarEvent(p, tag, evt)
 		}
 	}
 

@@ -6,6 +6,21 @@ import (
 	"gioui.org/widget"
 )
 
+var ActionAccountBalance *widget.Icon = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.ActionAccountBalance)
+	return icon
+}()
+
+var ActionAccountBox *widget.Icon = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.ActionAccountBox)
+	return icon
+}()
+
+var ActionAddShoppingCart *widget.Icon = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.ActionAddShoppingCart)
+	return icon
+}()
+
 var ActionCompareArrows = func() *widget.Icon {
 	icon, _ := widget.NewIcon(icons.ActionCompareArrows)
 	return icon

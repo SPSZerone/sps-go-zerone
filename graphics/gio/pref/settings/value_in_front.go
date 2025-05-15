@@ -10,7 +10,7 @@ import (
 
 func NewValueInFront() ValueInFront {
 	return ValueInFront{
-		Bool: spsbool.NewBool(
+		Bool: spsbool.New(
 			spsbool.OptName("Value In Front"),
 			spsbool.OptDesc("Use Value In Front"),
 			spsbool.OptValue(true),

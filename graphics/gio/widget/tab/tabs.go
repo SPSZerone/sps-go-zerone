@@ -14,19 +14,19 @@ import (
 	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
-func NewByNames(names []string, opts ...Option) Tabs {
-	t := New(opts...)
+func NewTabsByNames(names []string, opts ...Option) Tabs {
+	t := NewTabs(opts...)
 	t.AddTabByNames(names...)
 	return t
 }
 
-func NewByTabs(tabs []Tab, opts ...Option) Tabs {
-	t := New(opts...)
+func NewTabsByTabs(tabs []Tab, opts ...Option) Tabs {
+	t := NewTabs(opts...)
 	t.AddTab(tabs...)
 	return t
 }
 
-func New(opts ...Option) Tabs {
+func NewTabs(opts ...Option) Tabs {
 	t := newTabs()
 	t.Update(opts...)
 	return t

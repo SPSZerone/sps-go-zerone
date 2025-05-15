@@ -31,7 +31,7 @@ func GetTabName(index int) string {
 
 func New(theme *material.Theme, pages spsgio.Pages) *Page {
 	pref := pages.GetWindow().GetPref()
-	tabs := spstab.NewByNames(
+	tabs := spstab.NewTabsByNames(
 		[]string{GetTabName(TabIdxBags)},
 		spstab.OptAxisSetting(&pref.Settings.TabAxis),
 	)

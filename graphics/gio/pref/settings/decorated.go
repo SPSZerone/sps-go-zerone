@@ -10,7 +10,7 @@ import (
 
 func NewDecorated() Decorated {
 	return Decorated{
-		Bool: spsbool.NewBool(
+		Bool: spsbool.New(
 			spsbool.OptName("Decorated"),
 			spsbool.OptDesc("Use decorated"),
 		),

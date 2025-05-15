@@ -10,7 +10,7 @@ import (
 
 func NewBottomBar() BottomBar {
 	return BottomBar{
-		Bool: spsbool.NewBool(
+		Bool: spsbool.New(
 			spsbool.OptName("Bottom Bar"),
 			spsbool.OptDesc("Use Bottom Bar"),
 		),

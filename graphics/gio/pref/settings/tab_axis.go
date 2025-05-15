@@ -10,7 +10,7 @@ import (
 
 func NewTabAxis() TabAxis {
 	return TabAxis{
-		Bool: spsbool.NewBool(
+		Bool: spsbool.New(
 			spsbool.OptName("TabAxis Horizontal"),
 			spsbool.OptDesc("TabAxis Horizontal"),
 		),

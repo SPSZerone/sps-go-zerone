@@ -9,7 +9,7 @@ import (
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 )
 
-func NewBool(opts ...Option) Bool {
+func New(opts ...Option) Bool {
 	b := newBool()
 	b.Update(opts...)
 	return b

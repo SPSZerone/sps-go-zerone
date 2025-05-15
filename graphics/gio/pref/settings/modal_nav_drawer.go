@@ -11,7 +11,7 @@ import (
 
 func NewModalNavDrawer() ModalNavDrawer {
 	return ModalNavDrawer{
-		Bool: spsbool.NewBool(
+		Bool: spsbool.New(
 			spsbool.OptName("Use non-modal drawer"),
 			spsbool.OptDesc("Use Non-Modal Navigation Drawer"),
 			spsbool.OptValue(true),

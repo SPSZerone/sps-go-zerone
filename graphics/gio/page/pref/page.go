@@ -18,7 +18,7 @@ import (
 )
 
 func New(pages spsgio.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page {
-	tabs := spstab.NewByNames(
+	tabs := spstab.NewTabsByNames(
 		[]string{TabNameSettings, TabNamePreferences},
 		spstab.OptAxisSetting(&pages.GetWindow().GetPref().Settings.TabAxis),
 	)

@@ -61,14 +61,6 @@ func settingsCell(p *Page, win spsgio.Window, gtx layout.Context, row, col int, 
 			labelStyle.Text = pref.Settings.TabAxis.Name
 		}
 		return labelStyle.Layout(gtx)
-	case SettingsRowIdxValueInFront:
-		switch col {
-		case colIdx:
-			return p.ValueInFront(win, gtx)
-		default:
-			labelStyle.Text = pref.Settings.ValueInFront.Name
-		}
-		return labelStyle.Layout(gtx)
 	case SettingsRowIdxBottomBar:
 		switch col {
 		case colIdx:
@@ -83,6 +75,14 @@ func settingsCell(p *Page, win spsgio.Window, gtx layout.Context, row, col int, 
 			return p.Decorated(win, gtx)
 		default:
 			labelStyle.Text = pref.Settings.Decorated.Name
+		}
+		return labelStyle.Layout(gtx)
+	case SettingsRowIdxValueInFront:
+		switch col {
+		case colIdx:
+			return p.ValueInFront(win, gtx)
+		default:
+			labelStyle.Text = pref.Settings.ValueInFront.Name
 		}
 		return labelStyle.Layout(gtx)
 	default:

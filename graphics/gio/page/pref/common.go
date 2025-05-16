@@ -28,9 +28,9 @@ const (
 const (
 	SettingsRowIdxNonModalDrawer = iota
 	SettingsRowIdxTabAxis
-	SettingsRowIdxValueInFront
 	SettingsRowIdxBottomBar
 	SettingsRowIdxDecorated
+	SettingsRowIdxValueInFront
 	SettingsRowCount
 )
 

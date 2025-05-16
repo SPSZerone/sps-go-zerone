@@ -14,6 +14,7 @@ import (
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spscopy "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/copy"
 	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
+	spstreenode "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/treenode"
 )
 
 const (
@@ -25,10 +26,38 @@ const (
 
 func New(pages spsgio.Pages) *Page {
 	p := &Page{
-		Pages: pages,
+		Pages:    pages,
+		TreeNode: TestTreeNode(),
 	}
 	pages.RegisterAppBarEvent(p, p.OnAppBarEvent)
 	return p
+}
+
+func TestTreeNode() spstreenode.TreeNode {
+	return spstreenode.TreeNode{
+		Text: "Expand Me",
+		Children: []spstreenode.TreeNode{
+			{
+				Text: "Disclosers can be (expand me)...",
+				Children: []spstreenode.TreeNode{
+					{
+						Text: "...nested to arbitrary depths.",
+					},
+					{
+						Text: "There are also types available to customize the look and feel of the discloser:",
+						Children: []spstreenode.TreeNode{
+							{
+								Text: "• DiscloserStyle lets you provide your own control instead of the default triangle used here.",
+							},
+							{
+								Text: "• DiscloserArrowStyle lets you alter the presentation of the triangle used here, like changing its color, size, left/right anchoring, or margin.",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 }
 
 var _ spsgio.Page = (*Page)(nil)
@@ -45,12 +74,13 @@ type Page struct {
 	spslist.List
 	spsgio.Pages
 
-	Contextual Contextual
-
 	CopyName     spscopy.Copy
 	CopyAuthor   spscopy.Copy
 	CopyLicense  spscopy.Copy
 	CopyHomePage spscopy.Copy
+
+	Contextual Contextual
+	TreeNode   spstreenode.TreeNode
 }
 
 func (p *Page) Actions() []component.AppBarAction {
@@ -146,7 +176,9 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 				}
 				return material.Button(theme, &p.Contextual.Clickable, "Contextual").Layout(gtx)
 			}),
-			//children...,
+			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+				return p.TreeNode.LayoutTreeNodeDefault(theme, gtx, &p.TreeNode)
+			}),
 		)
 	})
 }

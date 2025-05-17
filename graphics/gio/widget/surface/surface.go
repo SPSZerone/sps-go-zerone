@@ -1,6 +1,8 @@
 package surface
 
 import (
+	"image/color"
+
 	"gioui.org/layout"
 	"gioui.org/unit"
 	"gioui.org/widget/material"
@@ -20,8 +22,10 @@ func NewUniformInset(outer, inner unit.Dp) Surface {
 
 func New(outer, inner layout.Inset) Surface {
 	return Surface{
-		InsetOuter: outer,
-		InsetInner: inner,
+		InsetOuter:  outer,
+		InsetInner:  inner,
+		BGColor:     color.NRGBA{R: 0xD3, G: 0xD3, B: 0xD3, A: 0xFF},
+		ShadowStyle: component.Shadow(unit.Dp(10), unit.Dp(8)),
 	}
 }
 
@@ -30,6 +34,9 @@ type Style func(surface *Surface, style *component.SurfaceStyle)
 type Surface struct {
 	InsetOuter layout.Inset
 	InsetInner layout.Inset
+
+	BGColor     color.NRGBA
+	ShadowStyle component.ShadowStyle
 }
 
 func (s *Surface) LayoutDefault(
@@ -49,6 +56,8 @@ func (s *Surface) Layout(
 		func(gtx layout.Context) layout.Dimensions {
 			surfaceStyle := component.Surface(theme)
 			if style != nil {
+				surfaceStyle.Fill = s.BGColor
+				surfaceStyle.ShadowStyle = s.ShadowStyle
 				style(s, &surfaceStyle)
 			}
 			return surfaceStyle.Layout(gtx, func(gtx layout.Context) layout.Dimensions {

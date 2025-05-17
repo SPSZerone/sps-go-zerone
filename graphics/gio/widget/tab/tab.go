@@ -86,16 +86,18 @@ func (t *Tab) LayoutName(
 		}
 	}
 
-	return t.Clickable.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+	var size image.Point
+	name := func(gtx layout.Context) layout.Dimensions {
 		dims := nameWidget(gtx)
-		size := dims.Size
+		size = dims.Size
 		if widthLimit > 0 {
 			if isVertical {
 				size.X = widthLimit
 			}
 		}
 		return layout.Dimensions{Size: size}
-	})
+	}
+	return t.Clickable.Layout(gtx, name)
 }
 
 func (t *Tab) LayoutHighlight(

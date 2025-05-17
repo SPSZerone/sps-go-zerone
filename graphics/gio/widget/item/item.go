@@ -45,7 +45,8 @@ func (i *Item) Layout(
 				func(gtx layout.Context) layout.Dimensions {
 					contentBgRect := image.Rect(
 						layoutCtx.Offset, layoutCtx.Offset,
-						layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset+layoutCtx.ContentSize.Y)
+						layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset+layoutCtx.ContentSize.Y,
+					)
 					paint.FillShape(gtx.Ops, i.Opts.BgColor, clip.Rect(contentBgRect).Op())
 					return layout.Dimensions{
 						Size: layoutCtx.TotalSizeWithoutInset,
@@ -114,19 +115,22 @@ func (i *Item) LayoutHighlightStrokeRect(theme *material.Theme, gtx layout.Conte
 		theme.Palette.ContrastBg,
 		pos,
 		float32(layoutCtx.HighlightThickness),
-		layoutCtx.HighlightRoundness)
+		layoutCtx.HighlightRoundness,
+	)
 }
 
 func (i *Item) LayoutHighlightTop(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
 		layoutCtx.Offset, 0,
-		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset)
+		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset,
+	)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }
 
 func (i *Item) LayoutHighlightBottom(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
 		layoutCtx.Offset, layoutCtx.TotalSizeWithoutInset.Y-layoutCtx.Offset,
-		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.TotalSizeWithoutInset.Y)
+		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.TotalSizeWithoutInset.Y,
+	)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }

@@ -46,61 +46,80 @@ func (t *Tab) Layout(
 	}
 
 	isVertical := axis == layout.Vertical
-	var tabSize image.Point
+	var size image.Point
 	dimensions = layout.Stack{Alignment: layout.S}.Layout(gtx,
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			if widthLimit > 0 {
-				if isVertical {
-					gtx.Constraints.Max.X = widthLimit
-				}
-			}
-
-			return t.Clickable.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				dims := layout.UniformInset(unit.Dp(12)).Layout(
-					gtx,
-					func(gtx layout.Context) layout.Dimensions {
-						labelStyle := material.H6(theme, t.Name)
-						if style != nil {
-							style(&labelStyle)
-						}
-						return labelStyle.Layout(gtx)
-					},
-				)
-				tabSize = dims.Size
-				if widthLimit > 0 {
-					if isVertical {
-						tabSize.X = widthLimit
-					}
-				}
-				return layout.Dimensions{Size: tabSize}
-			})
+			dims := t.LayoutName(theme, gtx, isVertical, widthLimit, style)
+			size = dims.Size
+			return dims
 		}),
 		// highlight
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			if !highlight {
-				return layout.Dimensions{}
-			}
-
-			highlightThickness := gtx.Dp(unit.Dp(4))
-			var highlightRect image.Rectangle
-			var size image.Point
-			if isVertical {
-				size = image.Pt(highlightThickness, tabSize.Y)
-				// right
-				startX := tabSize.X>>1 - highlightThickness>>1
-				// left
-				//startX = -startX
-				highlightRect = image.Rect(startX, 0, startX+highlightThickness, tabSize.Y)
-			} else {
-				size = image.Pt(tabSize.X, highlightThickness)
-				highlightRect = image.Rect(0, 0, tabSize.X, highlightThickness)
-			}
-
-			paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
-			return layout.Dimensions{Size: size}
+			return t.LayoutHighlight(theme, gtx, highlight, isVertical, size)
 		}),
 	)
 
 	return
+}
+
+func (t *Tab) LayoutName(
+	theme *material.Theme, gtx layout.Context,
+	isVertical bool,
+	widthLimit int,
+	style Style,
+) layout.Dimensions {
+	if widthLimit > 0 {
+		if isVertical {
+			gtx.Constraints.Max.X = widthLimit
+		}
+	}
+
+	return t.Clickable.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+		dims := layout.UniformInset(unit.Dp(12)).Layout(
+			gtx,
+			func(gtx layout.Context) layout.Dimensions {
+				labelStyle := material.H6(theme, t.Name)
+				if style != nil {
+					style(&labelStyle)
+				}
+				return labelStyle.Layout(gtx)
+			},
+		)
+		size := dims.Size
+		if widthLimit > 0 {
+			if isVertical {
+				size.X = widthLimit
+			}
+		}
+		return layout.Dimensions{Size: size}
+	})
+}
+
+func (t *Tab) LayoutHighlight(
+	theme *material.Theme, gtx layout.Context,
+	highlight, isVertical bool,
+	tabSize image.Point,
+) layout.Dimensions {
+	if !highlight {
+		return layout.Dimensions{}
+	}
+
+	highlightThickness := gtx.Dp(unit.Dp(4))
+	var highlightRect image.Rectangle
+	var size image.Point
+	if isVertical {
+		size = image.Pt(highlightThickness, tabSize.Y)
+		// right
+		startX := tabSize.X>>1 - highlightThickness>>1
+		// left
+		//startX = -startX
+		highlightRect = image.Rect(startX, 0, startX+highlightThickness, tabSize.Y)
+	} else {
+		size = image.Pt(tabSize.X, highlightThickness)
+		highlightRect = image.Rect(0, 0, tabSize.X, highlightThickness)
+	}
+
+	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
+	return layout.Dimensions{Size: size}
 }

@@ -40,7 +40,7 @@ func (i *Item) Layout(
 	dimensions = layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
 		// content background
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return i.Opts.Surface.LayoutDefault(
+			bgDimensions := i.Opts.Surface.LayoutDefault(
 				theme, gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					contentBgRect := image.Rect(
@@ -48,10 +48,12 @@ func (i *Item) Layout(
 						layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset+layoutCtx.ContentSize.Y)
 					paint.FillShape(gtx.Ops, i.Opts.BgColor, clip.Rect(contentBgRect).Op())
 					return layout.Dimensions{
-						Size: layoutCtx.SizeWithoutInset,
+						Size: layoutCtx.TotalSizeWithoutInset,
 					}
 				},
 			)
+			layoutCtx.TotalSize = bgDimensions.Size
+			return bgDimensions
 		}),
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
@@ -62,7 +64,7 @@ func (i *Item) Layout(
 				gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					return layout.Dimensions{
-						Size: layoutCtx.SizeWithoutInset,
+						Size: layoutCtx.TotalSizeWithoutInset,
 					}
 				},
 			)
@@ -90,7 +92,7 @@ func (i *Item) Layout(
 				i.LayoutHighlightStrokeRect(theme, gtx, layoutCtx)
 			}
 			return layout.Dimensions{
-				Size: layoutCtx.SizeWithoutInset,
+				Size: layoutCtx.TotalSizeWithoutInset,
 			}
 		}),
 		// menu
@@ -124,7 +126,7 @@ func (i *Item) LayoutHighlightTop(theme *material.Theme, gtx layout.Context, lay
 
 func (i *Item) LayoutHighlightBottom(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
-		layoutCtx.Offset, layoutCtx.SizeWithoutInset.Y-layoutCtx.Offset,
-		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.SizeWithoutInset.Y)
+		layoutCtx.Offset, layoutCtx.TotalSizeWithoutInset.Y-layoutCtx.Offset,
+		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.TotalSizeWithoutInset.Y)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }

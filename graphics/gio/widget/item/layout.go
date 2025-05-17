@@ -13,6 +13,7 @@ func NewLayoutContext(gtx layout.Context, dimensions *Dimensions, surface *spssu
 	c := LayoutContext{
 		InsetOuter: ConvertInsetByContext(gtx, surface.InsetOuter),
 		InsetInner: ConvertInsetByContext(gtx, surface.InsetInner),
+
 		ContentSize: image.Pt(
 			gtx.Dp(unit.Dp(dimensions.ContentSize.X)),
 			gtx.Dp(unit.Dp(dimensions.ContentSize.Y)),
@@ -31,8 +32,7 @@ type LayoutContext struct {
 	InsetOuter layout.Inset
 	InsetInner layout.Inset
 
-	ContentSize      image.Point
-	SizeWithoutInset image.Point
+	ContentSize image.Point
 
 	HighlightThickness       int
 	HighlightThicknessDouble int
@@ -43,6 +43,9 @@ type LayoutContext struct {
 	PaddingDouble int
 
 	Offset int
+
+	TotalSizeWithoutInset image.Point
+	TotalSize             image.Point
 }
 
 func (c *LayoutContext) OnInit() {
@@ -52,7 +55,8 @@ func (c *LayoutContext) OnInit() {
 	c.PaddingDouble = c.Padding << 1
 
 	c.Offset = c.Padding + c.HighlightThickness
-	c.SizeWithoutInset = image.Pt(
+
+	c.TotalSizeWithoutInset = image.Pt(
 		c.ContentSize.X+c.HighlightThicknessDouble+c.PaddingDouble,
 		c.ContentSize.Y+c.HighlightThicknessDouble+c.PaddingDouble,
 	)

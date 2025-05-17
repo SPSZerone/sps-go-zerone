@@ -5,8 +5,9 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget/material"
 
+	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
-	"github.com/SPSZerone/sps-go-zerone/math/rand"
+	spsrand "github.com/SPSZerone/sps-go-zerone/math/rand"
 )
 
 func NewItem(data Data, theme *material.Theme) *Item {
@@ -21,13 +22,17 @@ func NewSPSItem(opts ...spsitem.Option) spsitem.Item {
 	dimensions.ContentSize.X = 100
 	dimensions.ContentSize.Y = 100
 	//highlightStyle := spsitem.HighlightStyleDefault
-	highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
+	highlightStyle := spsitem.HighlightStyle(spsrand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
 	stackAlignment := layout.Center
 
 	item := spsitem.New(
 		spsitem.OptHighlightStyle(highlightStyle),
 		spsitem.OptStackAlignment(stackAlignment),
 		spsitem.OptDimensions(dimensions),
+		spsitem.OptBgColor(
+			spscolor.DynamicColor(spsrand.RandomInt(0, 10)),
+			spscolor.DynamicColor(spsrand.RandomInt(0, 10)),
+		),
 	)
 	item.Update(opts...)
 

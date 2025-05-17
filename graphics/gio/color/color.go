@@ -16,6 +16,10 @@ func Fill(gtx layout.Context, col1, col2 color.NRGBA) {
 	FillRect(gtx, rect, col1, col2)
 }
 
+func FillRectDynamicColor(gtx layout.Context, rect image.Rectangle, col1, col2 int) {
+	FillRect(gtx, rect, DynamicColor(col1), DynamicColor(col2))
+}
+
 func FillRect(gtx layout.Context, rect image.Rectangle, col1, col2 color.NRGBA) {
 	paint.FillShape(
 		gtx.Ops,

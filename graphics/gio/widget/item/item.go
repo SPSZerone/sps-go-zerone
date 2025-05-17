@@ -9,6 +9,7 @@ import (
 	"gioui.org/widget/material"
 
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
+	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
 func New(opts ...Option) Item {
@@ -43,11 +44,11 @@ func (i *Item) Layout(
 			bgDimensions := i.Opts.Surface.LayoutDefault(
 				theme, gtx,
 				func(gtx layout.Context) layout.Dimensions {
-					contentBgRect := image.Rect(
+					rect := image.Rect(
 						layoutCtx.Offset, layoutCtx.Offset,
 						layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset+layoutCtx.ContentSize.Y,
 					)
-					paint.FillShape(gtx.Ops, i.Opts.BgColor, clip.Rect(contentBgRect).Op())
+					spscolor.FillRect(gtx, rect, i.Opts.BgColor1, i.Opts.BgColor2)
 					return layout.Dimensions{
 						Size: layoutCtx.TotalSizeWithoutInset,
 					}

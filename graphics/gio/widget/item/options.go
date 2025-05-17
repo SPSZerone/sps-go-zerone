@@ -34,7 +34,8 @@ func NewOptions(opts ...Option) Options {
 		Surface:        spssurface.NewUniformInset(4, 2),
 		Dimensions:     NewDimensions(),
 		StackAlignment: layout.Center,
-		BgColor:        spscolor.DynamicColor(2),
+		BgColor1:       spscolor.DynamicColor(2),
+		BgColor2:       spscolor.DynamicColor(3),
 		HighlightStyle: HighlightStyleStrokeRect,
 	}
 	o.Update(opts...)
@@ -47,7 +48,8 @@ type Options struct {
 	Surface        spssurface.Surface
 	Dimensions     Dimensions
 	StackAlignment layout.Direction
-	BgColor        color.NRGBA
+	BgColor1       color.NRGBA
+	BgColor2       color.NRGBA
 	HighlightStyle HighlightStyle
 
 	Data any
@@ -77,9 +79,10 @@ func OptStackAlignment(value layout.Direction) Option {
 	}
 }
 
-func OptBgColor(value color.NRGBA) Option {
+func OptBgColor(color1, color2 color.NRGBA) Option {
 	return func(o *Options) {
-		o.BgColor = value
+		o.BgColor1 = color1
+		o.BgColor2 = color2
 	}
 }
 

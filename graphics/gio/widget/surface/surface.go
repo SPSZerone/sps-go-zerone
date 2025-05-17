@@ -11,25 +11,25 @@ func NewDefault() Surface {
 	return NewUniformInset(8, 8)
 }
 
-func NewUniformInset(inner, outer unit.Dp) Surface {
+func NewUniformInset(outer, inner unit.Dp) Surface {
 	return New(
-		layout.UniformInset(inner),
 		layout.UniformInset(outer),
+		layout.UniformInset(inner),
 	)
 }
 
-func New(inner, outer layout.Inset) Surface {
+func New(outer, inner layout.Inset) Surface {
 	return Surface{
-		InnerInset: inner,
-		OuterInset: outer,
+		InsetOuter: outer,
+		InsetInner: inner,
 	}
 }
 
 type Style func(surface *Surface, style *component.SurfaceStyle)
 
 type Surface struct {
-	InnerInset layout.Inset
-	OuterInset layout.Inset
+	InsetOuter layout.Inset
+	InsetInner layout.Inset
 }
 
 func (s *Surface) LayoutDefault(
@@ -44,7 +44,7 @@ func (s *Surface) Layout(
 	widget layout.Widget,
 	style Style,
 ) layout.Dimensions {
-	return s.OuterInset.Layout(
+	return s.InsetOuter.Layout(
 		gtx,
 		func(gtx layout.Context) layout.Dimensions {
 			surfaceStyle := component.Surface(theme)
@@ -52,7 +52,7 @@ func (s *Surface) Layout(
 				style(s, &surfaceStyle)
 			}
 			return surfaceStyle.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				return s.InnerInset.Layout(gtx, widget)
+				return s.InsetInner.Layout(gtx, widget)
 			})
 		},
 	)

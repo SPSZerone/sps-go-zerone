@@ -7,7 +7,6 @@ import (
 	"gioui.org/widget/material"
 
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
-	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
 type HighlightStyle int
@@ -31,7 +30,6 @@ type LayoutDetail func(
 
 func NewOptions(opts ...Option) Options {
 	o := Options{
-		Surface:        spssurface.NewUniformInset(2, 2),
 		Dimensions:     NewDimensions(),
 		StackAlignment: layout.Center,
 		BgColor:        spscolor.DynamicColor(2),
@@ -44,7 +42,6 @@ func NewOptions(opts ...Option) Options {
 type Option func(*Options)
 
 type Options struct {
-	Surface        spssurface.Surface
 	Dimensions     Dimensions
 	StackAlignment layout.Direction
 	BgColor        color.NRGBA
@@ -56,12 +53,6 @@ type Options struct {
 func (p *Options) Update(opts ...Option) {
 	for _, opt := range opts {
 		opt(p)
-	}
-}
-
-func OptSurface(value spssurface.Surface) Option {
-	return func(o *Options) {
-		o.Surface = value
 	}
 }
 

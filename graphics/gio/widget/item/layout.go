@@ -5,8 +5,7 @@ import (
 )
 
 type LayoutContext struct {
-	ContentWidth  int
-	ContentHeight int
+	ContentSize image.Point
 
 	Padding       int
 	PaddingDouble int

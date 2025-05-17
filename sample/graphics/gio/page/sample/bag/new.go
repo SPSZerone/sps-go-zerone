@@ -16,8 +16,8 @@ func NewItem(data Data, theme *material.Theme) *Item {
 
 func NewSPSItem(opts ...spsitem.Option) spsitem.Item {
 	dimensions := spsitem.NewDimensions()
-	dimensions.ContentWidth = 100
-	dimensions.ContentHeight = 100
+	dimensions.ContentSize.X = 100
+	dimensions.ContentSize.Y = 100
 	highlightStyle := spsitem.HighlightStyleDefault
 	//highlightStyle := spsitem.HighlightStyle(rand.RandomInt(int(spsitem.HighlightStyleDefault), int(spsitem.HighlightStyleCount-1)))
 	stackAlignment := layout.Center

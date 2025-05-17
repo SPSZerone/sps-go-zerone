@@ -18,7 +18,10 @@ import (
 func New(opts ...Option) Item {
 	i := Item{
 		Opts: NewOptions(opts...),
+		UI:   NewUI(),
 	}
+	i.UI.Surface.InsetOuter = i.Opts.Dimensions.InsetOuter
+	i.UI.Surface.InsetInner = i.Opts.Dimensions.InsetInner
 	return i
 }
 
@@ -38,8 +41,10 @@ func (i *Item) Layout(
 	layoutContent LayoutContent,
 ) (dimensions layout.Dimensions, clicked bool) {
 	layoutCtx := LayoutContext{
-		ContentWidth:       gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentWidth)),
-		ContentHeight:      gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentHeight)),
+		ContentSize: image.Pt(
+			gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentSize.X)),
+			gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentSize.Y)),
+		),
 		Padding:            gtx.Dp(unit.Dp(i.Opts.Dimensions.Padding)),
 		HighlightThickness: gtx.Dp(unit.Dp(i.Opts.Dimensions.HighlightThickness)),
 		HighlightRoundness: gtx.Dp(unit.Dp(i.Opts.Dimensions.HighlightRoundness)),
@@ -49,19 +54,19 @@ func (i *Item) Layout(
 	layoutCtx.HighlightThicknessHalf = layoutCtx.HighlightThickness >> 1
 	layoutCtx.Offset = layoutCtx.Padding + layoutCtx.HighlightThickness
 	layoutCtx.Size = image.Pt(
-		layoutCtx.ContentWidth+layoutCtx.PaddingDouble+layoutCtx.HighlightThicknessDouble,
-		layoutCtx.ContentHeight+layoutCtx.PaddingDouble+layoutCtx.HighlightThicknessDouble,
+		layoutCtx.ContentSize.X+layoutCtx.PaddingDouble+layoutCtx.HighlightThicknessDouble,
+		layoutCtx.ContentSize.Y+layoutCtx.PaddingDouble+layoutCtx.HighlightThicknessDouble,
 	)
 
 	dimensions = layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
 		// content background
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return i.Opts.Surface.Layout(
+			return i.UI.Surface.Layout(
 				theme, gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					contentBgRect := image.Rect(
 						layoutCtx.Offset, layoutCtx.Offset,
-						layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Offset+layoutCtx.ContentHeight)
+						layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset+layoutCtx.ContentSize.Y)
 					paint.FillShape(gtx.Ops, i.Opts.BgColor, clip.Rect(contentBgRect).Op())
 					return layout.Dimensions{
 						Size: layoutCtx.Size,
@@ -121,8 +126,8 @@ func (i *Item) Layout(
 
 func (i *Item) LayoutHighlightStrokeRect(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	size := image.Pt(
-		layoutCtx.ContentWidth+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
-		layoutCtx.ContentHeight+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
+		layoutCtx.ContentSize.X+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
+		layoutCtx.ContentSize.Y+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
 	)
 	pos := image.Pt(layoutCtx.HighlightThicknessHalf, layoutCtx.HighlightThicknessHalf)
 	spsdrawing.DrawStrokeRectR(
@@ -137,13 +142,13 @@ func (i *Item) LayoutHighlightStrokeRect(theme *material.Theme, gtx layout.Conte
 func (i *Item) LayoutHighlightTop(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
 		layoutCtx.Offset, 0,
-		layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Offset)
+		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }
 
 func (i *Item) LayoutHighlightBottom(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
 		layoutCtx.Offset, layoutCtx.Size.Y-layoutCtx.Offset,
-		layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Size.Y)
+		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Size.Y)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }

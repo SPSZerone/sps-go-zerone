@@ -2,9 +2,13 @@ package item
 
 import (
 	"image"
+
+	"gioui.org/layout"
 )
 
 type LayoutContext struct {
+	InsetOuter  layout.Inset
+	InsetInner  layout.Inset
 	ContentSize image.Point
 
 	Padding       int

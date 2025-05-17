@@ -37,10 +37,13 @@ func (i *Item) Update(opts ...Option) {
 }
 
 func (i *Item) Layout(
-	theme *material.Theme, gtx layout.Context, highlight bool,
+	theme *material.Theme, gtx layout.Context,
+	highlight bool,
 	layoutContent LayoutContent,
 ) (dimensions layout.Dimensions, clicked bool) {
 	layoutCtx := LayoutContext{
+		InsetOuter: ConvertInsetByContext(gtx, i.Opts.Dimensions.InsetOuter),
+		InsetInner: ConvertInsetByContext(gtx, i.Opts.Dimensions.InsetInner),
 		ContentSize: image.Pt(
 			gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentSize.X)),
 			gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentSize.Y)),

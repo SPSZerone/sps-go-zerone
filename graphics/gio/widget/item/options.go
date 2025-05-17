@@ -31,7 +31,7 @@ type LayoutDetail func(
 
 func NewOptions(opts ...Option) Options {
 	o := Options{
-		Surface:        spssurface.NewUniformInset(4, 4),
+		Surface:        spssurface.NewUniformInset(4, 2),
 		Dimensions:     NewDimensions(),
 		StackAlignment: layout.Center,
 		BgColor:        spscolor.DynamicColor(2),

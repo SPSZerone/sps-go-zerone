@@ -31,14 +31,22 @@ func NewSPSItem(opts ...spsitem.Option) spsitem.Item {
 	)
 	item.Update(opts...)
 
-	item.Opts.Surface.InsetOuter.Left = unit.Dp(16)
-	item.Opts.Surface.InsetOuter.Top = unit.Dp(12)
-	item.Opts.Surface.InsetOuter.Right = unit.Dp(8)
-	item.Opts.Surface.InsetOuter.Bottom = unit.Dp(4)
-
-	item.Opts.Surface.InsetInner.Left = unit.Dp(4)
-	item.Opts.Surface.InsetInner.Top = unit.Dp(8)
-	item.Opts.Surface.InsetInner.Right = unit.Dp(12)
-	item.Opts.Surface.InsetInner.Bottom = unit.Dp(16)
+	//item.Opts.Surface.InsetOuter, item.Opts.Surface.InsetInner = testItemSurfaceInset()
 	return item
+}
+
+func testItemSurfaceInset() (outer, inner layout.Inset) {
+	outer = layout.Inset{
+		Left:   unit.Dp(16),
+		Top:    unit.Dp(12),
+		Right:  unit.Dp(8),
+		Bottom: unit.Dp(4),
+	}
+	inner = layout.Inset{
+		Left:   unit.Dp(4),
+		Top:    unit.Dp(8),
+		Right:  unit.Dp(12),
+		Bottom: unit.Dp(16),
+	}
+	return
 }

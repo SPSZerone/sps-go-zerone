@@ -14,7 +14,7 @@ func NewDimensions() Dimensions {
 		HighlightThickness: 4,
 		HighlightRoundness: 10,
 
-		Padding: 4,
+		Padding: 2,
 	}
 }
 

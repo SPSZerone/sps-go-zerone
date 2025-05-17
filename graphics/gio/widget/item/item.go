@@ -122,14 +122,14 @@ func (i *Item) LayoutHighlightStrokeRect(theme *material.Theme, gtx layout.Conte
 func (i *Item) LayoutHighlightTop(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
 		layoutCtx.Offset, 0,
-		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset,
+		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.HighlightThickness,
 	)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }
 
 func (i *Item) LayoutHighlightBottom(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
-		layoutCtx.Offset, layoutCtx.TotalSizeWithoutInset.Y-layoutCtx.Offset,
+		layoutCtx.Offset, layoutCtx.TotalSizeWithoutInset.Y-layoutCtx.HighlightThickness,
 		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.TotalSizeWithoutInset.Y,
 	)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())

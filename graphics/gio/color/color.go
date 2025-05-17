@@ -12,22 +12,27 @@ import (
 )
 
 func Fill(gtx layout.Context, col1, col2 color.NRGBA) {
-	dr := image.Rectangle{Max: gtx.Constraints.Min}
-	paint.FillShape(gtx.Ops,
+	rect := image.Rectangle{Max: gtx.Constraints.Min}
+	FillRect(gtx, rect, col1, col2)
+}
+
+func FillRect(gtx layout.Context, rect image.Rectangle, col1, col2 color.NRGBA) {
+	paint.FillShape(
+		gtx.Ops,
 		color.NRGBA{R: 0, G: 0, B: 0, A: 0xFF},
-		clip.Rect(dr).Op(),
+		clip.Rect(rect).Op(),
 	)
 
 	col2.R = byte(float32(col2.R))
 	col2.G = byte(float32(col2.G))
 	col2.B = byte(float32(col2.B))
 	paint.LinearGradientOp{
-		Stop1:  f32.Pt(float32(dr.Min.X), 0),
-		Stop2:  f32.Pt(float32(dr.Max.X), 0),
+		Stop1:  f32.Pt(float32(rect.Min.X), 0),
+		Stop2:  f32.Pt(float32(rect.Max.X), 0),
 		Color1: col1,
 		Color2: col2,
 	}.Add(gtx.Ops)
-	defer clip.Rect(dr).Push(gtx.Ops).Pop()
+	defer clip.Rect(rect).Push(gtx.Ops).Pop()
 	paint.PaintOp{}.Add(gtx.Ops)
 }
 

@@ -2,6 +2,7 @@ package tab
 
 import (
 	"image"
+	"image/color"
 
 	"gioui.org/layout"
 	"gioui.org/op/clip"
@@ -9,12 +10,17 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
+
+	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 )
 
-func New(name string) Tab {
-	return Tab{
+func New(name string, data any) Tab {
+	t := Tab{
 		Name: name,
+		Data: data,
 	}
+	t.BGColor1, t.BGColor2 = spscolor.Rand2Color(0, 10)
+	return t
 }
 
 type Style func(style *material.LabelStyle)
@@ -23,6 +29,11 @@ type Tab struct {
 	Name      string
 	Clickable widget.Clickable
 	Data      any
+
+	BGColor1, BGColor2 color.NRGBA
+
+	Size       image.Point
+	sizeByName string
 }
 
 func (t *Tab) LayoutDefault(
@@ -86,18 +97,36 @@ func (t *Tab) LayoutName(
 		}
 	}
 
-	var size image.Point
 	name := func(gtx layout.Context) layout.Dimensions {
 		dims := nameWidget(gtx)
-		size = dims.Size
+		size := dims.Size
 		if widthLimit > 0 {
 			if isVertical {
 				size.X = widthLimit
 			}
 		}
+		t.Size = size
+		t.sizeByName = t.Name
 		return layout.Dimensions{Size: size}
 	}
-	return t.Clickable.Layout(gtx, name)
+	if t.Size.X == 0 || t.Size.Y == 0 || t.sizeByName != t.Name {
+		t.Clickable.Layout(gtx, name)
+	}
+	return layout.Stack{Alignment: layout.Center}.Layout(gtx,
+		// background
+		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+			rect := image.Rect(
+				0, 0,
+				t.Size.X, t.Size.Y,
+			)
+			spscolor.FillRect(gtx, rect, t.BGColor1, t.BGColor2)
+			return layout.Dimensions{Size: t.Size}
+		}),
+		// name
+		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+			return t.Clickable.Layout(gtx, name)
+		}),
+	)
 }
 
 func (t *Tab) LayoutHighlight(

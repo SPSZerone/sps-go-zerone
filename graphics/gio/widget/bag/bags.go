@@ -42,10 +42,7 @@ func (b *Bags) AddBag(bags ...Bag) {
 func (b *Bags) addBag(bag Bag) {
 	b.Bags = append(b.Bags, bag)
 
-	b.Tabs.AddTab(spstab.Tab{
-		Name: bag.Name,
-		Data: b.GetLastBag(),
-	})
+	b.Tabs.AddTab(spstab.New(bag.Name, b.GetLastBag()))
 }
 
 func (b *Bags) GetFirstBag() *Bag {

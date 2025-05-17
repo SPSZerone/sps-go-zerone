@@ -9,6 +9,8 @@ import (
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
+
+	spsrand "github.com/SPSZerone/sps-go-zerone/math/rand"
 )
 
 func Fill(gtx layout.Context, col1, col2 color.NRGBA) {
@@ -38,6 +40,12 @@ func FillRect(gtx layout.Context, rect image.Rectangle, col1, col2 color.NRGBA) 
 	}.Add(gtx.Ops)
 	defer clip.Rect(rect).Push(gtx.Ops).Pop()
 	paint.PaintOp{}.Add(gtx.Ops)
+}
+
+func Rand2Color(min, max int) (color1, color2 color.NRGBA) {
+	randColor1 := spsrand.RandomInt(min, max)
+	randColor2 := randColor1 + spsrand.RandomInt(1, 3)
+	return DynamicColor(randColor1), DynamicColor(randColor2)
 }
 
 func DynamicColor(i int) color.NRGBA {

@@ -55,7 +55,7 @@ func (t *Tabs) Update(opts ...Option) {
 
 func (t *Tabs) AddTabByNames(names ...string) {
 	for _, title := range names {
-		t.Tabs = append(t.Tabs, Tab{Name: title})
+		t.Tabs = append(t.Tabs, New(title, nil))
 	}
 }
 

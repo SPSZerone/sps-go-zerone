@@ -29,10 +29,7 @@ func NewSPSItem(opts ...spsitem.Option) spsitem.Item {
 		spsitem.OptHighlightStyle(highlightStyle),
 		spsitem.OptStackAlignment(stackAlignment),
 		spsitem.OptDimensions(dimensions),
-		spsitem.OptBgColor(
-			spscolor.DynamicColor(spsrand.RandomInt(0, 10)),
-			spscolor.DynamicColor(spsrand.RandomInt(0, 10)),
-		),
+		spsitem.OptBgColor(spscolor.Rand2Color(0, 10)),
 	)
 	item.Update(opts...)
 

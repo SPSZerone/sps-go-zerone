@@ -111,8 +111,8 @@ func (i *Item) Layout(
 
 func (i *Item) LayoutHighlightStrokeRect(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	size := image.Pt(
-		layoutCtx.ContentSize.X+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
-		layoutCtx.ContentSize.Y+layoutCtx.PaddingDouble+layoutCtx.HighlightThickness,
+		layoutCtx.ContentSize.X+layoutCtx.HighlightThickness+layoutCtx.PaddingDouble,
+		layoutCtx.ContentSize.Y+layoutCtx.HighlightThickness+layoutCtx.PaddingDouble,
 	)
 	pos := image.Pt(layoutCtx.HighlightThicknessHalf, layoutCtx.HighlightThicknessHalf)
 	spsdrawing.DrawStrokeRectR(

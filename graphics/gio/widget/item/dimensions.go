@@ -9,12 +9,14 @@ import (
 
 func NewDimensions() Dimensions {
 	return Dimensions{
-		InsetInner:         layout.UniformInset(unit.Dp(4)),
-		InsetOuter:         layout.UniformInset(unit.Dp(4)),
-		ContentSize:        image.Pt(100, 100),
-		Padding:            4,
+		InsetInner:  layout.UniformInset(unit.Dp(8)),
+		InsetOuter:  layout.UniformInset(unit.Dp(8)),
+		ContentSize: image.Pt(100, 100),
+
 		HighlightThickness: 4,
 		HighlightRoundness: 10,
+
+		Padding: 4,
 	}
 }
 

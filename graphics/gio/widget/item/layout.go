@@ -51,7 +51,7 @@ func (c *LayoutContext) OnInit() {
 
 	c.Offset = c.Padding + c.HighlightThickness
 	c.Size = image.Pt(
-		c.ContentSize.X+c.PaddingDouble+c.HighlightThicknessDouble,
-		c.ContentSize.Y+c.PaddingDouble+c.HighlightThicknessDouble,
+		c.ContentSize.X+c.HighlightThicknessDouble+c.PaddingDouble,
+		c.ContentSize.Y+c.HighlightThicknessDouble+c.PaddingDouble,
 	)
 }

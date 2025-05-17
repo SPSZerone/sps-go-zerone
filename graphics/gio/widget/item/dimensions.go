@@ -9,8 +9,6 @@ import (
 
 func NewDimensions() Dimensions {
 	return Dimensions{
-		InsetInner:  layout.UniformInset(unit.Dp(8)),
-		InsetOuter:  layout.UniformInset(unit.Dp(8)),
 		ContentSize: image.Pt(100, 100),
 
 		HighlightThickness: 4,
@@ -21,8 +19,6 @@ func NewDimensions() Dimensions {
 }
 
 type Dimensions struct {
-	InsetInner  layout.Inset
-	InsetOuter  layout.Inset
 	ContentSize image.Point
 
 	HighlightThickness int

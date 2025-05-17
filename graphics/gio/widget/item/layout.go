@@ -5,12 +5,14 @@ import (
 
 	"gioui.org/layout"
 	"gioui.org/unit"
+
+	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
-func NewLayoutContext(gtx layout.Context, dimensions Dimensions) LayoutContext {
+func NewLayoutContext(gtx layout.Context, dimensions *Dimensions, surface *spssurface.Surface) LayoutContext {
 	c := LayoutContext{
-		InsetOuter: ConvertInsetByContext(gtx, dimensions.InsetOuter),
-		InsetInner: ConvertInsetByContext(gtx, dimensions.InsetInner),
+		InsetOuter: ConvertInsetByContext(gtx, surface.InsetOuter),
+		InsetInner: ConvertInsetByContext(gtx, surface.InsetInner),
 		ContentSize: image.Pt(
 			gtx.Dp(unit.Dp(dimensions.ContentSize.X)),
 			gtx.Dp(unit.Dp(dimensions.ContentSize.Y)),
@@ -26,21 +28,21 @@ func NewLayoutContext(gtx layout.Context, dimensions Dimensions) LayoutContext {
 }
 
 type LayoutContext struct {
-	InsetOuter  layout.Inset
-	InsetInner  layout.Inset
-	ContentSize image.Point
+	InsetOuter layout.Inset
+	InsetInner layout.Inset
+
+	ContentSize      image.Point
+	SizeWithoutInset image.Point
 
 	HighlightThickness       int
 	HighlightThicknessDouble int
 	HighlightThicknessHalf   int
+	HighlightRoundness       int
 
 	Padding       int
 	PaddingDouble int
 
-	HighlightRoundness int
-
 	Offset int
-	Size   image.Point
 }
 
 func (c *LayoutContext) OnInit() {
@@ -50,7 +52,7 @@ func (c *LayoutContext) OnInit() {
 	c.PaddingDouble = c.Padding << 1
 
 	c.Offset = c.Padding + c.HighlightThickness
-	c.Size = image.Pt(
+	c.SizeWithoutInset = image.Pt(
 		c.ContentSize.X+c.HighlightThicknessDouble+c.PaddingDouble,
 		c.ContentSize.Y+c.HighlightThicknessDouble+c.PaddingDouble,
 	)

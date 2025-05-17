@@ -25,7 +25,7 @@ func New(outer, inner layout.Inset) Surface {
 		InsetOuter:  outer,
 		InsetInner:  inner,
 		BGColor:     color.NRGBA{R: 0xD3, G: 0xD3, B: 0xD3, A: 0xFF},
-		ShadowStyle: component.Shadow(unit.Dp(10), unit.Dp(8)),
+		ShadowStyle: component.Shadow(unit.Dp(10), unit.Dp(5)),
 	}
 }
 
@@ -55,11 +55,13 @@ func (s *Surface) Layout(
 		gtx,
 		func(gtx layout.Context) layout.Dimensions {
 			surfaceStyle := component.Surface(theme)
+			surfaceStyle.Fill = s.BGColor
+			surfaceStyle.ShadowStyle = s.ShadowStyle
+
 			if style != nil {
-				surfaceStyle.Fill = s.BGColor
-				surfaceStyle.ShadowStyle = s.ShadowStyle
 				style(s, &surfaceStyle)
 			}
+
 			return surfaceStyle.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 				return s.InsetInner.Layout(gtx, widget)
 			})

@@ -2,17 +2,13 @@ package item
 
 import (
 	"image"
-	"image/color"
 
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
-	"gioui.org/unit"
 	"gioui.org/widget/material"
-	"gioui.org/x/component"
 
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
-	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
 func New(opts ...Option) Item {
@@ -20,8 +16,6 @@ func New(opts ...Option) Item {
 		Opts: NewOptions(opts...),
 		UI:   NewUI(),
 	}
-	i.UI.Surface.InsetOuter = i.Opts.Dimensions.InsetOuter
-	i.UI.Surface.InsetInner = i.Opts.Dimensions.InsetInner
 	return i
 }
 
@@ -41,12 +35,12 @@ func (i *Item) Layout(
 	highlight bool,
 	layoutContent LayoutContent,
 ) (dimensions layout.Dimensions, clicked bool) {
-	layoutCtx := NewLayoutContext(gtx, i.Opts.Dimensions)
+	layoutCtx := NewLayoutContext(gtx, &i.Opts.Dimensions, &i.Opts.Surface)
 
 	dimensions = layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
 		// content background
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return i.UI.Surface.Layout(
+			return i.Opts.Surface.LayoutDefault(
 				theme, gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					contentBgRect := image.Rect(
@@ -54,12 +48,8 @@ func (i *Item) Layout(
 						layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Offset+layoutCtx.ContentSize.Y)
 					paint.FillShape(gtx.Ops, i.Opts.BgColor, clip.Rect(contentBgRect).Op())
 					return layout.Dimensions{
-						Size: layoutCtx.Size,
+						Size: layoutCtx.SizeWithoutInset,
 					}
-				},
-				func(surface *spssurface.Surface, style *component.SurfaceStyle) {
-					style.Fill = color.NRGBA{R: 0xD3, G: 0xD3, B: 0xD3, A: 0xFF}
-					style.ShadowStyle.CornerRadius = unit.Dp(layoutCtx.HighlightRoundness)
 				},
 			)
 		}),
@@ -72,7 +62,7 @@ func (i *Item) Layout(
 				gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					return layout.Dimensions{
-						Size: layoutCtx.Size,
+						Size: layoutCtx.SizeWithoutInset,
 					}
 				},
 			)
@@ -100,7 +90,7 @@ func (i *Item) Layout(
 				i.LayoutHighlightStrokeRect(theme, gtx, layoutCtx)
 			}
 			return layout.Dimensions{
-				Size: layoutCtx.Size,
+				Size: layoutCtx.SizeWithoutInset,
 			}
 		}),
 		// menu
@@ -134,7 +124,7 @@ func (i *Item) LayoutHighlightTop(theme *material.Theme, gtx layout.Context, lay
 
 func (i *Item) LayoutHighlightBottom(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {
 	contentBgRect := image.Rect(
-		layoutCtx.Offset, layoutCtx.Size.Y-layoutCtx.Offset,
-		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.Size.Y)
+		layoutCtx.Offset, layoutCtx.SizeWithoutInset.Y-layoutCtx.Offset,
+		layoutCtx.Offset+layoutCtx.ContentSize.X, layoutCtx.SizeWithoutInset.Y)
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(contentBgRect).Op())
 }

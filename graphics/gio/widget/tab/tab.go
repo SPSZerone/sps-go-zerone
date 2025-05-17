@@ -57,7 +57,7 @@ func (t *Tab) Layout(
 	highlightThickness := gtx.Dp(unit.Dp(4))
 
 	var size image.Point
-	dimensions = layout.Stack{Alignment: layout.S}.Layout(gtx,
+	dimensions = layout.Stack{Alignment: layout.Center}.Layout(gtx,
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			dims := t.LayoutName(theme, gtx, isVertical, widthLimit, highlightThickness, nameWidget)
@@ -102,26 +102,22 @@ func (t *Tab) LayoutHighlight(
 	theme *material.Theme, gtx layout.Context,
 	highlightThickness int, highlight bool,
 	isVertical bool,
-	tabSize image.Point,
+	size image.Point,
 ) layout.Dimensions {
 	if !highlight {
 		return layout.Dimensions{}
 	}
 
-	var highlightRect image.Rectangle
-	var size image.Point
+	var rect image.Rectangle
 	if isVertical {
-		size = image.Pt(highlightThickness, tabSize.Y)
-		// right
-		startX := tabSize.X>>1 - highlightThickness>>1
-		// left
-		//startX = -startX
-		highlightRect = image.Rect(startX, 0, startX+highlightThickness, tabSize.Y)
+		// on right
+		startX := size.X - highlightThickness
+		rect = image.Rect(startX, 0, startX+highlightThickness, size.Y)
 	} else {
-		size = image.Pt(tabSize.X, highlightThickness)
-		highlightRect = image.Rect(0, 0, tabSize.X, highlightThickness)
+		// on bottom
+		rect = image.Rect(0, size.Y-highlightThickness, size.X, size.Y)
 	}
 
-	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
+	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(rect).Op())
 	return layout.Dimensions{Size: size}
 }

@@ -7,6 +7,7 @@ import (
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
+	"gioui.org/unit"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
@@ -58,7 +59,7 @@ func (i *Item) Layout(
 				},
 				func(surface *spssurface.Surface, style *component.SurfaceStyle) {
 					style.Fill = color.NRGBA{R: 0xD3, G: 0xD3, B: 0xD3, A: 0xFF}
-					//style.Fill = color.NRGBA{R: 0xFF, G: 0x00, B: 0x00, A: 0x7F}
+					style.ShadowStyle.CornerRadius = unit.Dp(layoutCtx.HighlightRoundness)
 				},
 			)
 		}),

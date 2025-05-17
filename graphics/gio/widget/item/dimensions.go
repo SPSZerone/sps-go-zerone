@@ -21,12 +21,14 @@ func NewDimensions() Dimensions {
 }
 
 type Dimensions struct {
-	InsetInner         layout.Inset
-	InsetOuter         layout.Inset
-	ContentSize        image.Point
-	Padding            int
+	InsetInner  layout.Inset
+	InsetOuter  layout.Inset
+	ContentSize image.Point
+
 	HighlightThickness int
 	HighlightRoundness int
+
+	Padding int
 }
 
 func ConvertInsetByContext(gtx layout.Context, in layout.Inset) layout.Inset {

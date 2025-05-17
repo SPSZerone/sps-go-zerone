@@ -220,6 +220,7 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 			highlight,
 			t.GetLayoutAxis(),
 			widthLimit,
+			t.Opts.ColorfulBG,
 		)
 		if clicked {
 			if t.selected < tabIdx {

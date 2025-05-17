@@ -20,6 +20,7 @@ func New(name string, data any) Tab {
 		Data: data,
 	}
 	t.BGColor1, t.BGColor2 = spscolor.Rand2Color(0, 10)
+	//t.BGColor2 = color.NRGBA{R: 0xFF, G: 0xFF, B: 0xFF, A: 0xFF}
 	return t
 }
 
@@ -41,16 +42,24 @@ func (t *Tab) LayoutDefault(
 	highlight bool,
 	axis layout.Axis,
 	widthLimit int,
+	colorfulBG bool,
 ) (dimensions layout.Dimensions, clicked bool) {
-	return t.Layout(theme, gtx, highlight, axis, widthLimit, func(gtx layout.Context) layout.Dimensions {
-		return layout.UniformInset(unit.Dp(12)).Layout(
-			gtx,
-			func(gtx layout.Context) layout.Dimensions {
-				labelStyle := material.H6(theme, t.Name)
-				return labelStyle.Layout(gtx)
-			},
-		)
-	})
+	return t.Layout(
+		theme, gtx,
+		highlight,
+		axis,
+		widthLimit,
+		colorfulBG,
+		func(gtx layout.Context) layout.Dimensions {
+			return layout.UniformInset(unit.Dp(12)).Layout(
+				gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					labelStyle := material.H6(theme, t.Name)
+					return labelStyle.Layout(gtx)
+				},
+			)
+		},
+	)
 }
 
 func (t *Tab) Layout(
@@ -58,6 +67,7 @@ func (t *Tab) Layout(
 	highlight bool,
 	axis layout.Axis,
 	widthLimit int,
+	colorfulBG bool,
 	nameWidget layout.Widget,
 ) (dimensions layout.Dimensions, clicked bool) {
 	if t.Clickable.Clicked(gtx) {
@@ -71,7 +81,7 @@ func (t *Tab) Layout(
 	dimensions = layout.Stack{Alignment: layout.Center}.Layout(gtx,
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			dims := t.LayoutName(theme, gtx, isVertical, widthLimit, highlightThickness, nameWidget)
+			dims := t.LayoutName(theme, gtx, isVertical, widthLimit, highlightThickness, colorfulBG, nameWidget)
 			size = dims.Size
 			return dims
 		}),
@@ -89,6 +99,7 @@ func (t *Tab) LayoutName(
 	isVertical bool,
 	widthLimit int,
 	highlightThickness int,
+	colorfulBG bool,
 	nameWidget layout.Widget,
 ) layout.Dimensions {
 	if widthLimit > 0 {
@@ -109,6 +120,11 @@ func (t *Tab) LayoutName(
 		t.sizeByName = t.Name
 		return layout.Dimensions{Size: size}
 	}
+
+	if !colorfulBG {
+		return t.Clickable.Layout(gtx, name)
+	}
+
 	if t.Size.X == 0 || t.Size.Y == 0 || t.sizeByName != t.Name {
 		t.Clickable.Layout(gtx, name)
 	}

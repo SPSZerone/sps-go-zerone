@@ -9,8 +9,8 @@ import (
 func NewOptions(opts ...Option) Options {
 	o := Options{
 		WidthLimitWhenVertical: 128,
-
-		Axis: layout.Vertical,
+		Axis:                   layout.Vertical,
+		ColorfulBG:             true,
 	}
 	o.Update(opts...)
 	return o
@@ -21,6 +21,8 @@ type Options struct {
 
 	Axis        layout.Axis
 	AxisSetting *spssettings.TabAxis
+
+	ColorfulBG bool
 }
 
 func (o *Options) Update(opts ...Option) {
@@ -46,5 +48,11 @@ func OptAxis(value layout.Axis) Option {
 func OptAxisSetting(value *spssettings.TabAxis) Option {
 	return func(o *Options) {
 		o.AxisSetting = value
+	}
+}
+
+func OptColorfulBG(value bool) Option {
+	return func(o *Options) {
+		o.ColorfulBG = value
 	}
 }

@@ -1,11 +1,7 @@
 package tab
 
 import (
-	"image"
-
 	"gioui.org/layout"
-	"gioui.org/op/clip"
-	"gioui.org/op/paint"
 	"gioui.org/unit"
 	"gioui.org/widget/material"
 
@@ -208,17 +204,24 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 	// Axis
 	t.List.Axis = t.GetLayoutAxis()
 
-	// WidthWhenVertical
-	var width int
-	if t.Opts.WidthWhenVertical > 0 {
+	// WidthLimitWhenVertical
+	var widthLimit int
+	if t.Opts.WidthLimitWhenVertical > 0 {
 		if t.IsVertical() {
-			width = gtx.Dp(unit.Dp(t.Opts.WidthWhenVertical))
+			widthLimit = gtx.Dp(unit.Dp(t.Opts.WidthLimitWhenVertical))
 		}
 	}
 
 	return t.List.Layout(theme, gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
-		if tab.Clickable.Clicked(gtx) {
+		highlight := t.selected == tabIdx
+		d, clicked := tab.LayoutDefault(
+			theme, gtx,
+			highlight,
+			t.GetLayoutAxis(),
+			widthLimit,
+		)
+		if clicked {
 			if t.selected < tabIdx {
 				t.Slider.PushLeft()
 			} else if t.selected > tabIdx {
@@ -226,59 +229,6 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 			}
 			t.selected = tabIdx
 		}
-
-		var tabSize image.Point
-		return layout.Stack{Alignment: layout.S}.Layout(gtx,
-			// click area
-			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-				if width > 0 {
-					if t.IsVertical() {
-						gtx.Constraints.Max.X = width
-					}
-				}
-
-				return tab.Clickable.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-					dims := layout.UniformInset(unit.Dp(12)).Layout(
-						gtx,
-						func(gtx layout.Context) layout.Dimensions {
-							name := material.H6(theme, tab.Name)
-							name.Font.Typeface = t.Opts.Font
-							return name.Layout(gtx)
-						},
-					)
-					tabSize = dims.Size
-					if width > 0 {
-						if t.IsVertical() {
-							tabSize.X = width
-						}
-					}
-					return layout.Dimensions{Size: tabSize}
-				})
-			}),
-			// highlight
-			layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-				if t.selected != tabIdx {
-					return layout.Dimensions{}
-				}
-
-				highlightThickness := gtx.Dp(unit.Dp(4))
-				var highlightRect image.Rectangle
-				var size image.Point
-				if t.GetLayoutAxis() == layout.Vertical {
-					size = image.Pt(highlightThickness, tabSize.Y)
-					// right
-					startX := tabSize.X>>1 - highlightThickness>>1
-					// left
-					//startX = -startX
-					highlightRect = image.Rect(startX, 0, startX+highlightThickness, tabSize.Y)
-				} else {
-					size = image.Pt(tabSize.X, highlightThickness)
-					highlightRect = image.Rect(0, 0, tabSize.X, highlightThickness)
-				}
-
-				paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(highlightRect).Op())
-				return layout.Dimensions{Size: size}
-			}),
-		)
+		return d
 	})
 }

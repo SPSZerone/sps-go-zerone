@@ -2,14 +2,17 @@ package item
 
 import (
 	"image"
+	"image/color"
 
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/unit"
 	"gioui.org/widget/material"
+	"gioui.org/x/component"
 
 	spsdrawing "github.com/SPSZerone/sps-go-zerone/graphics/gio/architecture/drawing"
+	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
 func New(opts ...Option) Item {
@@ -53,13 +56,21 @@ func (i *Item) Layout(
 	dimensions = layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
 		// content background
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			contentBgRect := image.Rect(
-				layoutCtx.Offset, layoutCtx.Offset,
-				layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Offset+layoutCtx.ContentHeight)
-			paint.FillShape(gtx.Ops, i.Opts.BgColor, clip.Rect(contentBgRect).Op())
-			return layout.Dimensions{
-				Size: layoutCtx.Size,
-			}
+			return i.Opts.Surface.Layout(
+				theme, gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					contentBgRect := image.Rect(
+						layoutCtx.Offset, layoutCtx.Offset,
+						layoutCtx.Offset+layoutCtx.ContentWidth, layoutCtx.Offset+layoutCtx.ContentHeight)
+					paint.FillShape(gtx.Ops, i.Opts.BgColor, clip.Rect(contentBgRect).Op())
+					return layout.Dimensions{
+						Size: layoutCtx.Size,
+					}
+				},
+				func(surface *spssurface.Surface, style *component.SurfaceStyle) {
+					style.Fill = color.NRGBA{R: 0xD3, G: 0xD3, B: 0xD3, A: 0xFF}
+				},
+			)
 		}),
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {

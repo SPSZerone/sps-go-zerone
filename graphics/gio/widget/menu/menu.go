@@ -37,7 +37,8 @@ func (m *Menu) Layout(
 ) layout.Dimensions {
 	return layout.Stack{Alignment: alignment}.Layout(gtx,
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return spssurface.New().Layout(theme, gtx, func(gtx layout.Context) layout.Dimensions {
+			surface := spssurface.NewDefault()
+			return surface.LayoutDefault(theme, gtx, func(gtx layout.Context) layout.Dimensions {
 				if widget == nil {
 					return layout.Dimensions{}
 				}

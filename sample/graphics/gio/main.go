@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"gioui.org/app"
 	"gioui.org/io/event"
 
@@ -59,12 +57,9 @@ func NewWindow(app spsgio.App, fromWin spsgio.Window) spsgio.Window {
 			pages.Register(pageTag, spsabout.New(pages))
 
 			pageTag++
-			pref := spspref.New(pages, app, NewWindow)
-			for i := 0; i < 20; i++ {
-				pref.Tabs.AddTabByNames(fmt.Sprintf("test-%d", i))
-			}
-			pref.Tabs.SetSelected(spspref.TabIdxSettings)
-			pages.Register(pageTag, pref)
+			pagePref := spspref.New(pages, app, NewWindow)
+			pagePref.Tabs.SetSelected(spspref.TabIdxSettings)
+			pages.Register(pageTag, pagePref)
 
 			pageTag++
 			pages.Register(pageTag, spssample.New(win.GetTheme(), pages))

@@ -7,7 +7,6 @@ import (
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
-	"gioui.org/unit"
 	"gioui.org/widget/material"
 	"gioui.org/x/component"
 
@@ -41,25 +40,7 @@ func (i *Item) Layout(
 	highlight bool,
 	layoutContent LayoutContent,
 ) (dimensions layout.Dimensions, clicked bool) {
-	layoutCtx := LayoutContext{
-		InsetOuter: ConvertInsetByContext(gtx, i.Opts.Dimensions.InsetOuter),
-		InsetInner: ConvertInsetByContext(gtx, i.Opts.Dimensions.InsetInner),
-		ContentSize: image.Pt(
-			gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentSize.X)),
-			gtx.Dp(unit.Dp(i.Opts.Dimensions.ContentSize.Y)),
-		),
-		Padding:            gtx.Dp(unit.Dp(i.Opts.Dimensions.Padding)),
-		HighlightThickness: gtx.Dp(unit.Dp(i.Opts.Dimensions.HighlightThickness)),
-		HighlightRoundness: gtx.Dp(unit.Dp(i.Opts.Dimensions.HighlightRoundness)),
-	}
-	layoutCtx.PaddingDouble = layoutCtx.Padding << 1
-	layoutCtx.HighlightThicknessDouble = layoutCtx.HighlightThickness << 1
-	layoutCtx.HighlightThicknessHalf = layoutCtx.HighlightThickness >> 1
-	layoutCtx.Offset = layoutCtx.Padding + layoutCtx.HighlightThickness
-	layoutCtx.Size = image.Pt(
-		layoutCtx.ContentSize.X+layoutCtx.PaddingDouble+layoutCtx.HighlightThicknessDouble,
-		layoutCtx.ContentSize.Y+layoutCtx.PaddingDouble+layoutCtx.HighlightThicknessDouble,
-	)
+	layoutCtx := NewLayoutContext(gtx, i.Opts.Dimensions)
 
 	dimensions = layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
 		// content background

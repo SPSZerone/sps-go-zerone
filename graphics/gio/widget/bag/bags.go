@@ -11,7 +11,6 @@ import (
 func NewBags(opts ...spstab.Option) Bags {
 	tabs := spstab.NewTabs(
 		spstab.OptColorfulBG(true),
-		spstab.OptCloseMode(spstab.CloseModeNormal),
 	)
 	tabs.Update(opts...)
 	return Bags{

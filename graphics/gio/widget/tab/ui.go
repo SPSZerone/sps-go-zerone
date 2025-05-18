@@ -1,7 +1,6 @@
 package tab
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 
@@ -17,6 +16,7 @@ import (
 	spsbg "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bg"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsmenu "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/menu"
+	spssurface "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/surface"
 )
 
 func NewUI() UI {
@@ -48,6 +48,7 @@ func (u *UI) LayoutContent(
 	highlightThickness int,
 	colorfulBG bool,
 	closeMode CloseMode,
+	name string,
 	nameWidget layout.Widget,
 ) layout.Dimensions {
 	if widthLimit > 0 {
@@ -57,7 +58,7 @@ func (u *UI) LayoutContent(
 	}
 
 	if !colorfulBG {
-		return u.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
+		return u.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, name, nameWidget)
 	}
 
 	return layout.Stack{
@@ -69,7 +70,7 @@ func (u *UI) LayoutContent(
 			return spsbg.NewColorful(u.BGColor1, u.BGColor2).LayoutBG(theme, gtx, u.size)
 		}),
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			dim := u.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
+			dim := u.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, name, nameWidget)
 			u.size = dim.Size
 			return dim
 		}),
@@ -81,6 +82,7 @@ func (u *UI) doLayoutContent(
 	isVertical bool,
 	widthLimit int,
 	closeMode CloseMode,
+	name string,
 	nameWidget layout.Widget,
 ) layout.Dimensions {
 	// final name widget
@@ -123,8 +125,8 @@ func (u *UI) doLayoutContent(
 	// menu widgets
 	menuWidgets := []func(gtx layout.Context) layout.Dimensions{
 		func(gtx layout.Context) layout.Dimensions {
-			return layout.UniformInset(unit.Dp(8)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				return material.H6(theme, fmt.Sprintf("Tab Menu")).Layout(gtx)
+			return spssurface.NewUniformInset(8, 8).LayoutDefault(theme, gtx, func(gtx layout.Context) layout.Dimensions {
+				return material.H6(theme, name).Layout(gtx)
 			})
 		},
 		func(gtx layout.Context) layout.Dimensions {

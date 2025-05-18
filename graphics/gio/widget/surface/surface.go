@@ -39,14 +39,14 @@ type Surface struct {
 	ShadowStyle component.ShadowStyle
 }
 
-func (s *Surface) LayoutDefault(
+func (s Surface) LayoutDefault(
 	theme *material.Theme, gtx layout.Context,
 	widget layout.Widget,
 ) layout.Dimensions {
 	return s.Layout(theme, gtx, widget, nil)
 }
 
-func (s *Surface) Layout(
+func (s Surface) Layout(
 	theme *material.Theme, gtx layout.Context,
 	widget layout.Widget,
 	style Style,
@@ -59,7 +59,7 @@ func (s *Surface) Layout(
 			surfaceStyle.ShadowStyle = s.ShadowStyle
 
 			if style != nil {
-				style(s, &surfaceStyle)
+				style(&s, &surfaceStyle)
 			}
 
 			return surfaceStyle.Layout(gtx, func(gtx layout.Context) layout.Dimensions {

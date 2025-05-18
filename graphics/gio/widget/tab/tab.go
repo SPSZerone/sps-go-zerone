@@ -102,6 +102,7 @@ func (t *Tab) Layout(
 				highlightThickness,
 				colorfulBG,
 				closeMode,
+				t.Name,
 				nameWidget,
 			)
 			size = dims.Size

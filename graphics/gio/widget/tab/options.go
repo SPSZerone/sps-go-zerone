@@ -11,6 +11,7 @@ func NewOptions(opts ...Option) Options {
 		WidthLimitWhenVertical: 128,
 		Axis:                   layout.Vertical,
 		ColorfulBG:             true,
+		CloseMode:              CloseModeNone,
 	}
 	o.Update(opts...)
 	return o

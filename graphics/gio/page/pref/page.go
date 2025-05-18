@@ -22,6 +22,7 @@ func New(pages spsgio.Pages, app spsgio.App, newWindow spsgio.NewWindow) *Page {
 		[]string{TabNameSettings, TabNamePreferences},
 		spstab.OptAxisSetting(&pages.GetWindow().GetPref().Settings.TabAxis),
 		spstab.OptColorfulBG(true),
+		spstab.OptCloseMode(spstab.CloseModeNone),
 	)
 	p := &Page{
 		Pages: pages,

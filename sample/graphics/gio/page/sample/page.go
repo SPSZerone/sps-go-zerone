@@ -35,6 +35,7 @@ func New(theme *material.Theme, pages spsgio.Pages) *Page {
 		[]string{GetTabName(TabIdxBags)},
 		spstab.OptAxisSetting(&pref.Settings.TabAxis),
 		spstab.OptColorfulBG(true),
+		spstab.OptCloseMode(spstab.CloseModeNone),
 	)
 	bags := spsbag.NewBags()
 	bags.Tabs.Update(

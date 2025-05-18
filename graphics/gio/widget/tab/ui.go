@@ -1,21 +1,22 @@
 package tab
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 
 	"gioui.org/layout"
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
+	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
-	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsbg "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bg"
+	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spsmenu "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/menu"
-	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 )
 
 func NewUI() UI {
@@ -40,7 +41,7 @@ type UI struct {
 	size               image.Point
 }
 
-func (t *UI) LayoutContent(
+func (u *UI) LayoutContent(
 	theme *material.Theme, gtx layout.Context,
 	isVertical bool,
 	widthLimit int,
@@ -56,7 +57,7 @@ func (t *UI) LayoutContent(
 	}
 
 	if !colorfulBG {
-		return t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
+		return u.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
 	}
 
 	return layout.Stack{
@@ -64,75 +65,100 @@ func (t *UI) LayoutContent(
 	}.Layout(
 		gtx,
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			gtx.Constraints.Max = t.size
-			return spsbg.NewColorful(t.BGColor1, t.BGColor2).LayoutBG(theme, gtx, t.size)
+			gtx.Constraints.Max = u.size
+			return spsbg.NewColorful(u.BGColor1, u.BGColor2).LayoutBG(theme, gtx, u.size)
 		}),
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			dim := t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
-			t.size = dim.Size
+			dim := u.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
+			u.size = dim.Size
 			return dim
 		}),
 	)
 }
 
-func (t *UI) doLayoutContent(
+func (u *UI) doLayoutContent(
 	theme *material.Theme, gtx layout.Context,
 	isVertical bool,
 	widthLimit int,
 	closeMode CloseMode,
 	nameWidget layout.Widget,
-) (dimensions layout.Dimensions) {
+) layout.Dimensions {
+	// final name widget
+	var finalNameWidget layout.Widget
 	if closeMode == CloseModeNormal {
-		spacer := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return spsspacer.NewWithWidth(8).Layout(gtx)
-		})
-		var nameChild layout.FlexChild
-		if isVertical {
-			nameChild = layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-				return t.Clickable.Layout(gtx, nameWidget)
-			})
-		} else {
-			nameChild = layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				return t.Clickable.Layout(gtx, nameWidget)
-			})
-		}
-		dimensions = layout.Flex{
-			Axis:      layout.Horizontal,
-			Alignment: layout.Middle,
-		}.Layout(gtx,
-			nameChild,
-			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-				//   󰅖    󰅗 󰅙 󰅜 󰛉 󱎘 󰖭  󰅘 󰅚 󰅝
-				//return material.Button(theme, &t.Close, ``).Layout(gtx)
-				return material.IconButton(theme, &t.CloseClickable, spsicon.NavigationClose, "Close").Layout(gtx)
-			}),
-			spacer,
-		)
-		return
-	}
-
-	if closeMode == CloseModeMenu {
-		// TODO
-		dimensions = t.Clickable.Layout(gtx, nameWidget)
-		return
-	}
-
-	name := func(gtx layout.Context) layout.Dimensions {
-		dims := nameWidget(gtx)
-		size := dims.Size
-		if widthLimit > 0 {
+		finalNameWidget = func(gtx layout.Context) layout.Dimensions {
+			var nameChild layout.FlexChild
 			if isVertical {
-				size.X = widthLimit
+				nameChild = layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+					return u.Clickable.Layout(gtx, nameWidget)
+				})
+			} else {
+				nameChild = layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+					return u.Clickable.Layout(gtx, nameWidget)
+				})
 			}
+			return layout.Flex{
+				Axis:      layout.Horizontal,
+				Alignment: layout.Middle,
+			}.Layout(gtx,
+				nameChild,
+				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+					return u.LayoutClose(theme, gtx, &u.CloseClickable)
+				}),
+			)
 		}
-		return layout.Dimensions{Size: size}
+	} else {
+		finalNameWidget = func(gtx layout.Context) layout.Dimensions {
+			dims := nameWidget(gtx)
+			size := dims.Size
+			if widthLimit > 0 {
+				if isVertical {
+					size.X = widthLimit
+				}
+			}
+			return layout.Dimensions{Size: size}
+		}
 	}
 
-	dimensions = t.Clickable.Layout(gtx, name)
-	return
+	// menu widgets
+	menuWidgets := []func(gtx layout.Context) layout.Dimensions{
+		func(gtx layout.Context) layout.Dimensions {
+			return layout.UniformInset(unit.Dp(8)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+				return material.H6(theme, fmt.Sprintf("Tab Menu")).Layout(gtx)
+			})
+		},
+		func(gtx layout.Context) layout.Dimensions {
+			return spsdivider.Divider{
+				Subheading: "Actions",
+			}.Layout(theme, gtx)
+		},
+	}
+	if closeMode != CloseModeNone {
+		menuWidgets = append(menuWidgets,
+			func(gtx layout.Context) layout.Dimensions {
+				return layout.Flex{
+					Axis: layout.Vertical,
+				}.Layout(gtx, layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+					return u.LayoutClose(theme, gtx, &u.CloseClickable)
+				}))
+			})
+	}
+	u.Menu.SetWidgets(menuWidgets...)
+
+	// final
+	return layout.Stack{
+		Alignment: layout.Center,
+	}.Layout(
+		gtx,
+		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+			return u.Clickable.Layout(gtx, finalNameWidget)
+		}),
+		// menu
+		u.Menu.LayoutExpandedContextArea(theme, image.Point{}),
+	)
 }
 
-func (t *UI) LayoutHighlight(
+func (u *UI) LayoutHighlight(
 	theme *material.Theme, gtx layout.Context,
 	highlightThickness int, highlight bool,
 	isVertical bool,
@@ -154,4 +180,15 @@ func (t *UI) LayoutHighlight(
 
 	paint.FillShape(gtx.Ops, theme.Palette.ContrastBg, clip.Rect(rect).Op())
 	return layout.Dimensions{Size: size}
+}
+
+func (u *UI) LayoutClose(
+	theme *material.Theme, gtx layout.Context,
+	close *widget.Clickable,
+) layout.Dimensions {
+	return layout.UniformInset(unit.Dp(8)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+		//   󰅖    󰅗 󰅙 󰅜 󰛉 󱎘 󰖭  󰅘 󰅚 󰅝
+		return material.Button(theme, close, ``).Layout(gtx)
+		//return material.IconButton(theme, close, spsicon.NavigationClose, "Close").Layout(gtx)
+	})
 }

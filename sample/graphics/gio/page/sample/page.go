@@ -38,8 +38,10 @@ func New(theme *material.Theme, pages spsgio.Pages) *Page {
 		spstab.OptCloseMode(spstab.CloseModeNone),
 	)
 	bags := spsbag.NewBags(
-		spstab.OptWidthWhenVertical(150),
-		spstab.OptCloseMode(spstab.CloseModeNormal),
+		spstab.OptWidthWhenVertical(128),
+		spstab.OptCloseMode(spstab.CloseModeMenu),
+		//spstab.OptWidthWhenVertical(150),
+		//spstab.OptCloseMode(spstab.CloseModeNormal),
 	)
 	bags.Tabs.Update(
 		spstab.OptAxisSetting(&pref.Settings.TabAxis),

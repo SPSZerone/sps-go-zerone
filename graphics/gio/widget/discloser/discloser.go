@@ -48,5 +48,5 @@ func (d *Discloser) LayoutWithDefaultControl(
 	theme *material.Theme, gtx layout.Context,
 	summary, detail layout.Widget,
 ) layout.Dimensions {
-	return d.Layout(theme, gtx, "\U000F0798" /* 󰞘 */, "\U000F0796" /* 󰞖 */, summary, detail)
+	return d.Layout(theme, gtx, ` 󰞘 ` /* 󰞘 */, ` 󰞖 `, summary, detail)
 }

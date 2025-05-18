@@ -12,29 +12,52 @@ import (
 	"gioui.org/widget/material"
 
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
+	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
+	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 )
 
 func New(name string, data any) Tab {
 	t := Tab{
-		Name: name,
-		Data: data,
+		FlexInset: spslayout.New(),
+		Name:      name,
+		Data:      data,
 	}
+	t.FlexInset.Flex.Axis = layout.Horizontal
 	t.BGColor1, t.BGColor2 = spscolor.Rand2Color(0, 10)
 	//t.BGColor2 = color.NRGBA{R: 0xFF, G: 0xFF, B: 0xFF, A: 0xFF}
 	return t
 }
 
-type Style func(style *material.LabelStyle)
+type (
+	Style     func(style *material.LabelStyle)
+	CloseMode int
+)
+
+const (
+	CloseModeNone CloseMode = iota
+	CloseModeNormal
+	CloseModeMenu
+)
 
 type Tab struct {
-	Name      string
-	Clickable widget.Clickable
-	Data      any
+	FlexInset spslayout.FlexInset
+
+	Name           string
+	Clickable      widget.Clickable
+	CloseClickable widget.Clickable
+	Data           any
 
 	BGColor1, BGColor2 color.NRGBA
+	close              bool
+}
 
-	Size       image.Point
-	sizeByName string
+func (t *Tab) Close() {
+	t.close = true
+}
+
+func (t *Tab) IsClose() bool {
+	return t.close
 }
 
 func (t *Tab) LayoutDefault(
@@ -43,6 +66,7 @@ func (t *Tab) LayoutDefault(
 	axis layout.Axis,
 	widthLimit int,
 	colorfulBG bool,
+	closeMode CloseMode,
 ) (dimensions layout.Dimensions, clicked bool) {
 	return t.Layout(
 		theme, gtx,
@@ -50,8 +74,9 @@ func (t *Tab) LayoutDefault(
 		axis,
 		widthLimit,
 		colorfulBG,
+		closeMode,
 		func(gtx layout.Context) layout.Dimensions {
-			return layout.UniformInset(unit.Dp(12)).Layout(
+			return layout.UniformInset(unit.Dp(8)).Layout(
 				gtx,
 				func(gtx layout.Context) layout.Dimensions {
 					labelStyle := material.H6(theme, t.Name)
@@ -68,10 +93,14 @@ func (t *Tab) Layout(
 	axis layout.Axis,
 	widthLimit int,
 	colorfulBG bool,
+	closeMode CloseMode,
 	nameWidget layout.Widget,
 ) (dimensions layout.Dimensions, clicked bool) {
 	if t.Clickable.Clicked(gtx) {
 		clicked = true
+	}
+	if t.CloseClickable.Clicked(gtx) {
+		t.Close()
 	}
 
 	isVertical := axis == layout.Vertical
@@ -81,7 +110,15 @@ func (t *Tab) Layout(
 	dimensions = layout.Stack{Alignment: layout.Center}.Layout(gtx,
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			dims := t.LayoutName(theme, gtx, isVertical, widthLimit, highlightThickness, colorfulBG, nameWidget)
+			dims := t.LayoutContent(
+				theme, gtx,
+				isVertical,
+				widthLimit,
+				highlightThickness,
+				colorfulBG,
+				closeMode,
+				nameWidget,
+			)
 			size = dims.Size
 			return dims
 		}),
@@ -94,18 +131,77 @@ func (t *Tab) Layout(
 	return
 }
 
-func (t *Tab) LayoutName(
+func (t *Tab) LayoutContent(
 	theme *material.Theme, gtx layout.Context,
 	isVertical bool,
 	widthLimit int,
 	highlightThickness int,
 	colorfulBG bool,
+	closeMode CloseMode,
 	nameWidget layout.Widget,
 ) layout.Dimensions {
 	if widthLimit > 0 {
 		if isVertical {
 			gtx.Constraints.Max.X = widthLimit
 		}
+	}
+
+	if !colorfulBG {
+		return t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
+	}
+
+	var size image.Point
+	name := layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+		dim := t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
+		size = dim.Size
+		return dim
+	})
+	background := layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+		rect := image.Rect(
+			0, 0,
+			size.X, size.Y,
+		)
+		spscolor.FillRect(gtx, rect, t.BGColor1, t.BGColor2)
+		return layout.Dimensions{Size: size}
+	})
+
+	return layout.Stack{
+		Alignment: layout.Center,
+	}.Layout(gtx, background, name)
+}
+
+func (t *Tab) doLayoutContent(
+	theme *material.Theme, gtx layout.Context,
+	isVertical bool,
+	widthLimit int,
+	closeMode CloseMode,
+	nameWidget layout.Widget,
+) (dimensions layout.Dimensions) {
+	if closeMode == CloseModeNormal {
+		spacer := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return spsspacer.NewWithWidth(8).Layout(gtx)
+		})
+		dimensions = layout.Flex{
+			Axis:      layout.Horizontal,
+			Alignment: layout.Middle,
+		}.Layout(gtx,
+			layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+				return t.Clickable.Layout(gtx, nameWidget)
+			}),
+			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+				//   󰅖    󰅗 󰅙 󰅜 󰛉 󱎘 󰖭  󰅘 󰅚 󰅝
+				//return material.Button(theme, &t.Close, ``).Layout(gtx)
+				return material.IconButton(theme, &t.CloseClickable, spsicon.NavigationClose, "Close").Layout(gtx)
+			}),
+			spacer,
+		)
+		return
+	}
+
+	if closeMode == CloseModeMenu {
+		// TODO
+		dimensions = t.Clickable.Layout(gtx, nameWidget)
+		return
 	}
 
 	name := func(gtx layout.Context) layout.Dimensions {
@@ -116,33 +212,11 @@ func (t *Tab) LayoutName(
 				size.X = widthLimit
 			}
 		}
-		t.Size = size
-		t.sizeByName = t.Name
 		return layout.Dimensions{Size: size}
 	}
 
-	if !colorfulBG {
-		return t.Clickable.Layout(gtx, name)
-	}
-
-	if t.Size.X == 0 || t.Size.Y == 0 || t.sizeByName != t.Name {
-		t.Clickable.Layout(gtx, name)
-	}
-	return layout.Stack{Alignment: layout.Center}.Layout(gtx,
-		// background
-		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			rect := image.Rect(
-				0, 0,
-				t.Size.X, t.Size.Y,
-			)
-			spscolor.FillRect(gtx, rect, t.BGColor1, t.BGColor2)
-			return layout.Dimensions{Size: t.Size}
-		}),
-		// name
-		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return t.Clickable.Layout(gtx, name)
-		}),
-	)
+	dimensions = t.Clickable.Layout(gtx, name)
+	return
 }
 
 func (t *Tab) LayoutHighlight(

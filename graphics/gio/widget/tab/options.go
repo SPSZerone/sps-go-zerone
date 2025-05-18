@@ -23,6 +23,7 @@ type Options struct {
 	AxisSetting *spssettings.TabAxis
 
 	ColorfulBG bool
+	CloseMode  CloseMode
 }
 
 func (o *Options) Update(opts ...Option) {
@@ -54,5 +55,11 @@ func OptAxisSetting(value *spssettings.TabAxis) Option {
 func OptColorfulBG(value bool) Option {
 	return func(o *Options) {
 		o.ColorfulBG = value
+	}
+}
+
+func OptCloseMode(value CloseMode) Option {
+	return func(o *Options) {
+		o.CloseMode = value
 	}
 }

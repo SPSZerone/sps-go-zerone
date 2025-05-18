@@ -9,3 +9,8 @@ var NavigationMenu = func() *widget.Icon {
 	icon, _ := widget.NewIcon(icons.NavigationMenu)
 	return icon
 }()
+
+var NavigationClose = func() *widget.Icon {
+	icon, _ := widget.NewIcon(icons.NavigationClose)
+	return icon
+}()

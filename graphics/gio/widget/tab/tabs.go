@@ -99,20 +99,24 @@ func (t *Tabs) DelTab(cb func(idx int, tab *Tab) (del bool)) {
 		return
 	}
 
-	delIndexes := make([]int, len(t.Tabs))
+	delIndexes := make([]int, 0, len(t.Tabs))
 	for i, tab := range t.Tabs {
 		if cb(i, &tab) {
 			delIndexes = append(delIndexes, i)
 		}
 	}
 
-	for _, index := range delIndexes {
-		t.DelTabByIndex(index)
+	for i := len(delIndexes) - 1; i >= 0; i-- {
+		idx := delIndexes[i]
+		t.Tabs = append(t.Tabs[:idx], t.Tabs[idx+1:]...)
+	}
+	if t.selected >= len(t.Tabs) {
+		t.SetFirstSelected()
 	}
 }
 
 func (t *Tabs) DelTabByIndex(index int) {
-	t.Tabs = spsslice.RemoveFast(t.Tabs, index)
+	t.Tabs = spsslice.RemoveByKeepOrder(t.Tabs, index)
 	if t.selected >= len(t.Tabs) {
 		t.SetFirstSelected()
 	}
@@ -212,6 +216,9 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 		}
 	}
 
+	t.DelTab(func(idx int, tab *Tab) (del bool) {
+		return tab.IsClose()
+	})
 	return t.List.Layout(theme, gtx, t.Count(), func(gtx layout.Context, tabIdx int) layout.Dimensions {
 		tab := t.GetTabByIdx(tabIdx)
 		highlight := t.selected == tabIdx
@@ -221,6 +228,7 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 			t.GetLayoutAxis(),
 			widthLimit,
 			t.Opts.ColorfulBG,
+			t.Opts.CloseMode,
 		)
 		if clicked {
 			if t.selected < tabIdx {

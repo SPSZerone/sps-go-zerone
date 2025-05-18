@@ -49,7 +49,9 @@ type Tab struct {
 	Data           any
 
 	BGColor1, BGColor2 color.NRGBA
-	close              bool
+	size               image.Point
+
+	close bool
 }
 
 func (t *Tab) Close() {
@@ -150,24 +152,24 @@ func (t *Tab) LayoutContent(
 		return t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
 	}
 
-	var size image.Point
-	name := layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-		dim := t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
-		size = dim.Size
-		return dim
-	})
-	background := layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-		rect := image.Rect(
-			0, 0,
-			size.X, size.Y,
-		)
-		spscolor.FillRect(gtx, rect, t.BGColor1, t.BGColor2)
-		return layout.Dimensions{Size: size}
-	})
-
 	return layout.Stack{
 		Alignment: layout.Center,
-	}.Layout(gtx, background, name)
+	}.Layout(
+		gtx,
+		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+			rect := image.Rect(
+				0, 0,
+				t.size.X, t.size.Y,
+			)
+			spscolor.FillRect(gtx, rect, t.BGColor1, t.BGColor2)
+			return layout.Dimensions{Size: t.size}
+		}),
+		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
+			dim := t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)
+			t.size = dim.Size
+			return dim
+		}),
+	)
 }
 
 func (t *Tab) doLayoutContent(

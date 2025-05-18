@@ -14,6 +14,7 @@ import (
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 	spsicon "github.com/SPSZerone/sps-go-zerone/graphics/gio/icon"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
+	spsbg "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bg"
 	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 )
 
@@ -157,12 +158,8 @@ func (t *Tab) LayoutContent(
 	}.Layout(
 		gtx,
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			rect := image.Rect(
-				0, 0,
-				t.size.X, t.size.Y,
-			)
-			spscolor.FillRect(gtx, rect, t.BGColor1, t.BGColor2)
-			return layout.Dimensions{Size: t.size}
+			gtx.Constraints.Max = t.size
+			return spsbg.NewColorful(t.BGColor1, t.BGColor2).LayoutBG(theme, gtx, t.size)
 		}),
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			dim := t.doLayoutContent(theme, gtx, isVertical, widthLimit, closeMode, nameWidget)

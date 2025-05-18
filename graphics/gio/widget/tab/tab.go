@@ -180,13 +180,21 @@ func (t *Tab) doLayoutContent(
 		spacer := layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return spsspacer.NewWithWidth(8).Layout(gtx)
 		})
+		var nameChild layout.FlexChild
+		if isVertical {
+			nameChild = layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+				return t.Clickable.Layout(gtx, nameWidget)
+			})
+		} else {
+			nameChild = layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+				return t.Clickable.Layout(gtx, nameWidget)
+			})
+		}
 		dimensions = layout.Flex{
 			Axis:      layout.Horizontal,
 			Alignment: layout.Middle,
 		}.Layout(gtx,
-			layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
-				return t.Clickable.Layout(gtx, nameWidget)
-			}),
+			nameChild,
 			layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 				//   󰅖    󰅗 󰅙 󰅜 󰛉 󱎘 󰖭  󰅘 󰅚 󰅝
 				//return material.Button(theme, &t.Close, ``).Layout(gtx)

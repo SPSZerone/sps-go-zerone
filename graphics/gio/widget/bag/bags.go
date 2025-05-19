@@ -78,20 +78,21 @@ func (b *Bags) DelBag(cb func(idx int, bag *Bag) (del bool)) {
 		return
 	}
 
-	delIndexes := make([]int, len(b.Bags))
+	delIndexes := make([]int, 0, len(b.Bags))
 	for i, bag := range b.Bags {
 		if cb(i, &bag) {
 			delIndexes = append(delIndexes, i)
 		}
 	}
 
-	for _, index := range delIndexes {
-		b.DelBagByIndex(index)
+	for i := len(delIndexes) - 1; i >= 0; i-- {
+		idx := delIndexes[i]
+		b.Bags = append(b.Bags[:idx], b.Bags[idx+1:]...)
 	}
 }
 
 func (b *Bags) DelBagByIndex(index int) {
-	b.Bags = spsslice.RemoveFast(b.Bags, index)
+	b.Bags = spsslice.RemoveByKeepOrder(b.Bags, index)
 	b.Tabs.DelTabByIndex(index)
 }
 

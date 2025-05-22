@@ -5,6 +5,8 @@ go 1.23.0
 require (
 	gioui.org v0.7.1
 	gioui.org/x v0.7.1
+	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71
+	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20231223183121-56fa3ac82ce7
 	github.com/rs/zerolog v1.33.0
 	golang.design/x/clipboard v0.7.0
 	golang.org/x/exp/shiny v0.0.0-20240909161429-701f63a606c0

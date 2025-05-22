@@ -13,7 +13,7 @@ func main() {
 	spsglfw.Run(
 		func() spsglfw.Window {
 			return spsglfwin.NewWindow(
-				spsglfw.OptTitle(Name),
+				spsglfwin.OptTitle(Name),
 			)
 		},
 		func(win spsglfw.Window) {

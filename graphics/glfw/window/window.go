@@ -4,13 +4,12 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/rs/zerolog"
 
-	spsglfw "github.com/SPSZerone/sps-go-zerone/graphics/glfw"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
-func NewWindow(opts ...spsglfw.Option) *Window {
+func NewWindow(opts ...Option) *Window {
 	win := &Window{
-		Opts:   spsglfw.NewOptions(opts...),
+		Opts:   NewOptions(opts...),
 		logger: spslog.NewLogger(),
 	}
 	win.CreateWindow()
@@ -18,7 +17,7 @@ func NewWindow(opts ...spsglfw.Option) *Window {
 }
 
 type Window struct {
-	Opts   spsglfw.Options
+	Opts   Options
 	window *glfw.Window
 	logger zerolog.Logger
 }

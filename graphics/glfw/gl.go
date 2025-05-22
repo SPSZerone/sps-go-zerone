@@ -14,9 +14,10 @@ func require() {
 	runtime.LockOSThread()
 }
 
-func glInit() (err error) {
+func glInit() {
 	desktopGL := spsos.IsDarwin()
 
+	var err error
 	if desktopGL {
 		err = gl.Init()
 	} else {
@@ -25,6 +26,7 @@ func glInit() (err error) {
 	if err != nil {
 		Logger.Fatal().Msgf("gl.Init failed: %v", err)
 	}
+
 	if desktopGL {
 		// Enable sRGB.
 		gl.Enable(gl.FRAMEBUFFER_SRGB)
@@ -33,6 +35,4 @@ func glInit() (err error) {
 		gl.GenVertexArrays(1, &defVBA)
 		gl.BindVertexArray(defVBA)
 	}
-
-	return
 }

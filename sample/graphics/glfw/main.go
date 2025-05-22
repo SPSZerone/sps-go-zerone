@@ -13,6 +13,8 @@ func main() {
 	spsglfw.Run(
 		func() spsglfw.Window {
 			return spsglfwin.NewWindow(
+				spsglfwin.OptWidth(1920),
+				spsglfwin.OptHeight(1080),
 				spsglfwin.OptTitle(Name),
 			)
 		},

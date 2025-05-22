@@ -6,8 +6,8 @@ import (
 
 func NewOptions(opts ...Option) Options {
 	o := Options{
-		Width:  800,
-		Height: 600,
+		Width:  1920,
+		Height: 1080,
 		Title:  "GLFW",
 	}
 	o.UpdateOpts(opts...)

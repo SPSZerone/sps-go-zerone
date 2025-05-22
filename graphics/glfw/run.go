@@ -27,7 +27,7 @@ func Run(
 	win := newWin()
 	window := win.GetWindow()
 
-	err = glInit()
+	glInit()
 
 	for !window.ShouldClose() {
 		glfw.PollEvents()

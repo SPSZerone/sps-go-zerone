@@ -26,21 +26,20 @@ func (w *Window) GetWindow() *glfw.Window {
 	return w.window
 }
 
-func (w *Window) CreateWindow() (*glfw.Window, error) {
+func (w *Window) CreateWindow() *glfw.Window {
 	if w.window != nil {
-		return w.window, nil
+		return w.window
 	}
 
 	window, err := glfw.CreateWindow(w.Opts.Width, w.Opts.Height, w.Opts.Title, w.Opts.Monitor, w.Opts.Share)
 	if err != nil {
-		w.logger.Error().Msgf("Failed to create window %v", err)
-		return nil, err
+		w.logger.Fatal().Msgf("Failed to create window %v", err)
 	}
 
 	window.MakeContextCurrent()
 
 	w.window = window
-	return window, nil
+	return window
 }
 
 func (w *Window) GetLogger() *zerolog.Logger {

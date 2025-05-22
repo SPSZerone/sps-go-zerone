@@ -2,7 +2,7 @@ package main
 
 import (
 	spsglfw "github.com/SPSZerone/sps-go-zerone/graphics/glfw"
-	spsglfwin "github.com/SPSZerone/sps-go-zerone/graphics/glfw/window"
+	spsglfwwin "github.com/SPSZerone/sps-go-zerone/graphics/glfw/window"
 )
 
 const (
@@ -10,16 +10,17 @@ const (
 )
 
 func main() {
-	spsglfw.Run(
-		func() spsglfw.Window {
-			return spsglfwin.NewWindow(
-				spsglfwin.OptWidth(1920),
-				spsglfwin.OptHeight(1080),
-				spsglfwin.OptTitle(Name),
-			)
-		},
-		func(win spsglfw.Window) {
+	spsglfw.Run(newWin, loop)
+}
 
-		},
+func newWin() spsglfw.Window {
+	return spsglfwwin.NewWindow(
+		spsglfwwin.OptWidth(1920),
+		spsglfwwin.OptHeight(1080),
+		spsglfwwin.OptTitle(Name),
 	)
+}
+
+func loop(win spsglfw.Window) {
+
 }

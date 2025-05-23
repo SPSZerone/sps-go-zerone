@@ -10,14 +10,11 @@ import (
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
-	"gioui.org/text"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"github.com/rs/zerolog"
 
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
-	spsfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font"
-	spsnerdfont "github.com/SPSZerone/sps-go-zerone/graphics/gio/font/nerdfont"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
@@ -82,10 +79,7 @@ func (w *Window) Init(opts ...Option) {
 
 	w.startAction = w.Opts.StartAction
 
-	theme := material.NewTheme()
-	theme.Shaper = text.NewShaper(text.WithCollection(spsfont.Collection()))
-	theme.Face = spsnerdfont.MesloLGSNerdFontMono
-	w.Theme = theme
+	w.Theme = spsgio.NewTheme()
 
 	w.Pages = NewPages(w)
 	w.Window = new(app.Window)

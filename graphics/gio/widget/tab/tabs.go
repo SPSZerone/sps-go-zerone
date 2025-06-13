@@ -10,19 +10,19 @@ import (
 	spslist "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/list"
 )
 
-func NewTabsByNames(names []string, opts ...Option) Tabs {
+func NewTabsByNames(names []string, opts ...TabsOption) Tabs {
 	t := NewTabs(opts...)
 	t.AddTabByNames(names...)
 	return t
 }
 
-func NewTabsByTabs(tabs []Tab, opts ...Option) Tabs {
+func NewTabsByTabs(tabs []Tab, opts ...TabsOption) Tabs {
 	t := NewTabs(opts...)
 	t.AddTab(tabs...)
 	return t
 }
 
-func NewTabs(opts ...Option) Tabs {
+func NewTabs(opts ...TabsOption) Tabs {
 	t := newTabs()
 	t.Update(opts...)
 	return t
@@ -30,7 +30,7 @@ func NewTabs(opts ...Option) Tabs {
 
 func newTabs() Tabs {
 	return Tabs{
-		Opts: NewOptions(),
+		Opts: NewTabsOptions(),
 		List: spslist.New(),
 	}
 }
@@ -38,7 +38,7 @@ func newTabs() Tabs {
 type Content func(gtx layout.Context, selected int) layout.Dimensions
 
 type Tabs struct {
-	Opts Options
+	Opts TabsOptions
 
 	List spslist.List
 	Tabs []Tab
@@ -47,7 +47,7 @@ type Tabs struct {
 	Slider   Slider
 }
 
-func (t *Tabs) Update(opts ...Option) {
+func (t *Tabs) Update(opts ...TabsOption) {
 	for _, opt := range opts {
 		opt(&t.Opts)
 	}

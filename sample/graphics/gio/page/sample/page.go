@@ -33,18 +33,16 @@ func New(theme *material.Theme, pages spsgio.Pages) *Page {
 	pref := pages.GetWindow().GetPref()
 	tabs := spstab.NewTabsByNames(
 		[]string{GetTabName(TabIdxBags)},
-		spstab.OptAxisSetting(&pref.Settings.TabAxis),
-		spstab.OptColorfulBG(true),
-		spstab.OptCloseMode(spstab.CloseModeNone),
+		spstab.TabsOptAxisSetting(&pref.Settings.TabAxis),
+		spstab.TabsOptColorfulBG(true),
+		spstab.TabsOptCloseMode(spstab.CloseModeNone),
 	)
 	bags := spsbag.NewBags(
-		spstab.OptWidthWhenVertical(128),
-		spstab.OptCloseMode(spstab.CloseModeMenu),
-		//spstab.OptWidthWhenVertical(150),
-		//spstab.OptCloseMode(spstab.CloseModeNormal),
+		spstab.TabsOptWidthWhenVertical(128),
+		spstab.TabsOptCloseMode(spstab.CloseModeMenu),
 	)
 	bags.Tabs.Update(
-		spstab.OptAxisSetting(&pref.Settings.TabAxis),
+		spstab.TabsOptAxisSetting(&pref.Settings.TabAxis),
 	)
 	for i := 0; i < 32; i++ {
 		bags.AddBag(
@@ -98,6 +96,9 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 	return p.Tabs.Layout(theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
 		switch selected {
 		case TabIdxBags:
+			if p.Bags.Tabs.Count() > 0 {
+				p.Bags.Tabs.Tabs[0].CloseMode = spstab.CloseModeNormal
+			}
 			return p.Bags.Layout(
 				theme, gtx, param,
 				func(index int) (items []spsbag.Item, itemUpdateTime time.Time) {

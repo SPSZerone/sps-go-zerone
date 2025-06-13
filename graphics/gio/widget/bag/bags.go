@@ -8,9 +8,9 @@ import (
 	spstab "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/tab"
 )
 
-func NewBags(opts ...spstab.Option) Bags {
+func NewBags(opts ...spstab.TabsOption) Bags {
 	tabs := spstab.NewTabs(
-		spstab.OptColorfulBG(true),
+		spstab.TabsOptColorfulBG(true),
 	)
 	tabs.Update(opts...)
 	return Bags{

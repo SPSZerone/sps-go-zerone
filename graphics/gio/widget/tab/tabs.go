@@ -54,13 +54,20 @@ func (t *Tabs) Update(opts ...Option) {
 }
 
 func (t *Tabs) AddTabByNames(names ...string) {
-	for _, title := range names {
-		t.Tabs = append(t.Tabs, New(title, nil))
+	for _, name := range names {
+		t.addTab(New(name, nil))
 	}
 }
 
 func (t *Tabs) AddTab(tabs ...Tab) {
-	t.Tabs = append(t.Tabs, tabs...)
+	for _, tab := range tabs {
+		t.addTab(tab)
+	}
+}
+
+func (t *Tabs) addTab(tab Tab) {
+	tab.CloseMode = t.Opts.CloseMode
+	t.Tabs = append(t.Tabs, tab)
 }
 
 func (t *Tabs) UpdateTabs(cb func(idx int, tab *Tab) (stop bool)) {
@@ -228,7 +235,6 @@ func (t *Tabs) LayoutTabs(theme *material.Theme, gtx layout.Context, param any) 
 			t.GetLayoutAxis(),
 			widthLimit,
 			t.Opts.ColorfulBG,
-			t.Opts.CloseMode,
 		)
 		if clicked {
 			if t.selected < tabIdx {

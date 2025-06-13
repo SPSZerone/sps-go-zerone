@@ -34,7 +34,8 @@ type Tab struct {
 
 	UI UI
 
-	close bool
+	CloseMode CloseMode
+	close     bool
 }
 
 func (t *Tab) Close() {
@@ -51,7 +52,6 @@ func (t *Tab) LayoutDefault(
 	axis layout.Axis,
 	widthLimit int,
 	colorfulBG bool,
-	closeMode CloseMode,
 ) (dimensions layout.Dimensions, clicked bool) {
 	return t.Layout(
 		theme, gtx,
@@ -59,7 +59,6 @@ func (t *Tab) LayoutDefault(
 		axis,
 		widthLimit,
 		colorfulBG,
-		closeMode,
 		func(gtx layout.Context) layout.Dimensions {
 			return layout.UniformInset(unit.Dp(8)).Layout(
 				gtx,
@@ -78,7 +77,6 @@ func (t *Tab) Layout(
 	axis layout.Axis,
 	widthLimit int,
 	colorfulBG bool,
-	closeMode CloseMode,
 	nameWidget layout.Widget,
 ) (dimensions layout.Dimensions, clicked bool) {
 	if t.UI.Clickable.Clicked(gtx) {
@@ -101,7 +99,7 @@ func (t *Tab) Layout(
 				widthLimit,
 				highlightThickness,
 				colorfulBG,
-				closeMode,
+				t.CloseMode,
 				t.Name,
 				nameWidget,
 			)

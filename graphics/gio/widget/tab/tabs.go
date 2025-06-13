@@ -66,7 +66,9 @@ func (t *Tabs) AddTab(tabs ...Tab) {
 }
 
 func (t *Tabs) addTab(tab Tab) {
-	tab.CloseMode = t.Opts.CloseMode
+	if tab.Opts.CloseModeInheritTabs {
+		tab.Opts.CloseMode = t.Opts.CloseMode
+	}
 	t.Tabs = append(t.Tabs, tab)
 }
 

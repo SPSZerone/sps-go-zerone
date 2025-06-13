@@ -97,7 +97,7 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 		switch selected {
 		case TabIdxBags:
 			if p.Bags.Tabs.Count() > 0 {
-				p.Bags.Tabs.Tabs[0].CloseMode = spstab.CloseModeNormal
+				p.Bags.Tabs.Tabs[0].Opts.CloseMode = spstab.CloseModeNormal
 			}
 			return p.Bags.Layout(
 				theme, gtx, param,

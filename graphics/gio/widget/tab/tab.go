@@ -8,10 +8,11 @@ import (
 	"gioui.org/widget/material"
 )
 
-func New(name string, data any) Tab {
+func New(name string, data any, opts ...Option) Tab {
 	t := Tab{
 		Name: name,
 		Data: data,
+		Opts: NewOptions(opts...),
 		UI:   NewUI(),
 	}
 	return t
@@ -32,10 +33,10 @@ type Tab struct {
 	Name string
 	Data any
 
-	UI UI
+	Opts Options
+	UI   UI
 
-	CloseMode CloseMode
-	close     bool
+	close bool
 }
 
 func (t *Tab) Close() {
@@ -82,8 +83,16 @@ func (t *Tab) Layout(
 	if t.UI.Clickable.Clicked(gtx) {
 		clicked = true
 	}
+
 	if t.UI.CloseClickable.Clicked(gtx) {
-		t.Close()
+		isClose := true
+		if t.Opts.OnClose != nil {
+			isClose = t.Opts.OnClose(t)
+		}
+
+		if isClose {
+			t.Close()
+		}
 	}
 
 	isVertical := axis == layout.Vertical
@@ -99,7 +108,7 @@ func (t *Tab) Layout(
 				widthLimit,
 				highlightThickness,
 				colorfulBG,
-				t.CloseMode,
+				t.Opts.CloseMode,
 				t.Name,
 				nameWidget,
 			)

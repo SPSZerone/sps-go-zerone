@@ -17,8 +17,20 @@ func NewTabsOptions(opts ...TabsOption) TabsOptions {
 	return o
 }
 
+func NewOptions(opts ...Option) Options {
+	o := Options{
+		CloseMode:            CloseModeNone,
+		CloseModeInheritTabs: true,
+	}
+	o.Update(opts...)
+	return o
+}
+
 type (
 	TabsOption func(*TabsOptions)
+	Option     func(*Options)
+
+	OnClose func(tab *Tab) (close bool)
 )
 
 type TabsOptions struct {
@@ -32,6 +44,19 @@ type TabsOptions struct {
 }
 
 func (o *TabsOptions) Update(opts ...TabsOption) {
+	for _, opt := range opts {
+		opt(o)
+	}
+}
+
+type Options struct {
+	CloseMode            CloseMode
+	CloseModeInheritTabs bool
+
+	OnClose OnClose
+}
+
+func (o *Options) Update(opts ...Option) {
 	for _, opt := range opts {
 		opt(o)
 	}
@@ -64,5 +89,23 @@ func TabsOptColorfulBG(value bool) TabsOption {
 func TabsOptCloseMode(value CloseMode) TabsOption {
 	return func(o *TabsOptions) {
 		o.CloseMode = value
+	}
+}
+
+func OptCloseMode(value CloseMode) Option {
+	return func(o *Options) {
+		o.CloseMode = value
+	}
+}
+
+func OptCloseModeInheritTabs(value bool) Option {
+	return func(o *Options) {
+		o.CloseModeInheritTabs = value
+	}
+}
+
+func OptOnClose(value OnClose) Option {
+	return func(o *Options) {
+		o.OnClose = value
 	}
 }

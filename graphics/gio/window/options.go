@@ -7,6 +7,10 @@ import (
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 )
 
+const (
+	DecoActionNone = 0
+)
+
 type Option func(win *Window)
 
 type Options struct {

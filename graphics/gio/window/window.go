@@ -17,6 +17,7 @@ import (
 	spsgio "github.com/SPSZerone/sps-go-zerone/graphics/gio"
 	spspref "github.com/SPSZerone/sps-go-zerone/graphics/gio/pref"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
+	spsos "github.com/SPSZerone/sps-go-zerone/os"
 )
 
 func NewWindow(app spsgio.App, opts ...Option) *Window {
@@ -70,7 +71,11 @@ type Window struct {
 
 func (w *Window) Init(opts ...Option) {
 	// default init
-	w.Opts.StartAction = system.ActionMaximize
+	if spsos.IsDarwin() && w.Pref.Settings.Decorated.Value {
+		w.Opts.StartAction = system.ActionFullscreen
+	} else {
+		w.Opts.StartAction = system.ActionMaximize
+	}
 	w.Update(opts...)
 
 	if w.Opts.OnInitPre != nil {
@@ -277,24 +282,32 @@ func (w *Window) OnFrameEvent(e app.FrameEvent, param any) {
 }
 
 func (w *Window) Layout(gtx layout.Context, param any) {
+	w.doStartAction()
 	w.Pages.Layout(w, gtx, param, func() layout.FlexChild {
-		if w.startAction != 0 {
+		return layout.Rigid(w.decorationsWidget)
+	})
+}
+
+func (w *Window) doStartAction() {
+	if !w.Pref.Settings.Decorated.Value {
+		if w.startAction != DecoActionNone {
 			clickable := w.Deco.Clickable(w.startAction)
 			if clickable != nil {
 				clickable.Click()
 			}
-			w.startAction = 0
+			w.startAction = DecoActionNone
 		}
-
-		w.Window.Perform(w.Deco.Update(gtx))
-		return w.decorationsFlexChild()
-	})
+	} else {
+		if w.startAction != DecoActionNone {
+			w.Window.Perform(w.startAction)
+			w.startAction = DecoActionNone
+		}
+	}
 }
 
-func (w *Window) decorationsFlexChild() layout.FlexChild {
-	return layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-		return material.Decorations(w.Theme, &w.Deco, ^system.Action(0), w.Title).Layout(gtx)
-	})
+func (w *Window) decorationsWidget(gtx layout.Context) layout.Dimensions {
+	w.Window.Perform(w.Deco.Update(gtx))
+	return material.Decorations(w.Theme, &w.Deco, ^system.Action(0), w.Title).Layout(gtx)
 }
 
 func (w *Window) SendParam(param any) {

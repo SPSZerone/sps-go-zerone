@@ -125,8 +125,8 @@ func (p *Pages) Start(tag any) spsgio.Page {
 	if p.Window.Pref.Settings.ModalNavDrawer.Value {
 		p.NavAnim.ToggleVisibility(timeNow)
 	} else {
-		p.ModalNavDrawer.Appear(timeNow)
-		p.NavAnim.Disappear(timeNow)
+		//p.ModalNavDrawer.Appear(timeNow)
+		//p.NavAnim.Disappear(timeNow)
 	}
 	p.ModalNavDrawer.SetNavDestination(tag)
 

@@ -3,8 +3,8 @@ module github.com/SPSZerone/sps-go-zerone
 go 1.23.0
 
 require (
-	gioui.org v0.7.1
-	gioui.org/x v0.7.1
+	gioui.org v0.8.0
+	gioui.org/x v0.8.1
 	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20231223183121-56fa3ac82ce7
 	github.com/rs/zerolog v1.33.0
@@ -14,9 +14,8 @@ require (
 )
 
 require (
-	gioui.org/cpu v0.0.0-20210817075930-8d6a761490d2 // indirect
 	gioui.org/shader v1.0.8 // indirect
-	github.com/go-text/typesetting v0.1.1 // indirect
+	github.com/go-text/typesetting v0.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	golang.org/x/exp v0.0.0-20240707233637-46b078467d37 // indirect

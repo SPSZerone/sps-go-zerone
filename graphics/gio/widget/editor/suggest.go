@@ -25,6 +25,21 @@ type SuggestEditor struct {
 	List   spslist.List
 }
 
+func (e *SuggestEditor) LayoutSimple(
+	theme *material.Theme, gtx layout.Context,
+	suggestListHeight int,
+	suggestHeight int,
+	suggests []*Suggest,
+) layout.Dimensions {
+	return e.Layout(
+		theme, gtx,
+		nil, nil,
+		suggestListHeight, suggestHeight,
+		suggests,
+		nil,
+	)
+}
+
 func (e *SuggestEditor) Layout(
 	theme *material.Theme, gtx layout.Context,
 	style Style, onSubmit OnSubmit,
@@ -57,7 +72,9 @@ func (e *SuggestEditor) Layout(
 			return e.List.Layout(theme, gtx, len(suggests), func(gtx layout.Context, index int) layout.Dimensions {
 				suggest := suggests[index]
 				return suggest.Layout(theme, gtx, size, func(suggest *Suggest) {
-					onSuggestClick(suggest)
+					if onSuggestClick != nil {
+						onSuggestClick(suggest)
+					}
 					e.Editor.SetText(suggest.Content)
 				})
 			})
@@ -65,22 +82,31 @@ func (e *SuggestEditor) Layout(
 	)
 }
 
-func NewSuggest(content string, w layout.Widget) *Suggest {
+func NewSuggest(content string, display layout.Widget, opts ...SuggestOption) *Suggest {
 	s := &Suggest{
-		Clickable:     spsclickable.New(),
-		ContentWidget: w,
-		Content:       content,
+		Clickable: spsclickable.New(),
+		Display:   display,
+		Content:   content,
 	}
 	s.BGColor1, s.BGColor2 = spscolor.Rand2Color(0, 10)
+	s.Update(opts...)
 	return s
 }
 
 type Suggest struct {
-	BGColor1      color.NRGBA
-	BGColor2      color.NRGBA
-	Clickable     spsclickable.Clickable
-	ContentWidget layout.Widget
-	Content       string
+	BGColor1 color.NRGBA
+	BGColor2 color.NRGBA
+
+	Clickable spsclickable.Clickable
+
+	Display layout.Widget
+	Content string
+}
+
+func (s *Suggest) Update(opts ...SuggestOption) {
+	for _, opt := range opts {
+		opt(s)
+	}
 }
 
 func (s *Suggest) Layout(
@@ -110,7 +136,7 @@ func (s *Suggest) Layout(
 		}),
 		// content
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return s.ContentWidget(gtx)
+			return s.Display(gtx)
 		}),
 	)
 }

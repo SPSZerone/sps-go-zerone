@@ -14,8 +14,9 @@ import (
 
 func NewUI() UI {
 	return UI{
-		UseEditor: spseditor.New(spseditor.OptHint("use count")),
-		UseSlider: spsslider.New(),
+		UseEditor:     spseditor.New(spseditor.OptHint("use count")),
+		UseSlider:     spsslider.New(),
+		SuggestEditor: spseditor.NewSuggestEditor(),
 	}
 }
 
@@ -25,8 +26,9 @@ type UI struct {
 	UseEditor    spseditor.Editor
 	UseEditorBtn widget.Clickable
 
-	UseSlider    spsslider.Slider
-	UseSliderBtn widget.Clickable
+	UseSlider     spsslider.Slider
+	UseSliderBtn  widget.Clickable
+	SuggestEditor spseditor.SuggestEditor
 }
 
 func (u *UI) GetMenuDetail(index int) *spsmenu.Menu {

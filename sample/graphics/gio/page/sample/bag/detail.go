@@ -1,12 +1,15 @@
 package bag
 
 import (
+	"fmt"
 	"image"
+	"image/color"
 
 	"gioui.org/font"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
+	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
 	spseditor "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/editor"
@@ -68,28 +71,33 @@ func (i *Item) LayoutDetail(
 			return i.LayoutUseSlider(theme, gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			suggestEditor := spseditor.NewSuggestEditor()
 			if len(i.Suggests) == 0 {
-				i.Suggests = []*spseditor.Suggest{
-					spseditor.NewSuggest("aaa",
-						func(gtx layout.Context) layout.Dimensions {
-							return material.Body1(theme, "aaa").Layout(gtx)
-						}),
-					spseditor.NewSuggest("bbb",
-						func(gtx layout.Context) layout.Dimensions {
-							return material.Body1(theme, "bbb").Layout(gtx)
-						}),
-					spseditor.NewSuggest("ccc",
-						func(gtx layout.Context) layout.Dimensions {
-							return material.Body1(theme, "ccc").Layout(gtx)
-						}),
+				var colorIdx int
+				nextColor := func() color.NRGBA {
+					c := spscolor.DynamicColor(colorIdx)
+					colorIdx++
+					return c
+				}
+				for idx := 0; idx < 10; idx++ {
+					content := fmt.Sprintf("Suggest %d", idx)
+					i.Suggests = append(i.Suggests,
+						spseditor.NewSuggest(
+							content,
+							func(gtx layout.Context) layout.Dimensions {
+								return material.Body1(theme, fmt.Sprintf("%v display", content)).Layout(gtx)
+							},
+							spseditor.SgtOptBGColor(nextColor(), nextColor()),
+						),
+					)
 				}
 			}
-			return suggestEditor.Layout(theme, gtx,
-				nil, nil,
-				200, 32,
-				i.Suggests, func(suggest *spseditor.Suggest) {
-				})
+			const suggestHeight = 32
+			const suggestListHeight = suggestHeight * 3.5
+			return i.UI.SuggestEditor.LayoutSimple(
+				theme, gtx,
+				suggestListHeight, suggestHeight,
+				i.Suggests,
+			)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return material.H5(theme, "Info").Layout(gtx)

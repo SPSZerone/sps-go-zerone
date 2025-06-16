@@ -222,6 +222,9 @@ func (w *Window) loopSimple() error {
 			w.Logger.Info().Msgf("%s loopSimple app.DestroyEvent ...", w.LogPrefix())
 			w.Pages.OnEventPost(w, evt, nil)
 			return e.Err
+		case app.ConfigEvent:
+			w.Pref.Settings.Decorated.Value = e.Config.Decorated
+			w.Deco.Maximized = e.Config.Mode == app.Maximized
 		case app.FrameEvent:
 			w.OnFrameEvent(e, nil)
 		}
@@ -263,6 +266,9 @@ func (w *Window) loopParam() error {
 				w.Pages.OnEventPost(w, evt, param)
 				chanEventDone <- struct{}{}
 				return e.Err
+			case app.ConfigEvent:
+				w.Pref.Settings.Decorated.Value = e.Config.Decorated
+				w.Deco.Maximized = e.Config.Mode == app.Maximized
 			case app.FrameEvent:
 				w.OnFrameEvent(e, param)
 			}

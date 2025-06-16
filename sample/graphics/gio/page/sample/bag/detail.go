@@ -9,6 +9,7 @@ import (
 
 	spslayout "github.com/SPSZerone/sps-go-zerone/graphics/gio/layout"
 	spsdivider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/divider"
+	spseditor "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/editor"
 	spsslider "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/slider"
 	spsspacer "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/spacer"
 )
@@ -65,6 +66,30 @@ func (i *Item) LayoutDetail(
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return i.LayoutUseSlider(theme, gtx)
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			suggestEditor := spseditor.NewSuggestEditor()
+			if len(i.Suggests) == 0 {
+				i.Suggests = []*spseditor.Suggest{
+					spseditor.NewSuggest("aaa",
+						func(gtx layout.Context) layout.Dimensions {
+							return material.Body1(theme, "aaa").Layout(gtx)
+						}),
+					spseditor.NewSuggest("bbb",
+						func(gtx layout.Context) layout.Dimensions {
+							return material.Body1(theme, "bbb").Layout(gtx)
+						}),
+					spseditor.NewSuggest("ccc",
+						func(gtx layout.Context) layout.Dimensions {
+							return material.Body1(theme, "ccc").Layout(gtx)
+						}),
+				}
+			}
+			return suggestEditor.Layout(theme, gtx,
+				nil, nil,
+				200, 32,
+				i.Suggests, func(suggest *spseditor.Suggest) {
+				})
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return material.H5(theme, "Info").Layout(gtx)

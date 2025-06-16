@@ -5,6 +5,7 @@ import (
 	"gioui.org/widget/material"
 
 	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
+	spseditor "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/editor"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 )
 
@@ -21,6 +22,8 @@ type Item struct {
 	spsitem.Item
 	UI
 	Data
+
+	Suggests []*spseditor.Suggest
 }
 
 func (i *Item) Init(item spsitem.Item, theme *material.Theme) {

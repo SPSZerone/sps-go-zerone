@@ -20,12 +20,16 @@ func NewSuggestEditor(opts ...Option) SuggestEditor {
 	}
 }
 
+type (
+	OnSuggestClick func(suggest *Suggest) string
+)
+
 type SuggestEditor struct {
 	Editor Editor
 	List   spslist.List
 }
 
-func (e *SuggestEditor) LayoutSimple(
+func (e *SuggestEditor) LayoutDefault(
 	theme *material.Theme, gtx layout.Context,
 	suggestListHeight int,
 	suggestHeight int,
@@ -46,7 +50,7 @@ func (e *SuggestEditor) Layout(
 	suggestListHeight int,
 	suggestHeight int,
 	suggests []*Suggest,
-	onSuggestClick func(suggest *Suggest),
+	onSuggestClick OnSuggestClick,
 ) layout.Dimensions {
 	var width int
 	return layout.Flex{
@@ -71,11 +75,15 @@ func (e *SuggestEditor) Layout(
 			size := image.Pt(width, suggestHeight)
 			return e.List.Layout(theme, gtx, len(suggests), func(gtx layout.Context, index int) layout.Dimensions {
 				suggest := suggests[index]
-				return suggest.Layout(theme, gtx, size, func(suggest *Suggest) {
+				return suggest.Layout(theme, gtx, size, func() {
+					var content string
 					if onSuggestClick != nil {
-						onSuggestClick(suggest)
+						content = onSuggestClick(suggest)
 					}
-					e.Editor.SetText(suggest.Content)
+					if content == "" {
+						content = suggest.Content
+					}
+					e.Editor.SetText(content)
 				})
 			})
 		}),
@@ -85,7 +93,7 @@ func (e *SuggestEditor) Layout(
 func NewSuggest(content string, display layout.Widget, opts ...SuggestOption) *Suggest {
 	s := &Suggest{
 		Clickable: spsclickable.New(),
-		Display:   display,
+		Widget:    display,
 		Content:   content,
 	}
 	s.BGColor1, s.BGColor2 = spscolor.Rand2Color(0, 10)
@@ -99,7 +107,7 @@ type Suggest struct {
 
 	Clickable spsclickable.Clickable
 
-	Display layout.Widget
+	Widget  layout.Widget
 	Content string
 }
 
@@ -112,10 +120,10 @@ func (s *Suggest) Update(opts ...SuggestOption) {
 func (s *Suggest) Layout(
 	theme *material.Theme, gtx layout.Context,
 	size image.Point,
-	onClick func(suggest *Suggest),
+	onClick func(),
 ) layout.Dimensions {
 	return layout.Stack{Alignment: layout.Center}.Layout(gtx,
-		// content background
+		// background
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			gtx.Constraints.Max = size
 			return spsbg.NewColorful(s.BGColor1, s.BGColor2).LayoutBG(theme, gtx, size)
@@ -123,7 +131,7 @@ func (s *Suggest) Layout(
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			if s.Clickable.Clicked(gtx) {
-				onClick(s)
+				onClick()
 			}
 			return s.Clickable.Layout(
 				gtx,
@@ -135,8 +143,6 @@ func (s *Suggest) Layout(
 			)
 		}),
 		// content
-		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return s.Display(gtx)
-		}),
+		layout.Stacked(s.Widget),
 	)
 }

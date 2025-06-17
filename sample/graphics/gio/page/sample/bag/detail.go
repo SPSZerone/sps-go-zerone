@@ -93,10 +93,14 @@ func (i *Item) LayoutDetail(
 			}
 			const suggestHeight = 32
 			const suggestListHeight = suggestHeight * 3.5
-			return i.UI.SuggestEditor.LayoutSimple(
+			return i.UI.SuggestEditor.Layout(
 				theme, gtx,
+				nil, nil,
 				suggestListHeight, suggestHeight,
 				i.Suggests,
+				func(suggest *spseditor.Suggest) string {
+					return fmt.Sprintf("%v Custom", suggest.Content)
+				},
 			)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {

@@ -2,6 +2,13 @@ package net
 
 import "net"
 
+const (
+	NetworkTCP   = "tcp"
+	NetworkTCPv4 = "tcp4"
+	NetworkTCPv6 = "tcp6"
+	NetworkUDP   = "udp"
+)
+
 type Addresses interface {
 	Addresses() []net.Addr
 	Append(addr ...net.Addr)

@@ -199,7 +199,7 @@ func (t *Tabs) Layout(theme *material.Theme, gtx layout.Context, param any, cont
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			return t.LayoutTabs(theme, gtx, param)
 		}),
-		// LayoutContent
+		// Content
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 			return t.doLayoutContent(theme, gtx, param, content)
 		}),

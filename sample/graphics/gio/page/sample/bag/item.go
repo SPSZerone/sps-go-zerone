@@ -32,7 +32,9 @@ func (i *Item) Init(item spsitem.Item, theme *material.Theme) {
 }
 
 func (i *Item) Layout(
-	theme *material.Theme, gtx layout.Context, highlight bool,
-) (dimensions layout.Dimensions, clicked bool) {
-	return i.Item.Layout(theme, gtx, highlight, i.LayoutContent)
+	theme *material.Theme, gtx layout.Context,
+	highlight bool,
+	onClick func(),
+) layout.Dimensions {
+	return i.Item.Layout(theme, gtx, highlight, i.LayoutContent, onClick)
 }

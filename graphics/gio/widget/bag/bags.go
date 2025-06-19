@@ -25,15 +25,24 @@ type Bags struct {
 
 func (b *Bags) Layout(
 	theme *material.Theme, gtx layout.Context, param any,
-	itemDataSource ItemDataSource,
+	listBagItemLength ListBagItemLength,
+	listBagItem ListBagItem,
+	itemDetail ItemDetail,
 ) layout.Dimensions {
-	return b.Tabs.Layout(theme, gtx, param, func(gtx layout.Context, selected int) layout.Dimensions {
-		bag := b.GetBagByIndex(selected)
+	return b.Tabs.Layout(theme, gtx, param, func(gtx layout.Context, bagIndex int) layout.Dimensions {
+		bag := b.GetBagByIndex(bagIndex)
 		if bag == nil {
 			return layout.Dimensions{}
 		}
-		bag.UpdateItems(itemDataSource(selected))
-		return bag.Layout(theme, gtx, param)
+		return bag.Layout(
+			theme, gtx,
+			bagIndex,
+			listBagItemLength(bagIndex, bag),
+			func(gtx layout.Context, index, selectedIndex int, onClick func()) layout.Dimensions {
+				return listBagItem(gtx, bagIndex, index, selectedIndex, onClick)
+			},
+			itemDetail,
+		)
 	})
 }
 

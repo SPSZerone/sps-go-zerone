@@ -1,8 +1,6 @@
 package bag
 
 import (
-	"time"
-
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
@@ -20,43 +18,16 @@ func NewGrid() Grid {
 type Grid struct {
 	Grid spsgrid.Grid
 
-	Items          []Item
-	ItemUpdateTime time.Time
-	ItemSelected   Item
+	CurSelectedIndex int
 }
 
-func (g *Grid) Layout(theme *material.Theme, gtx layout.Context) layout.Dimensions {
-	return g.Grid.Layout(theme, gtx, g.GetItemCount(), func(gtx layout.Context, index int) layout.Dimensions {
-		curItem := g.GetItem(index)
-		highlight := curItem == g.ItemSelected
-		dimensions, clicked := curItem.Layout(theme, gtx, highlight)
-		if clicked {
-			g.ItemSelected = curItem
-		}
-		return dimensions
+func (g *Grid) Layout(
+	theme *material.Theme, gtx layout.Context,
+	length int, listItem ListGridItem,
+) layout.Dimensions {
+	return g.Grid.Layout(theme, gtx, length, func(gtx layout.Context, index int) layout.Dimensions {
+		return listItem(gtx, index, g.CurSelectedIndex, func() {
+			g.CurSelectedIndex = index
+		})
 	})
-}
-
-func (g *Grid) UpdateItems(items []Item, itemUpdateTime time.Time) {
-	if itemUpdateTime == g.ItemUpdateTime {
-		return
-	}
-
-	g.Items = items
-	g.ItemUpdateTime = itemUpdateTime
-
-	if len(g.Items) > 0 {
-		g.ItemSelected = g.Items[0]
-	}
-}
-
-func (g *Grid) GetItem(index int) Item {
-	if index < 0 || index >= len(g.Items) {
-		return nil
-	}
-	return g.Items[index]
-}
-
-func (g *Grid) GetItemCount() int {
-	return len(g.Items)
 }

@@ -12,6 +12,10 @@ import (
 	spsbg "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bg"
 )
 
+type (
+	OnClick func()
+)
+
 func New(opts ...Option) Item {
 	i := Item{
 		Opts: NewOptions(opts...),
@@ -35,10 +39,10 @@ func (i *Item) Layout(
 	theme *material.Theme, gtx layout.Context,
 	highlight bool,
 	layoutContent LayoutContent,
-) (dimensions layout.Dimensions, clicked bool) {
+	onClick OnClick,
+) layout.Dimensions {
 	layoutCtx := NewLayoutContext(gtx, &i.Opts.Dimensions, &i.Opts.Surface)
-
-	dimensions = layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
+	return layout.Stack{Alignment: i.Opts.StackAlignment}.Layout(gtx,
 		// content background
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			bgDimensions := i.Opts.Surface.LayoutDefault(
@@ -54,7 +58,9 @@ func (i *Item) Layout(
 		// click area
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			if i.UI.Clickable.Clicked(gtx) {
-				clicked = true
+				if onClick != nil {
+					onClick()
+				}
 			}
 			return i.UI.Clickable.Layout(
 				gtx,
@@ -94,8 +100,6 @@ func (i *Item) Layout(
 		// menu
 		i.UI.Menu.LayoutExpandedContextArea(theme, image.Point{}),
 	)
-
-	return
 }
 
 func (i *Item) LayoutHighlightStrokeRect(theme *material.Theme, gtx layout.Context, layoutCtx LayoutContext) {

@@ -2,7 +2,6 @@ package sample
 
 import (
 	"fmt"
-	"time"
 
 	"gioui.org/io/event"
 	"gioui.org/layout"
@@ -101,8 +100,14 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 			}
 			return p.Bags.Layout(
 				theme, gtx, param,
-				func(index int) (items []spsbag.Item, itemUpdateTime time.Time) {
-					return p.BagData.GetItems(index)
+				func(bagIndex int, bag *spsbag.Bag) int {
+					return len(p.BagData.GetItems(bagIndex))
+				},
+				func(gtx layout.Context, bagIndex, itemIndex, itemSelectedIndex int, onClick func()) layout.Dimensions {
+					return p.BagData.GetItems(bagIndex)[itemIndex].Layout(theme, gtx, itemIndex == itemSelectedIndex, onClick)
+				},
+				func(gtx layout.Context, bagIndex int, bag *spsbag.Bag, itemSelectedIndex int) layout.Dimensions {
+					return p.BagData.GetItems(bagIndex)[itemSelectedIndex].LayoutDetail(theme, gtx)
 				},
 			)
 		default:

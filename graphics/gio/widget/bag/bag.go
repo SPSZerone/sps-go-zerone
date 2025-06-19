@@ -1,8 +1,6 @@
 package bag
 
 import (
-	"time"
-
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
@@ -36,7 +34,10 @@ type Bag struct {
 }
 
 func (b *Bag) Layout(
-	theme *material.Theme, gtx layout.Context, param any,
+	theme *material.Theme, gtx layout.Context,
+	bagIndex int,
+	itemLength int, listGridItem ListGridItem,
+	itemDetail ItemDetail,
 ) layout.Dimensions {
 	return layout.Flex{
 		Alignment: layout.Middle,
@@ -47,23 +48,16 @@ func (b *Bag) Layout(
 				gtx,
 				// item grid
 				func(gtx layout.Context) layout.Dimensions {
-					return b.Grid.Layout(theme, gtx)
+					return b.Grid.Layout(theme, gtx, itemLength, listGridItem)
 				},
 				// item detail
 				func(gtx layout.Context) layout.Dimensions {
 					b.DetailList.Axis = layout.Vertical
 					return b.DetailList.Layout(theme, gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
-						if b.Grid.ItemSelected == nil {
-							return layout.Dimensions{}
-						}
-						return b.Grid.ItemSelected.LayoutDetail(theme, gtx)
+						return itemDetail(gtx, bagIndex, b, b.Grid.CurSelectedIndex)
 					})
 				},
 			)
 		}),
 	)
-}
-
-func (b *Bag) UpdateItems(items []Item, itemUpdateTime time.Time) {
-	b.Grid.UpdateItems(items, itemUpdateTime)
 }

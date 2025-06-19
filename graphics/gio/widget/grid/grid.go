@@ -10,7 +10,7 @@ import (
 
 func New() Grid {
 	return Grid{
-		list: spslist.New(),
+		List: spslist.New(),
 
 		Wrap:      true,
 		Axis:      layout.Horizontal,
@@ -20,7 +20,7 @@ func New() Grid {
 }
 
 type Grid struct {
-	list spslist.List
+	List spslist.List
 
 	Axis      layout.Axis
 	Alignment layout.Alignment
@@ -28,13 +28,19 @@ type Grid struct {
 	Num       int
 }
 
-func (g *Grid) Layout(theme *material.Theme, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
-	return g.list.Layout(theme, gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
-		return g.LayoutContent(theme, gtx, num, element)
+func (g *Grid) Layout(
+	theme *material.Theme, gtx layout.Context,
+	num int, element outlay.FlowElement,
+) layout.Dimensions {
+	return g.List.Layout(theme, gtx, 1, func(gtx layout.Context, _ int) layout.Dimensions {
+		return g.LayoutFlow(theme, gtx, num, element)
 	})
 }
 
-func (g *Grid) LayoutContent(theme *material.Theme, gtx layout.Context, num int, element outlay.FlowElement) layout.Dimensions {
+func (g *Grid) LayoutFlow(
+	theme *material.Theme, gtx layout.Context,
+	num int, element outlay.FlowElement,
+) layout.Dimensions {
 	if g.Wrap {
 		return outlay.FlowWrap{
 			Axis:      g.Axis,

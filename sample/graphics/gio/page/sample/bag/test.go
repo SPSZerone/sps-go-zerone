@@ -2,7 +2,6 @@ package bag
 
 import (
 	"fmt"
-	"time"
 
 	"gioui.org/widget/material"
 
@@ -19,9 +18,7 @@ const (
 )
 
 func NewTestData(theme *material.Theme, groupCount, count int) TestData {
-	testData := TestData{
-		UpdateTime: time.Now(),
-	}
+	testData := TestData{}
 	testData.Items = make([][]spsbag.Item, groupCount)
 	for i := 0; i < groupCount; i++ {
 		testData.Items[i] = make([]spsbag.Item, count)
@@ -69,13 +66,12 @@ func GetTestValue(key PropertyKey, i, j int) any {
 }
 
 type TestData struct {
-	Items      [][]spsbag.Item
-	UpdateTime time.Time
+	Items [][]spsbag.Item
 }
 
-func (d *TestData) GetItems(index int) ([]spsbag.Item, time.Time) {
+func (d *TestData) GetItems(index int) []spsbag.Item {
 	if index < 0 || index >= len(d.Items) {
-		return nil, d.UpdateTime
+		return nil
 	}
-	return d.Items[index], d.UpdateTime
+	return d.Items[index]
 }

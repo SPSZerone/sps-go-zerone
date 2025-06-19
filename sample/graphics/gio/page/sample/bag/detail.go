@@ -80,26 +80,29 @@ func (i *Item) LayoutDetail(
 				}
 				for idx := 0; idx < 10; idx++ {
 					content := fmt.Sprintf("Suggest %d", idx)
-					i.Suggests = append(i.Suggests,
-						spseditor.NewSuggest(
-							content,
-							func(gtx layout.Context) layout.Dimensions {
-								return material.Body1(theme, fmt.Sprintf("%v display", content)).Layout(gtx)
-							},
-							spseditor.SgtOptBGColor(nextColor(), nextColor()),
-						),
+					suggest := spseditor.NewSuggest(
+						content,
+						func(gtx layout.Context) layout.Dimensions {
+							return material.Body1(theme, fmt.Sprintf("%v display", content)).Layout(gtx)
+						},
+						spseditor.SgtOptBGColor(nextColor(), nextColor()),
 					)
+					i.Suggests = append(i.Suggests, &suggest)
 				}
 			}
+
 			const suggestHeight = 32
 			const suggestListHeight = suggestHeight * 3.5
-			return i.UI.SuggestEditor.Layout(
+
+			return i.UI.SuggestEditor.LayoutDefault(
 				theme, gtx,
-				nil, nil,
 				suggestListHeight, suggestHeight,
-				i.Suggests,
-				func(suggest *spseditor.Suggest) string {
-					return fmt.Sprintf("%v Custom", suggest.Content)
+				len(i.Suggests),
+				func(gtx layout.Context, index int, size image.Point, onClick func(content string)) layout.Dimensions {
+					suggest := i.Suggests[index]
+					return suggest.Layout(theme, gtx, size, func() {
+						onClick(fmt.Sprintf("%v Custom", suggest.Content))
+					})
 				},
 			)
 		}),

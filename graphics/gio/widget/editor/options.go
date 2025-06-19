@@ -4,7 +4,9 @@ import (
 	"image/color"
 )
 
-type Option func(*Editor)
+type (
+	Option func(*Editor)
+)
 
 func OptHint(value string) Option {
 	return func(editor *Editor) {

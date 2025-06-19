@@ -11,7 +11,7 @@ import (
 )
 
 func New(opts ...Option) Editor {
-	return Editor{
+	e := Editor{
 		Editor: widget.Editor{
 			SingleLine: true,
 			Submit:     true,
@@ -22,10 +22,9 @@ func New(opts ...Option) Editor {
 			Width:        unit.Dp(2),
 		},
 	}
+	e.Update(opts...)
+	return e
 }
-
-type OnSubmit func(editor *Editor)
-type Style func(editor *Editor, style *material.EditorStyle)
 
 type Editor struct {
 	widget.Editor

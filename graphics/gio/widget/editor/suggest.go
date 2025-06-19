@@ -21,7 +21,7 @@ func NewSuggestEditor(opts ...Option) SuggestEditor {
 }
 
 type (
-	OnSuggestClick func(suggest *Suggest) string
+	SuggestWidget func(gtx layout.Context, index int, size image.Point, onClick func(content string)) layout.Dimensions
 )
 
 type SuggestEditor struct {
@@ -31,26 +31,26 @@ type SuggestEditor struct {
 
 func (e *SuggestEditor) LayoutDefault(
 	theme *material.Theme, gtx layout.Context,
-	suggestListHeight int,
-	suggestHeight int,
-	suggests []*Suggest,
+	listHeight int,
+	height int,
+	length int,
+	widget SuggestWidget,
 ) layout.Dimensions {
 	return e.Layout(
 		theme, gtx,
 		nil, nil,
-		suggestListHeight, suggestHeight,
-		suggests,
-		nil,
+		listHeight, height,
+		length, widget,
 	)
 }
 
 func (e *SuggestEditor) Layout(
 	theme *material.Theme, gtx layout.Context,
 	style Style, onSubmit OnSubmit,
-	suggestListHeight int,
-	suggestHeight int,
-	suggests []*Suggest,
-	onSuggestClick OnSuggestClick,
+	listHeight int,
+	height int,
+	length int,
+	widget SuggestWidget,
 ) layout.Dimensions {
 	var width int
 	return layout.Flex{
@@ -70,19 +70,11 @@ func (e *SuggestEditor) Layout(
 			)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			gtx.Constraints.Max.Y = suggestListHeight
+			gtx.Constraints.Max.Y = listHeight
 			gtx.Constraints.Max.X = width
-			size := image.Pt(width, suggestHeight)
-			return e.List.Layout(theme, gtx, len(suggests), func(gtx layout.Context, index int) layout.Dimensions {
-				suggest := suggests[index]
-				return suggest.Layout(theme, gtx, size, func() {
-					var content string
-					if onSuggestClick != nil {
-						content = onSuggestClick(suggest)
-					}
-					if content == "" {
-						content = suggest.Content
-					}
+			size := image.Pt(width, height)
+			return e.List.Layout(theme, gtx, length, func(gtx layout.Context, index int) layout.Dimensions {
+				return widget(gtx, index, size, func(content string) {
 					e.Editor.SetText(content)
 				})
 			})
@@ -90,8 +82,8 @@ func (e *SuggestEditor) Layout(
 	)
 }
 
-func NewSuggest(content string, display layout.Widget, opts ...SuggestOption) *Suggest {
-	s := &Suggest{
+func NewSuggest(content string, display layout.Widget, opts ...SuggestOption) Suggest {
+	s := Suggest{
 		Clickable: spsclickable.New(),
 		Widget:    display,
 		Content:   content,

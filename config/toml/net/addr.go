@@ -25,3 +25,19 @@ type Addr struct {
 	Port int    `toml:"port"`
 	Zone string `toml:"zone"`
 }
+
+func (a *Addr) GetType() string {
+	return a.Type
+}
+
+func (a *Addr) GetHost() string {
+	return a.Host
+}
+
+func (a *Addr) GetPort() int {
+	return a.Port
+}
+
+func (a *Addr) GetZone() string {
+	return a.Zone
+}

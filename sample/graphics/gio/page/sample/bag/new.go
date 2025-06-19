@@ -10,7 +10,7 @@ import (
 	spsrand "github.com/SPSZerone/sps-go-zerone/math/rand"
 )
 
-func NewItem(data Data, theme *material.Theme) *Item {
+func NewItem(data Data, theme *material.Theme) Item {
 	item := newItem(data)
 	spsItem := NewSPSItem(spsitem.OptData(item))
 	item.Init(spsItem, theme)

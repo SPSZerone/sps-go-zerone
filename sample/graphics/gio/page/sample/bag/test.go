@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"gioui.org/widget/material"
-
-	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 )
 
 type PropertyKey int
@@ -19,9 +17,9 @@ const (
 
 func NewTestData(theme *material.Theme, groupCount, count int) TestData {
 	testData := TestData{}
-	testData.Items = make([][]spsbag.Item, groupCount)
+	testData.Items = make([][]Item, groupCount)
 	for i := 0; i < groupCount; i++ {
-		testData.Items[i] = make([]spsbag.Item, count)
+		testData.Items[i] = make([]Item, count)
 		for j := 0; j < count; j++ {
 			data := NewData()
 			data.AddProperties(NewTestProperties(i, j)...)
@@ -66,10 +64,10 @@ func GetTestValue(key PropertyKey, i, j int) any {
 }
 
 type TestData struct {
-	Items [][]spsbag.Item
+	Items [][]Item
 }
 
-func (d *TestData) GetItems(index int) []spsbag.Item {
+func (d *TestData) GetItems(index int) []Item {
 	if index < 0 || index >= len(d.Items) {
 		return nil
 	}

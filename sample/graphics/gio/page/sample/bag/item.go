@@ -4,19 +4,16 @@ import (
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 
-	spsbag "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/bag"
 	spseditor "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/editor"
 	spsitem "github.com/SPSZerone/sps-go-zerone/graphics/gio/widget/item"
 )
 
-func newItem(data Data) *Item {
-	return &Item{
+func newItem(data Data) Item {
+	return Item{
 		UI:   NewUI(),
 		Data: data,
 	}
 }
-
-var _ spsbag.Item = (*Item)(nil)
 
 type Item struct {
 	spsitem.Item

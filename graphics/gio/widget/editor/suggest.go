@@ -5,6 +5,8 @@ import (
 	"image/color"
 
 	"gioui.org/layout"
+	"gioui.org/unit"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
 
 	spscolor "github.com/SPSZerone/sps-go-zerone/graphics/gio/color"
@@ -31,26 +33,62 @@ type SuggestEditor struct {
 
 func (e *SuggestEditor) LayoutDefault(
 	theme *material.Theme, gtx layout.Context,
-	listHeight int,
-	height int,
-	length int,
-	widget SuggestWidget,
+	listHeight int, height int,
+	length int, suggest SuggestWidget,
 ) layout.Dimensions {
 	return e.Layout(
 		theme, gtx,
 		nil, nil,
 		listHeight, height,
-		length, widget,
+		length, suggest,
 	)
+}
+
+func (e *SuggestEditor) LayoutWithBorderDefault(
+	theme *material.Theme, gtx layout.Context,
+	listHeight int, height int,
+	length int, suggest SuggestWidget,
+) layout.Dimensions {
+	return e.LayoutWithBorder(
+		theme, gtx,
+		listHeight, height,
+		length, suggest,
+		widget.Border{
+			Color:        color.NRGBA{A: 0xFF, R: 0x00, G: 0x00, B: 0x00},
+			CornerRadius: unit.Dp(8),
+			Width:        unit.Dp(4),
+		},
+		layout.UniformInset(unit.Dp(8)),
+		layout.UniformInset(unit.Dp(8)),
+	)
+}
+
+func (e *SuggestEditor) LayoutWithBorder(
+	theme *material.Theme, gtx layout.Context,
+	listHeight int, height int,
+	length int, suggest SuggestWidget,
+	border widget.Border,
+	outer, inner layout.Inset,
+) layout.Dimensions {
+	return outer.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+		return border.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+			return inner.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+				return e.Layout(
+					theme, gtx,
+					nil, nil,
+					listHeight, height,
+					length, suggest,
+				)
+			})
+		})
+	})
 }
 
 func (e *SuggestEditor) Layout(
 	theme *material.Theme, gtx layout.Context,
 	style Style, onSubmit OnSubmit,
-	listHeight int,
-	height int,
-	length int,
-	widget SuggestWidget,
+	listHeight int, height int,
+	length int, suggest SuggestWidget,
 ) layout.Dimensions {
 	var width int
 	return layout.Flex{
@@ -74,7 +112,7 @@ func (e *SuggestEditor) Layout(
 			gtx.Constraints.Max.X = width
 			size := image.Pt(width, height)
 			return e.List.Layout(theme, gtx, length, func(gtx layout.Context, index int) layout.Dimensions {
-				return widget(gtx, index, size, func(content string) {
+				return suggest(gtx, index, size, func(content string) {
 					e.Editor.SetText(content)
 				})
 			})

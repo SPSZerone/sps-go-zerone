@@ -94,7 +94,7 @@ func (i *Item) LayoutDetail(
 			const suggestHeight = 32
 			const suggestListHeight = suggestHeight * 3.5
 
-			return i.UI.SuggestEditor.LayoutDefault(
+			return i.UI.SuggestEditor.LayoutWithBorderDefault(
 				theme, gtx,
 				suggestListHeight, suggestHeight,
 				len(i.Suggests),

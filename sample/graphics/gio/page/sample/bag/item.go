@@ -33,5 +33,8 @@ func (i *Item) Layout(
 	highlight bool,
 	onClick func(),
 ) layout.Dimensions {
+	if i == nil {
+		return layout.Dimensions{}
+	}
 	return i.Item.Layout(theme, gtx, highlight, i.LayoutContent, onClick)
 }

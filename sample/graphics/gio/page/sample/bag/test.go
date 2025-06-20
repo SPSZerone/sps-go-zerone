@@ -73,3 +73,13 @@ func (d *TestData) GetItems(index int) []Item {
 	}
 	return d.Items[index]
 }
+
+func (d *TestData) GetItem(bagIndex, itemIndex int) *Item {
+	if bagIndex < 0 || bagIndex >= len(d.Items) {
+		return nil
+	}
+	if itemIndex < 0 || itemIndex >= len(d.Items[bagIndex]) {
+		return nil
+	}
+	return &d.Items[bagIndex][itemIndex]
+}

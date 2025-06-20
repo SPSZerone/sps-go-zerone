@@ -13,6 +13,10 @@ func (i *Item) LayoutContent(
 	theme *material.Theme, gtx layout.Context,
 	item *spsitem.Item, layoutCtx spsitem.LayoutContext,
 ) layout.Dimensions {
+	if i == nil {
+		return layout.Dimensions{}
+	}
+
 	gtx.Constraints.Max = layoutCtx.ContentSize
 
 	if item.UI.MenuItems[0].Clicked(gtx) {

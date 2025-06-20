@@ -20,6 +20,10 @@ import (
 func (i *Item) LayoutDetail(
 	theme *material.Theme, gtx layout.Context,
 ) layout.Dimensions {
+	if i == nil {
+		return layout.Dimensions{}
+	}
+
 	menuWidgets := []func(gtx layout.Context) layout.Dimensions{
 		func(gtx layout.Context) layout.Dimensions {
 			return i.LayoutDetailProperty(theme, gtx, i.Data.GetProperty(PropertyKeyId))

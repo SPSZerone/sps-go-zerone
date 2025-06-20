@@ -104,10 +104,11 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 					return len(p.BagData.GetItems(bagIndex))
 				},
 				func(gtx layout.Context, bagIndex, itemIndex, itemSelectedIndex int, onClick func()) layout.Dimensions {
-					return p.BagData.GetItems(bagIndex)[itemIndex].Layout(theme, gtx, itemIndex == itemSelectedIndex, onClick)
+					return p.BagData.GetItem(bagIndex, itemIndex).Layout(theme, gtx, itemIndex == itemSelectedIndex, onClick)
 				},
 				func(gtx layout.Context, bagIndex int, bag *spsbag.Bag, itemSelectedIndex int) layout.Dimensions {
-					return p.BagData.GetItems(bagIndex)[itemSelectedIndex].LayoutDetail(theme, gtx)
+					itemSelectedIndex = -1
+					return p.BagData.GetItem(bagIndex, itemSelectedIndex).LayoutDetail(theme, gtx)
 				},
 			)
 		default:

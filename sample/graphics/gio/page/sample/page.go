@@ -107,7 +107,6 @@ func (p *Page) Layout(win spsgio.Window, gtx layout.Context, param any) layout.D
 					return p.BagData.GetItem(bagIndex, itemIndex).Layout(theme, gtx, itemIndex == itemSelectedIndex, onClick)
 				},
 				func(gtx layout.Context, bagIndex int, bag *spsbag.Bag, itemSelectedIndex int) layout.Dimensions {
-					itemSelectedIndex = -1
 					return p.BagData.GetItem(bagIndex, itemSelectedIndex).LayoutDetail(theme, gtx)
 				},
 			)

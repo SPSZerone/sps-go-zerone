@@ -11,22 +11,22 @@ const (
 	AsciiNumeric9     = byte('9')
 )
 
-func RandomByteAsciiVisible() byte {
-	return RandomByte(AsciiVisibleStart, AsciiVisibleEnd)
+func ByteAsciiVisible() byte {
+	return Byte(AsciiVisibleStart, AsciiVisibleEnd)
 }
 
-func RandomByteAsciiAlphabetLower() byte {
-	return RandomByte(AsciiLowerCaseA, AsciiLowerCaseZ)
+func ByteAsciiAlphabetLower() byte {
+	return Byte(AsciiLowerCaseA, AsciiLowerCaseZ)
 }
 
-func RandomByteAsciiAlphabetUpper() byte {
-	return RandomByte(AsciiUpperCaseA, AsciiUpperCaseZ)
+func ByteAsciiAlphabetUpper() byte {
+	return Byte(AsciiUpperCaseA, AsciiUpperCaseZ)
 }
 
-func RandomByteAsciiNumeric() byte {
-	return RandomByte(AsciiNumeric0, AsciiNumeric9)
+func ByteAsciiNumeric() byte {
+	return Byte(AsciiNumeric0, AsciiNumeric9)
 }
 
-func RandomByte(min, max byte) byte {
-	return byte(RandomInt(int(min), int(max)))
+func Byte(min, max byte) byte {
+	return byte(Int(int(min), int(max)))
 }

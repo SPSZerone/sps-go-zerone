@@ -21,7 +21,7 @@ func Put(opts *Options) (*cos.Response, error) {
 	}
 
 	for i := 0; i < opts.Args.ErrRetryNum; i++ {
-		time.Sleep(time.Duration(spsrand.RandomInt(1, 5)) * time.Second)
+		time.Sleep(time.Duration(spsrand.Int(1, 5)) * time.Second)
 		rsp, err = DoPut(opts)
 		if err == nil {
 			return rsp, nil

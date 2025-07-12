@@ -43,8 +43,8 @@ func FillRect(gtx layout.Context, rect image.Rectangle, col1, col2 color.NRGBA) 
 }
 
 func Rand2Color(min, max int) (color1, color2 color.NRGBA) {
-	randColor1 := spsrand.RandomInt(min, max)
-	randColor2 := randColor1 + spsrand.RandomInt(1, 3)
+	randColor1 := spsrand.Int(min, max)
+	randColor2 := randColor1 + spsrand.Int(1, 3)
 	return DynamicColor(randColor1), DynamicColor(randColor2)
 }
 

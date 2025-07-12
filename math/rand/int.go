@@ -1,30 +1,41 @@
 package rand
 
 import (
-	"math/rand"
-	"time"
+	"github.com/SPSZerone/sps-go-zerone/generic"
 )
 
 var (
-	r = rand.New(rand.NewSource(time.Now().UnixNano()))
+	integerRandDefault = NewRandDefault()
 )
 
-func RandomInt(min, max int) int {
-	return Random(r.Intn, min, max)
+func Int(min, max int) int {
+	return Integer(integerRandDefault.IntN, min, max)
 }
 
-func RandomInt32(min, max int32) int32 {
-	return Random(r.Int31n, min, max)
+func Int32(min, max int32) int32 {
+	return Integer(integerRandDefault.Int32N, min, max)
 }
 
-func RandomInt64(min, max int64) int64 {
-	return Random(r.Int63n, min, max)
+func Int64(min, max int64) int64 {
+	return Integer(integerRandDefault.Int64N, min, max)
 }
 
-// Random
+func UInt(min, max uint) uint {
+	return Integer(integerRandDefault.UintN, min, max)
+}
+
+func UInt32(min, max uint32) uint32 {
+	return Integer(integerRandDefault.Uint32N, min, max)
+}
+
+func UInt64(min, max uint64) uint64 {
+	return Integer(integerRandDefault.Uint64N, min, max)
+}
+
+// Integer
 //
 //	funRand func(n T) should return [0,n)
-func Random[T int | int32 | int64](funRand func(n T) T, min T, max T) T {
+func Integer[T generic.Integer](funRand func(n T) T, min T, max T) T {
 	diff := max + 1 - min
 	randomNum := funRand(diff) + min
 	return randomNum

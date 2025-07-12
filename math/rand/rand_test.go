@@ -4,32 +4,32 @@ import (
 	"testing"
 )
 
-func TestRandomByte(t *testing.T) {
+func TestByte(t *testing.T) {
 	const count = 10
 	var b byte
 
 	for i := 0; i < count; i++ {
-		b = RandomByte(0, 255)
-		t.Logf("RandomByte(0, 255) = 0x%X | %d ", b, b)
+		b = Byte(0, 255)
+		t.Logf("Byte(0, 255) = 0x%X | %d ", b, b)
 	}
 
 	for i := 0; i < count; i++ {
-		b = RandomByteAsciiAlphabetLower()
-		t.Logf("RandomByteAsciiAlphabetLower = %v | 0x%X | %d", string(b), b, b)
+		b = ByteAsciiAlphabetLower()
+		t.Logf("ByteAsciiAlphabetLower = %v | 0x%X | %d", string(b), b, b)
 	}
 
 	for i := 0; i < count; i++ {
-		b = RandomByteAsciiAlphabetUpper()
-		t.Logf("RandomByteAsciiAlphabetUpper = %v | 0x%X | %d", string(b), b, b)
+		b = ByteAsciiAlphabetUpper()
+		t.Logf("ByteAsciiAlphabetUpper = %v | 0x%X | %d", string(b), b, b)
 	}
 
 	for i := 0; i < count; i++ {
-		b = RandomByteAsciiNumeric()
-		t.Logf("RandomByteAsciiNumeric = %v | 0x%X | %d", string(b), b, b)
+		b = ByteAsciiNumeric()
+		t.Logf("ByteAsciiNumeric = %v | 0x%X | %d", string(b), b, b)
 	}
 
 	for i := 0; i < count; i++ {
-		b = RandomByteAsciiVisible()
-		t.Logf("RandomByteAsciiVisible = %v | 0x%X | %d", string(b), b, b)
+		b = ByteAsciiVisible()
+		t.Logf("ByteAsciiVisible = %v | 0x%X | %d", string(b), b, b)
 	}
 }

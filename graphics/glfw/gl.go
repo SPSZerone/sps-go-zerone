@@ -37,8 +37,7 @@ func glInit() {
 	}
 }
 
-func Clear(red, green, blue, alpha float32) {
-	desktopGL := spsos.IsDarwin()
+func Clear(red, green, blue, alpha float32, desktopGL bool) {
 	if desktopGL {
 		gl.ClearColor(red, green, blue, alpha)
 		gl.Clear(gl.COLOR_BUFFER_BIT)

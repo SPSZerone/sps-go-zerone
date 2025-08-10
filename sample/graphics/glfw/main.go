@@ -2,6 +2,7 @@ package main
 
 import (
 	spsgioglfw "github.com/SPSZerone/sps-go-zerone/graphics/gio/glfw"
+	spsos "github.com/SPSZerone/sps-go-zerone/os"
 
 	spsglfw "github.com/SPSZerone/sps-go-zerone/graphics/glfw"
 	spsglfwwin "github.com/SPSZerone/sps-go-zerone/graphics/glfw/window"
@@ -12,7 +13,9 @@ const (
 )
 
 func main() {
+	desktopGL := spsos.IsDarwin()
 	var ctx spsgioglfw.Context
+
 	spsglfw.Run(
 		spsglfw.OptOnGLFWInit(func() {
 		}),
@@ -31,7 +34,7 @@ func main() {
 		}),
 		spsglfw.OptOnLoop(func(win spsglfw.Window) {
 			gtx, size := ctx.LayoutContext(win.GetWindow())
-			spsglfw.Clear(0, 0, 0, 1)
+			spsglfw.Clear(0, 0, 0, 1, desktopGL)
 			ctx.Frame(gtx, size)
 		}),
 	)

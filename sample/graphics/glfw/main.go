@@ -31,7 +31,7 @@ func main() {
 		}),
 		spsglfw.OptOnLoop(func(win spsglfw.Window) {
 			gtx, size := ctx.LayoutContext(win.GetWindow())
-			spsgioglfw.Clear(0, 0, 0, 1)
+			spsglfw.Clear(0, 0, 0, 1)
 			ctx.Frame(gtx, size)
 		}),
 	)

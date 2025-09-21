@@ -6,7 +6,7 @@ import (
 	spsos "github.com/SPSZerone/sps-go-zerone/os"
 )
 
-func glfwInitWindowHint() {
+func InitWindowHint() {
 	glfw.WindowHint(glfw.SRGBCapable, glfw.True)
 	glfw.WindowHint(glfw.ScaleToMonitor, glfw.True)
 	glfw.WindowHint(glfw.CocoaRetinaFramebuffer, glfw.True)

@@ -13,7 +13,7 @@ var (
 func Run(opts ...Option) {
 	o := NewOptions(opts...)
 
-	require()
+	Require()
 
 	// glfw init
 	err := glfw.Init()
@@ -22,7 +22,7 @@ func Run(opts ...Option) {
 	}
 	defer glfw.Terminate()
 
-	glfwInitWindowHint()
+	InitWindowHint()
 	if o.OnGLFWInit != nil {
 		o.OnGLFWInit()
 	}
@@ -32,7 +32,7 @@ func Run(opts ...Option) {
 	window := win.GetWindow()
 
 	// gl init
-	glInit()
+	GLInit()
 	if o.OnGLInit != nil {
 		o.OnGLInit()
 	}

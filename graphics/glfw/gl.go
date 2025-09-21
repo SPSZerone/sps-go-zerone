@@ -9,12 +9,12 @@ import (
 	spsos "github.com/SPSZerone/sps-go-zerone/os"
 )
 
-func require() {
+func Require() {
 	// Required by the OpenGL threading model.
 	runtime.LockOSThread()
 }
 
-func glInit() {
+func GLInit() {
 	desktopGL := spsos.IsDarwin()
 
 	var err error

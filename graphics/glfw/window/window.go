@@ -31,12 +31,10 @@ func (w *Window) CreateWindow() *glfw.Window {
 		return w.window
 	}
 
-	window, err := glfw.CreateWindow(w.Opts.Width, w.Opts.Height, w.Opts.Title, w.Opts.Monitor, w.Opts.Share)
+	window, err := DoCreateWindow(w.Opts)
 	if err != nil {
 		w.logger.Fatal().Msgf("Failed to create window %v", err)
 	}
-
-	window.MakeContextCurrent()
 
 	w.window = window
 	return window
@@ -44,4 +42,19 @@ func (w *Window) CreateWindow() *glfw.Window {
 
 func (w *Window) GetLogger() *zerolog.Logger {
 	return &w.logger
+}
+
+func CreateWindow(opts ...Option) (*glfw.Window, error) {
+	o := NewOptions(opts...)
+	return DoCreateWindow(o)
+}
+
+func DoCreateWindow(o Options) (*glfw.Window, error) {
+	window, err := glfw.CreateWindow(o.Width, o.Height, o.Title, o.Monitor, o.Share)
+	if err != nil {
+		return nil, err
+	}
+	window.MakeContextCurrent()
+
+	return window, nil
 }

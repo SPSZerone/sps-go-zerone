@@ -10,16 +10,20 @@ type (
 	Option func(o *Options)
 
 	NewWindow  func() Window
+	OnInitPre  func()
 	OnGLFWInit func()
 	OnGLInit   func()
+	OnInitPost func()
 	OnStop     func()
 	OnLoop     func(win Window)
 )
 
 type Options struct {
 	NewWindow  NewWindow
+	OnInitPre  OnInitPre
 	OnGLFWInit OnGLFWInit
 	OnGLInit   OnGLInit
+	OnInitPost OnInitPost
 	OnStop     OnStop
 	OnLoop     OnLoop
 }
@@ -36,6 +40,12 @@ func OptNewWindow(value NewWindow) Option {
 	})
 }
 
+func OptOnInitPre(value OnInitPre) Option {
+	return Option(func(o *Options) {
+		o.OnInitPre = value
+	})
+}
+
 func OptOnGLFWInit(value OnGLFWInit) Option {
 	return Option(func(o *Options) {
 		o.OnGLFWInit = value
@@ -45,6 +55,12 @@ func OptOnGLFWInit(value OnGLFWInit) Option {
 func OptOnGLInit(value OnGLInit) Option {
 	return Option(func(o *Options) {
 		o.OnGLInit = value
+	})
+}
+
+func OptOnInitPost(value OnInitPost) Option {
+	return Option(func(o *Options) {
+		o.OnInitPost = value
 	})
 }
 

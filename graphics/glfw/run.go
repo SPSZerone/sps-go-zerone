@@ -15,6 +15,11 @@ func Run(opts ...Option) {
 
 	Require()
 
+	// init pre
+	if o.OnInitPre != nil {
+		o.OnInitPre()
+	}
+
 	// glfw init
 	err := glfw.Init()
 	if err != nil {
@@ -35,6 +40,11 @@ func Run(opts ...Option) {
 	GLInit()
 	if o.OnGLInit != nil {
 		o.OnGLInit()
+	}
+
+	// init post
+	if o.OnInitPost != nil {
+		o.OnInitPost()
 	}
 
 	// stop

@@ -33,8 +33,11 @@ func main() {
 			ctx.Release()
 		}),
 		spsglfw.OptOnLoop(func(win spsglfw.Window) {
+			spsglfw.ProcessInputDefaultKeyEscape(win.GetWindow())
+
 			gtx, size := ctx.LayoutContext(win.GetWindow())
-			spsglfw.Clear(0, 0, 0, 1, desktopGL)
+			spsglfw.GLClear(0, 0, 0, 1, desktopGL)
+
 			ctx.Frame(gtx, size)
 		}),
 	)

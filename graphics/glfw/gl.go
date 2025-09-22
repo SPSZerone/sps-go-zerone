@@ -37,7 +37,7 @@ func GLInit() {
 	}
 }
 
-func Clear(red, green, blue, alpha float32, desktopGL bool) {
+func GLClear(red, green, blue, alpha float32, desktopGL bool) {
 	if desktopGL {
 		gl.ClearColor(red, green, blue, alpha)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
@@ -45,4 +45,8 @@ func Clear(red, green, blue, alpha float32, desktopGL bool) {
 		gles2.ClearColor(red, green, blue, alpha)
 		gles2.Clear(gl.COLOR_BUFFER_BIT)
 	}
+}
+
+func GLViewport(x, y, width, height int32) {
+	gl.Viewport(x, y, width, height)
 }

@@ -2,6 +2,8 @@ package window
 
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
+
+	spsglfw "github.com/SPSZerone/sps-go-zerone/graphics/glfw"
 )
 
 func NewOptions(opts ...Option) Options {
@@ -9,6 +11,8 @@ func NewOptions(opts ...Option) Options {
 		Width:  1920,
 		Height: 1080,
 		Title:  "GLFW",
+
+		FramebufferSizeCallback: spsglfw.FramebufferSizeCallback,
 	}
 	o.UpdateOpts(opts...)
 	return o
@@ -17,11 +21,14 @@ func NewOptions(opts ...Option) Options {
 type Option func(*Options)
 
 type Options struct {
-	Width   int
-	Height  int
-	Title   string
+	Width  int
+	Height int
+	Title  string
+
 	Monitor *glfw.Monitor
 	Share   *glfw.Window
+
+	FramebufferSizeCallback glfw.FramebufferSizeCallback
 }
 
 func (o *Options) UpdateOpts(opts ...Option) {
@@ -57,5 +64,11 @@ func OptMonitor(value *glfw.Monitor) Option {
 func OptShare(value *glfw.Window) Option {
 	return func(o *Options) {
 		o.Share = value
+	}
+}
+
+func OptFramebufferSizeCallback(value glfw.FramebufferSizeCallback) Option {
+	return func(o *Options) {
+		o.FramebufferSizeCallback = value
 	}
 }

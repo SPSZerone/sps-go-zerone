@@ -55,6 +55,7 @@ func DoCreateWindow(o Options) (*glfw.Window, error) {
 		return nil, err
 	}
 	window.MakeContextCurrent()
+	window.SetFramebufferSizeCallback(o.FramebufferSizeCallback)
 
 	return window, nil
 }

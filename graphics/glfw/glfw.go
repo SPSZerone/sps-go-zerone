@@ -24,3 +24,13 @@ func InitWindowHint() {
 		glfw.WindowHint(glfw.ContextVersionMinor, 0)
 	}
 }
+
+func ProcessInputDefaultKeyEscape(window *glfw.Window) {
+	if window.GetKey(glfw.KeyEscape) == glfw.Press {
+		window.SetShouldClose(true)
+	}
+}
+
+func FramebufferSizeCallback(win *glfw.Window, width int, height int) {
+	GLViewport(0, 0, int32(width), int32(height))
+}

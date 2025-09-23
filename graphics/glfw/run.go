@@ -3,6 +3,7 @@ package glfw
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 
+	spsgl "github.com/SPSZerone/sps-go-zerone/graphics/gl"
 	spslog "github.com/SPSZerone/sps-go-zerone/log/zerolog"
 )
 
@@ -13,7 +14,7 @@ var (
 func Run(opts ...Option) {
 	o := NewOptions(opts...)
 
-	Require()
+	spsgl.Require()
 
 	// init pre
 	if o.OnInitPre != nil {
@@ -37,7 +38,7 @@ func Run(opts ...Option) {
 	window := win.GetWindow()
 
 	// gl init
-	GLInit()
+	spsgl.Init()
 	if o.OnGLInit != nil {
 		o.OnGLInit()
 	}

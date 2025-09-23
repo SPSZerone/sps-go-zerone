@@ -3,6 +3,7 @@ package glfw
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 
+	spsgl "github.com/SPSZerone/sps-go-zerone/graphics/gl"
 	spsos "github.com/SPSZerone/sps-go-zerone/os"
 )
 
@@ -32,5 +33,5 @@ func ProcessInputDefaultKeyEscape(window *glfw.Window) {
 }
 
 func FramebufferSizeCallback(win *glfw.Window, width int, height int) {
-	GLViewport(0, 0, int32(width), int32(height))
+	spsgl.Viewport(0, 0, int32(width), int32(height))
 }

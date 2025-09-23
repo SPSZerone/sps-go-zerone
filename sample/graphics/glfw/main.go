@@ -1,11 +1,13 @@
 package main
 
 import (
-	spsgioglfw "github.com/SPSZerone/sps-go-zerone/graphics/gio/glfw"
 	spsos "github.com/SPSZerone/sps-go-zerone/os"
 
+	spsgl "github.com/SPSZerone/sps-go-zerone/graphics/gl"
 	spsglfw "github.com/SPSZerone/sps-go-zerone/graphics/glfw"
 	spsglfwwin "github.com/SPSZerone/sps-go-zerone/graphics/glfw/window"
+
+	spsgioglfw "github.com/SPSZerone/sps-go-zerone/graphics/gio/glfw"
 )
 
 const (
@@ -36,7 +38,7 @@ func main() {
 			spsglfw.ProcessInputDefaultKeyEscape(win.GetWindow())
 
 			gtx, size := ctx.LayoutContext(win.GetWindow())
-			spsglfw.GLClear(0, 0, 0, 1, desktopGL)
+			spsgl.Clear(0, 0, 0, 1, desktopGL)
 
 			ctx.Frame(gtx, size)
 		}),

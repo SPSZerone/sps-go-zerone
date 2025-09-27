@@ -1,13 +1,10 @@
 package main
 
 import (
-	spsos "github.com/SPSZerone/sps-go-zerone/os"
-
+	spsgioglfw "github.com/SPSZerone/sps-go-zerone/graphics/gio/glfw"
 	spsgl "github.com/SPSZerone/sps-go-zerone/graphics/gl"
 	spsglfw "github.com/SPSZerone/sps-go-zerone/graphics/glfw"
 	spsglfwwin "github.com/SPSZerone/sps-go-zerone/graphics/glfw/window"
-
-	spsgioglfw "github.com/SPSZerone/sps-go-zerone/graphics/gio/glfw"
 )
 
 const (
@@ -15,7 +12,6 @@ const (
 )
 
 func main() {
-	desktopGL := spsos.IsDarwin()
 	var ctx spsgioglfw.Context
 
 	spsglfw.Run(
@@ -38,7 +34,7 @@ func main() {
 			spsglfw.ProcessInputDefaultKeyEscape(win.GetWindow())
 
 			gtx, size := ctx.LayoutContext(win.GetWindow())
-			spsgl.Clear(0, 0, 0, 1, desktopGL)
+			spsgl.ClearDefault()
 
 			ctx.Frame(gtx, size)
 		}),

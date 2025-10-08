@@ -15,7 +15,7 @@ type SimpleVertex struct {
 
 // SetUpAndConfigure
 // set up vertex data (and buffer(s)) and configure vertex attributes
-func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, configure func()) {
+func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, configure func() error) (err error) {
 	if usage == 0 {
 		usage = gl.STATIC_DRAW
 	}
@@ -42,7 +42,10 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 	// ----------------------------------------------------------------------------------------------------
 	const positionSize = 3
 	if configure != nil {
-		configure()
+		err = configure()
+		if err != nil {
+			return
+		}
 	} else if len(v.Indices)%positionSize == 0 { // default: Config as Position{XYZ(float32)} Attributes
 		// position attribute
 		index := uint32(0)
@@ -87,6 +90,8 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 	if wireframeMode {
 		v.WireframePolygons()
 	}
+
+	return
 }
 
 // WireframePolygons

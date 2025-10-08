@@ -43,6 +43,8 @@ const (
 	SourceTypeFile
 )
 
+var _ Shader = (*SimpleShader)(nil)
+
 type SimpleShader struct {
 	SourceType SourceType
 	Vertex     string

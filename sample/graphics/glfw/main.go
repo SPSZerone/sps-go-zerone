@@ -15,7 +15,8 @@ func main() {
 	var ctx spsgioglfw.Context
 
 	spsglfw.Run(
-		spsglfw.OptOnGLFWInit(func() {
+		spsglfw.OptOnGLFWInit(func() (err error) {
+			return
 		}),
 		spsglfw.OptNewWindow(func() spsglfw.Window {
 			return spsglfwwin.NewWindow(
@@ -24,8 +25,9 @@ func main() {
 				spsglfwwin.OptTitle(Name),
 			)
 		}),
-		spsglfw.OptOnGLInit(func() {
+		spsglfw.OptOnGLInit(func() (err error) {
 			ctx = spsgioglfw.NewDefaultContext()
+			return
 		}),
 		spsglfw.OptOnStop(func() {
 			ctx.Release()

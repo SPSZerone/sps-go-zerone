@@ -11,26 +11,35 @@ var (
 	Logger = spslog.NewLogger()
 )
 
-func Run(opts ...Option) {
+func Run(opts ...Option) (err error) {
 	o := NewOptions(opts...)
 
 	spsgl.Require()
 
 	// init pre
 	if o.OnInitPre != nil {
-		o.OnInitPre()
+		err = o.OnInitPre()
+		if err != nil {
+			Logger.Error().Msgf("failed OnInitPre: %v", err)
+			return
+		}
 	}
 
 	// glfw init
-	err := glfw.Init()
+	err = glfw.Init()
 	if err != nil {
-		Logger.Fatal().Msgf("failed to initialize glfw: %v", err)
+		Logger.Error().Msgf("failed glfw.Init: %v", err)
+		return
 	}
 	defer glfw.Terminate()
 
 	InitWindowHint()
 	if o.OnGLFWInit != nil {
-		o.OnGLFWInit()
+		err = o.OnGLFWInit()
+		if err != nil {
+			Logger.Error().Msgf("failed OnGLFWInit: %v", err)
+			return
+		}
 	}
 
 	// new window
@@ -40,12 +49,20 @@ func Run(opts ...Option) {
 	// gl init
 	spsgl.Init()
 	if o.OnGLInit != nil {
-		o.OnGLInit()
+		err = o.OnGLInit()
+		if err != nil {
+			Logger.Error().Msgf("failed OnGLInit: %v", err)
+			return
+		}
 	}
 
 	// init post
 	if o.OnInitPost != nil {
-		o.OnInitPost()
+		err = o.OnInitPost()
+		if err != nil {
+			Logger.Error().Msgf("failed OnInitPost: %v", err)
+			return
+		}
 	}
 
 	// stop
@@ -65,4 +82,6 @@ func Run(opts ...Option) {
 
 		window.SwapBuffers()
 	}
+
+	return
 }

@@ -10,10 +10,10 @@ type (
 	Option func(o *Options)
 
 	NewWindow  func() Window
-	OnInitPre  func()
-	OnGLFWInit func()
-	OnGLInit   func()
-	OnInitPost func()
+	OnInitPre  func() error
+	OnGLFWInit func() error
+	OnGLInit   func() error
+	OnInitPost func() error
 	OnStop     func()
 	OnLoop     func(win Window)
 )

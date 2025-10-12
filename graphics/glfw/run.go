@@ -74,13 +74,12 @@ func Run(opts ...Option) (err error) {
 
 	// loop
 	for !window.ShouldClose() {
-		glfw.PollEvents()
-
 		if o.OnLoop != nil {
 			o.OnLoop(win)
 		}
 
 		window.SwapBuffers()
+		glfw.PollEvents()
 	}
 
 	return

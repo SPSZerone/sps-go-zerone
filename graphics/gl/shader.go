@@ -34,6 +34,27 @@ type Shader interface {
 	Uniform4ui(name string, v0, v1, v2, v3 uint32)
 	Uniform4f(name string, v0, v1, v2, v3 float32)
 	Uniform4d(name string, v0, v1, v2, v3 float64)
+
+	UniformMatrix2dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix2fv(name string, count int32, transpose bool, value *float32)
+	UniformMatrix2x3dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix2x3fv(name string, count int32, transpose bool, value *float32)
+	UniformMatrix2x4dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix2x4fv(name string, count int32, transpose bool, value *float32)
+
+	UniformMatrix3dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix3fv(name string, count int32, transpose bool, value *float32)
+	UniformMatrix3x2dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix3x2fv(name string, count int32, transpose bool, value *float32)
+	UniformMatrix3x4dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix3x4fv(name string, count int32, transpose bool, value *float32)
+
+	UniformMatrix4dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix4fv(name string, count int32, transpose bool, value *float32)
+	UniformMatrix4x2dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix4x2fv(name string, count int32, transpose bool, value *float32)
+	UniformMatrix4x3dv(name string, count int32, transpose bool, value *float64)
+	UniformMatrix4x3fv(name string, count int32, transpose bool, value *float32)
 }
 
 type SourceType byte
@@ -164,6 +185,78 @@ func (s *SimpleShader) Uniform4f(name string, v0, v1, v2, v3 float32) {
 
 func (s *SimpleShader) Uniform4d(name string, v0, v1, v2, v3 float64) {
 	gl.Uniform4d(GetUniformLocation(s.programID, name), v0, v1, v2, v3)
+}
+
+func (s *SimpleShader) UniformMatrix2dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix2dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix2fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix2fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix2x3dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix2x3dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix2x3fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix2x3fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix2x4dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix2x4dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix2x4fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix2x4fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix3dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix3dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix3fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix3fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix3x2dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix3x2dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix3x2fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix3x2fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix3x4dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix3x4dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix3x4fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix3x4fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix4dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix4dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix4fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix4fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix4x2dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix4x2dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix4x2fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix4x2fv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix4x3dv(name string, count int32, transpose bool, value *float64) {
+	gl.UniformMatrix4x3dv(GetUniformLocation(s.programID, name), count, transpose, value)
+}
+
+func (s *SimpleShader) UniformMatrix4x3fv(name string, count int32, transpose bool, value *float32) {
+	gl.UniformMatrix4x3fv(GetUniformLocation(s.programID, name), count, transpose, value)
 }
 
 func CreateProgram(vertexShaderSource, fragmentShaderSource string) (shaderProgram uint32, err error) {

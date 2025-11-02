@@ -36,6 +36,10 @@ func Init() {
 	if desktopGL {
 		// Enable sRGB.
 		gl.Enable(gl.FRAMEBUFFER_SRGB)
+
+		// Enable depth test
+		gl.Enable(gl.DEPTH_TEST)
+
 		// Set up default VBA, required for the forward-compatible core profile.
 		var defVBA uint32
 		gl.GenVertexArrays(1, &defVBA)
@@ -44,7 +48,7 @@ func Init() {
 }
 
 func ClearDefault() {
-	Clear(0.2, 0.3, 0.3, 1, gl.COLOR_BUFFER_BIT, true)
+	Clear(0.2, 0.3, 0.3, 1, gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT, true)
 }
 
 func Clear(red, green, blue, alpha float32, mask uint32, desktopGL bool) {

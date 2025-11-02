@@ -1,6 +1,8 @@
 package gl
 
 import (
+	"fmt"
+
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
@@ -20,11 +22,22 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 		usage = gl.STATIC_DRAW
 	}
 
+	verticesLen := len(v.Vertices)
+	if verticesLen == 0 {
+		err = fmt.Errorf("vertexs is empty")
+		return
+	}
+
+	indicesLen := len(v.Indices)
+	eboEnable := indicesLen > 0
+
 	// = Generate Buffers/Arrays
 	// ----------------------------------------------------------------------------------------------------
 	gl.GenVertexArrays(1, &v.VAO)
 	gl.GenBuffers(1, &v.VBO)
-	gl.GenBuffers(1, &v.EBO)
+	if eboEnable {
+		gl.GenBuffers(1, &v.EBO)
+	}
 
 	// = 1. bind the Vertex Array Object first
 	// ----------------------------------------------------------------------------------------------------
@@ -33,10 +46,12 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 	// = 2. then bind and set vertex buffer(s)
 	// ----------------------------------------------------------------------------------------------------
 	gl.BindBuffer(gl.ARRAY_BUFFER, v.VBO)
-	gl.BufferData(gl.ARRAY_BUFFER, len(v.Vertices)*4 /* 4: bytes of float32 */, gl.Ptr(v.Vertices), usage)
+	gl.BufferData(gl.ARRAY_BUFFER, verticesLen*4 /* 4: bytes of float32 */, gl.Ptr(v.Vertices), usage)
 
-	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, v.EBO)
-	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(v.Indices)*4 /* 4: bytes of uint32 */, gl.Ptr(v.Indices), usage)
+	if eboEnable {
+		gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, v.EBO)
+		gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, indicesLen*4 /* 4: bytes of uint32 */, gl.Ptr(v.Indices), usage)
+	}
 
 	// = 3. and then configure vertex attributes(s)
 	// ----------------------------------------------------------------------------------------------------
@@ -46,7 +61,7 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 		if err != nil {
 			return
 		}
-	} else if len(v.Indices)%positionSize == 0 { // default: Config as Position{XYZ(float32)} Attributes
+	} else if eboEnable && indicesLen%positionSize == 0 { // default: Config as Position{XYZ(float32)} Attributes
 		// position attribute
 		index := uint32(0)
 
@@ -100,21 +115,47 @@ func (v *SimpleVertex) WireframePolygons() {
 	gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE /* default: gl.FILL */)
 }
 
+func (v *SimpleVertex) BindVAO() {
+	gl.BindVertexArray(v.VAO)
+}
+
+func (v *SimpleVertex) UnBindVAO() {
+	gl.BindVertexArray(0)
+}
+
 func (v *SimpleVertex) DrawAsTriangles() {
 	// seeing as we only have a single VAO there's no need to bind it every time,
 	// but we'll do so to keep things a bit more organized
-	gl.BindVertexArray(v.VAO)
+	v.BindVAO()
 
 	// Draw
-	//gl.DrawArrays(gl.TRIANGLES, 0, 6)
-	gl.DrawElementsWithOffset(gl.TRIANGLES, int32(len(v.Indices)), gl.UNSIGNED_INT, 0)
+	v.DrawTrianglesByElements()
 
 	// no need to unbind it every time
-	//gl.BindVertexArray(0)
+	//v.UnBindVAO()
+}
+
+func (v *SimpleVertex) DrawAsTrianglesByArrays(first, count int32) {
+	v.BindVAO()
+	v.DrawTrianglesByArrays(first, count)
+}
+
+func (v *SimpleVertex) DrawTrianglesByElements() {
+	gl.DrawElementsWithOffset(gl.TRIANGLES, int32(len(v.Indices)), gl.UNSIGNED_INT, 0)
+}
+
+func (v *SimpleVertex) DrawTrianglesByArrays(first, count int32) {
+	gl.DrawArrays(gl.TRIANGLES, first, count)
 }
 
 func (v *SimpleVertex) Delete() {
-	gl.DeleteVertexArrays(1, &v.VAO)
-	gl.DeleteBuffers(1, &v.VBO)
-	gl.DeleteBuffers(1, &v.EBO)
+	if v.VAO != 0 {
+		gl.DeleteVertexArrays(1, &v.VAO)
+	}
+	if v.VBO != 0 {
+		gl.DeleteBuffers(1, &v.VBO)
+	}
+	if v.EBO != 0 {
+		gl.DeleteBuffers(1, &v.EBO)
+	}
 }

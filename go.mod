@@ -15,6 +15,7 @@ require (
 	golang.design/x/clipboard v0.7.0
 	golang.org/x/exp/shiny v0.0.0-20240909161429-701f63a606c0
 	google.golang.org/protobuf v1.36.0
+	howett.net/plist v1.0.1
 )
 
 require (

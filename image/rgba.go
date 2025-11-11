@@ -20,7 +20,7 @@ func LoadAsRGBA(file string, op Op) (rgba *image.RGBA, err error) {
 	defer func() {
 		errClose := imgFile.Close()
 		if errClose != nil {
-			fmt.Println(fmt.Sprintf("file %v close failed %v", file, errClose))
+			fmt.Printf("file %v close failed err: %v\n", file, errClose)
 		}
 	}()
 

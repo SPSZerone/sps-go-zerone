@@ -12,16 +12,16 @@ func ReadFileBytes(fileName string, bufSize uint) ([]byte, error) {
 		bufSize = 10240
 	}
 
-	file, errOpen := os.Open(fileName)
-	if errOpen != nil {
-		return nil, errOpen
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
 	}
-	defer func(file *os.File) {
-		errClose := file.Close()
-		if errClose != nil {
-			fmt.Println("close file fail", fileName, errClose)
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			fmt.Printf("Error closing file %s err: %+v\n", fileName, err)
 		}
-	}(file)
+	}()
 
 	reader := bufio.NewReader(file)
 	return ReadBytes(reader, bufSize)

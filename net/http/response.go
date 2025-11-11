@@ -25,7 +25,7 @@ func HandleResponse(response *http.Response, onResponse OnResponse) ([]byte, err
 	defer func() {
 		err := response.Body.Close()
 		if err != nil {
-			fmt.Println("http response body close")
+			fmt.Printf("http response body close failed. err: %v\n", err)
 		}
 	}()
 

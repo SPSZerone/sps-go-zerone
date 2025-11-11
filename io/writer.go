@@ -19,12 +19,12 @@ func WriteBytes(dataBytes []byte, fileName string, overwriteFile bool) error {
 	if err != nil {
 		return err
 	}
-	defer func(file *os.File) {
+	defer func() {
 		err = file.Close()
 		if err != nil {
-			fmt.Printf("Error closing file %s err:%+v", fileName, err)
+			fmt.Printf("Error closing file %s err: %+v\n", fileName, err)
 		}
-	}(file)
+	}()
 
 	writer := bufio.NewWriter(file)
 

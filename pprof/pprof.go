@@ -3,7 +3,6 @@ package pprof
 import (
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -181,12 +180,12 @@ func (p *PProf) getData(url string) ([]byte, error) {
 		fmt.Printf("PProf getData | http.Get error: %+v\n", err)
 		return nil, err
 	}
-	defer func(body io.ReadCloser) {
-		err = body.Close()
+	defer func() {
+		err = resp.Body.Close()
 		if err != nil {
 			fmt.Printf("PProf getData | resp.Body.Close error: %+v\n", err)
 		}
-	}(resp.Body)
+	}()
 
 	bodyBytes, err := spsio.ReadBytes(resp.Body, 10240)
 	if err != nil {

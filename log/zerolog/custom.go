@@ -25,14 +25,6 @@ var (
 	}
 )
 
-func InitDefault() {
-	zerolog.LevelFieldMarshalFunc = LevelFieldMarshalFunc
-	zerolog.TimestampFunc = TimestampFunc
-	zerolog.TimeFieldFormat = DefaultTimeFormat
-	zerolog.CallerMarshalFunc = CallerMarshalFunc
-	//zerolog.ErrorHandler = ErrorHandler
-}
-
 func LevelFieldMarshalFunc(l zerolog.Level) string {
 	return zerolog.FormattedLevels[l]
 }

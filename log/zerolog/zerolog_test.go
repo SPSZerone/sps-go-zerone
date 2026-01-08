@@ -1,8 +1,12 @@
 package zerolog
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLogger(t *testing.T) {
+	SetGlobalLevelForDevelopment()
+
 	logger := NewLogger()
 	logger.Print("Print")
 	logger.Debug().

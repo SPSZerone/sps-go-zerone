@@ -4,9 +4,9 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func init() {
-	InitDefault()
-}
+var (
+	Logger = NewLogger()
+)
 
 func NewLogger() zerolog.Logger {
 	return NewConsoleLogger()

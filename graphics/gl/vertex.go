@@ -151,11 +151,14 @@ func (v *SimpleVertex) DrawTrianglesByArrays(first, count int32) {
 func (v *SimpleVertex) Delete() {
 	if v.VAO != 0 {
 		gl.DeleteVertexArrays(1, &v.VAO)
+		v.VAO = 0
 	}
 	if v.VBO != 0 {
 		gl.DeleteBuffers(1, &v.VBO)
+		v.VBO = 0
 	}
 	if v.EBO != 0 {
 		gl.DeleteBuffers(1, &v.EBO)
+		v.EBO = 0
 	}
 }

@@ -9,23 +9,25 @@ func NewOptions(opts ...Option) Options {
 type (
 	Option func(o *Options)
 
-	NewWindow  func() Window
-	OnInitPre  func() error
-	OnGLFWInit func() error
-	OnGLInit   func() error
-	OnInitPost func() error
-	OnStop     func()
-	OnLoop     func(win Window)
+	NewWindow      func() Window
+	OnInitPre      func() error
+	OnGLFWInit     func() error
+	OnGLInit       func() error
+	OnInitPost     func() error
+	OnStop         func()
+	OnProcessInput func(win Window)
+	OnLoop         func(win Window)
 )
 
 type Options struct {
-	NewWindow  NewWindow
-	OnInitPre  OnInitPre
-	OnGLFWInit OnGLFWInit
-	OnGLInit   OnGLInit
-	OnInitPost OnInitPost
-	OnStop     OnStop
-	OnLoop     OnLoop
+	NewWindow      NewWindow
+	OnInitPre      OnInitPre
+	OnGLFWInit     OnGLFWInit
+	OnGLInit       OnGLInit
+	OnInitPost     OnInitPost
+	OnStop         OnStop
+	OnProcessInput OnProcessInput
+	OnLoop         OnLoop
 }
 
 func (o *Options) Update(opts ...Option) {
@@ -67,6 +69,12 @@ func OptOnInitPost(value OnInitPost) Option {
 func OptOnStop(value OnStop) Option {
 	return Option(func(o *Options) {
 		o.OnStop = value
+	})
+}
+
+func OptOnProcessInput(value OnProcessInput) Option {
+	return Option(func(o *Options) {
+		o.OnProcessInput = value
 	})
 }
 

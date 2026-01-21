@@ -74,6 +74,9 @@ func Run(opts ...Option) (err error) {
 
 	// loop
 	for !window.ShouldClose() {
+		if o.OnProcessInput != nil {
+			o.OnProcessInput(win)
+		}
 		if o.OnLoop != nil {
 			o.OnLoop(win)
 		}

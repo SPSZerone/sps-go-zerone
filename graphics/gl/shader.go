@@ -116,11 +116,18 @@ func (s *SimpleShader) createProgramAsFile() (err error) {
 }
 
 func (s *SimpleShader) UseProgram() {
+	if s.programID == 0 {
+		return
+	}
 	gl.UseProgram(s.programID)
 }
 
 func (s *SimpleShader) DeleteProgram() {
+	if s.programID == 0 {
+		return
+	}
 	gl.DeleteProgram(s.programID)
+	s.programID = 0
 }
 
 func (s *SimpleShader) Uniform1i(name string, value int32) {

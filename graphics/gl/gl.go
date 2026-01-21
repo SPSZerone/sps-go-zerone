@@ -39,11 +39,6 @@ func Init() {
 
 		// Enable depth test
 		gl.Enable(gl.DEPTH_TEST)
-
-		// Set up default VBA, required for the forward-compatible core profile.
-		var defVBA uint32
-		gl.GenVertexArrays(1, &defVBA)
-		gl.BindVertexArray(defVBA)
 	}
 }
 

@@ -11,8 +11,9 @@ type SimpleVertex struct {
 	VBO uint32
 	EBO uint32
 
-	Vertices []float32
-	Indices  []uint32
+	Vertices  []float32
+	AttrSizes []int32 // e.g. -> { 3 /* position */, 3 /* color */, 2 /* texture */ }
+	Indices   []uint32
 }
 
 // SetUpAndConfigure
@@ -107,6 +108,27 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 	}
 
 	return
+}
+
+func (v *SimpleVertex) SetUpAttribFloat32(normalized bool) {
+	const byteCountOfDataType = 4 /* 4: bytes of float32 */
+	attrLen := len(v.AttrSizes)
+
+	totalSize := int32(0)
+	for i := 0; i < attrLen; i++ {
+		totalSize += v.AttrSizes[i]
+	}
+	stride := totalSize * byteCountOfDataType
+
+	offset := uintptr(0)
+	for index := uint32(0); index < uint32(attrLen); index++ {
+		attrSize := v.AttrSizes[index]
+
+		gl.VertexAttribPointerWithOffset(index, attrSize, gl.FLOAT, normalized, stride, offset)
+		gl.EnableVertexAttribArray(index)
+
+		offset += uintptr(attrSize) * byteCountOfDataType
+	}
 }
 
 // WireframePolygons

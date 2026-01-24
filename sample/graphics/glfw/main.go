@@ -35,7 +35,7 @@ func main() {
 		spsglfw.OptOnProcessInput(func(win spsglfw.Window) {
 			spsglfw.ProcessInputDefaultKeyEscape(win.GetWindow())
 		}),
-		spsglfw.OptOnLoop(func(win spsglfw.Window) {
+		spsglfw.OptOnRender(func(win spsglfw.Window) {
 			gtx, size := ctx.LayoutContext(win.GetWindow())
 			spsgl.ClearDefault()
 

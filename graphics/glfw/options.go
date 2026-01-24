@@ -16,7 +16,7 @@ type (
 	OnInitPost     func() error
 	OnStop         func()
 	OnProcessInput func(win Window)
-	OnLoop         func(win Window)
+	OnRender       func(win Window)
 )
 
 type Options struct {
@@ -27,7 +27,7 @@ type Options struct {
 	OnInitPost     OnInitPost
 	OnStop         OnStop
 	OnProcessInput OnProcessInput
-	OnLoop         OnLoop
+	OnRender       OnRender
 }
 
 func (o *Options) Update(opts ...Option) {
@@ -78,8 +78,8 @@ func OptOnProcessInput(value OnProcessInput) Option {
 	})
 }
 
-func OptOnLoop(value OnLoop) Option {
+func OptOnRender(value OnRender) Option {
 	return Option(func(o *Options) {
-		o.OnLoop = value
+		o.OnRender = value
 	})
 }

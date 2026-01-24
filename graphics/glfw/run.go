@@ -77,8 +77,8 @@ func Run(opts ...Option) (err error) {
 		if o.OnProcessInput != nil {
 			o.OnProcessInput(win)
 		}
-		if o.OnLoop != nil {
-			o.OnLoop(win)
+		if o.OnRender != nil {
+			o.OnRender(win)
 		}
 
 		window.SwapBuffers()

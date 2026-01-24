@@ -14,6 +14,8 @@ type SimpleVertex struct {
 	Vertices  []float32
 	AttrSizes []int32 // e.g. -> { 3 /* position */, 3 /* color */, 2 /* texture */ }
 	Indices   []uint32
+
+	vertexCount int32
 }
 
 // SetUpAndConfigure
@@ -164,6 +166,22 @@ func (v *SimpleVertex) DrawAsTrianglesByArrays(first, count int32) {
 
 func (v *SimpleVertex) DrawTrianglesByElements() {
 	gl.DrawElementsWithOffset(gl.TRIANGLES, int32(len(v.Indices)), gl.UNSIGNED_INT, 0)
+}
+
+func (v *SimpleVertex) VertexCount() int32 {
+	if v.vertexCount == 0 {
+		var attrSize int32
+		for _, attr := range v.AttrSizes {
+			attrSize += attr
+		}
+		verticesLen := int32(len(v.Vertices))
+		v.vertexCount = verticesLen / attrSize
+	}
+	return v.vertexCount
+}
+
+func (v *SimpleVertex) DrawTrianglesByArraysAll() {
+	v.DrawTrianglesByArrays(0, v.VertexCount())
 }
 
 func (v *SimpleVertex) DrawTrianglesByArrays(first, count int32) {

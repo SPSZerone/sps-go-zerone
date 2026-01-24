@@ -29,6 +29,8 @@ type Options struct {
 	Share   *glfw.Window
 
 	FramebufferSizeCallback glfw.FramebufferSizeCallback
+	CursorPosCallback       glfw.CursorPosCallback
+	ScrollCallback          glfw.ScrollCallback
 }
 
 func (o *Options) UpdateOpts(opts ...Option) {
@@ -70,5 +72,17 @@ func OptShare(value *glfw.Window) Option {
 func OptFramebufferSizeCallback(value glfw.FramebufferSizeCallback) Option {
 	return func(o *Options) {
 		o.FramebufferSizeCallback = value
+	}
+}
+
+func OptCursorPosCallback(value glfw.CursorPosCallback) Option {
+	return func(o *Options) {
+		o.CursorPosCallback = value
+	}
+}
+
+func OptScrollCallback(value glfw.ScrollCallback) Option {
+	return func(o *Options) {
+		o.ScrollCallback = value
 	}
 }

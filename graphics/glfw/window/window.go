@@ -54,8 +54,21 @@ func DoCreateWindow(o Options) (*glfw.Window, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	window.MakeContextCurrent()
-	window.SetFramebufferSizeCallback(o.FramebufferSizeCallback)
+
+	if o.FramebufferSizeCallback != nil {
+		window.SetFramebufferSizeCallback(o.FramebufferSizeCallback)
+	}
+
+	if o.CursorPosCallback != nil {
+		window.SetCursorPosCallback(o.CursorPosCallback)
+	}
+	if o.ScrollCallback != nil {
+		window.SetScrollCallback(o.ScrollCallback)
+	}
+
+	//window.SetInputMode(glfw.CursorMode, glfw.CursorNormal)
 
 	return window, nil
 }

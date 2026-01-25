@@ -6,30 +6,45 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
-type SimpleVertex struct {
+type SimpleVertex[T float32 | float64] struct {
 	VAO uint32
 	VBO uint32
 	EBO uint32
 
-	Vertices  []float32
+	Vertices  []T
 	AttrSizes []int32 // e.g. -> { 3 /* position */, 3 /* color */, 2 /* texture */ }
 	Indices   []uint32
 
 	vertexCount int32
 }
 
+func (v *SimpleVertex[T]) VertexDataInfo() (typeSize int32, glType uint32) {
+	var zero T
+	switch any(zero).(type) {
+	case float32:
+		typeSize = 4
+		glType = gl.FLOAT
+	case float64:
+		typeSize = 8
+		glType = gl.DOUBLE
+	}
+	return
+}
+
 // SetUpAndConfigure
 // set up vertex data (and buffer(s)) and configure vertex attributes
-func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, configure func() error) (err error) {
+func (v *SimpleVertex[T]) SetUpAndConfigure(usage uint32, wireframeMode bool, configure func() error) (err error) {
 	if usage == 0 {
 		usage = gl.STATIC_DRAW
 	}
 
 	verticesLen := len(v.Vertices)
 	if verticesLen == 0 {
-		err = fmt.Errorf("vertexs is empty")
+		err = fmt.Errorf("vertices is empty")
 		return
 	}
+
+	vertexTypeSize, vertexGLType := v.VertexDataInfo()
 
 	indicesLen := len(v.Indices)
 	eboEnable := indicesLen > 0
@@ -49,7 +64,7 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 	// = 2. then bind and set vertex buffer(s)
 	// ----------------------------------------------------------------------------------------------------
 	gl.BindBuffer(gl.ARRAY_BUFFER, v.VBO)
-	gl.BufferData(gl.ARRAY_BUFFER, verticesLen*4 /* 4: bytes of float32 */, gl.Ptr(v.Vertices), usage)
+	gl.BufferData(gl.ARRAY_BUFFER, verticesLen*int(vertexTypeSize), gl.Ptr(v.Vertices), usage)
 
 	if eboEnable {
 		gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, v.EBO)
@@ -74,8 +89,8 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 		// This means we have to specify how OpenGL should interpret the vertex data before rendering.
 		// With this knowledge we can tell OpenGL how it should interpret the vertex data (per vertex attribute) using gl.VertexAttribPointerWithOffset
 		gl.VertexAttribPointerWithOffset(index,
-			positionSize, gl.FLOAT, false,
-			positionSize*4 /* 4: bytes of float32 */, 0)
+			positionSize, vertexGLType, false,
+			positionSize*vertexTypeSize, 0)
 
 		// Now that we specified how OpenGL should interpret the vertex data we should also
 		// enable the vertex attribute with gl.EnableVertexAttribArray giving the vertex attribute location as its argument;
@@ -112,42 +127,42 @@ func (v *SimpleVertex) SetUpAndConfigure(usage uint32, wireframeMode bool, confi
 	return
 }
 
-func (v *SimpleVertex) SetUpAttribFloat32(normalized bool) {
-	const byteCountOfDataType = 4 /* 4: bytes of float32 */
+func (v *SimpleVertex[T]) SetUpAttrib(normalized bool) {
+	vertexTypeSize, vertexGLType := v.VertexDataInfo()
 	attrLen := len(v.AttrSizes)
 
 	totalSize := int32(0)
 	for i := 0; i < attrLen; i++ {
 		totalSize += v.AttrSizes[i]
 	}
-	stride := totalSize * byteCountOfDataType
+	stride := totalSize * vertexTypeSize
 
 	offset := uintptr(0)
 	for index := uint32(0); index < uint32(attrLen); index++ {
 		attrSize := v.AttrSizes[index]
 
-		gl.VertexAttribPointerWithOffset(index, attrSize, gl.FLOAT, normalized, stride, offset)
+		gl.VertexAttribPointerWithOffset(index, attrSize, vertexGLType, normalized, stride, offset)
 		gl.EnableVertexAttribArray(index)
 
-		offset += uintptr(attrSize) * byteCountOfDataType
+		offset += uintptr(attrSize * vertexTypeSize)
 	}
 }
 
 // WireframePolygons
 // draw in wireframe polygons.
-func (v *SimpleVertex) WireframePolygons() {
+func (v *SimpleVertex[T]) WireframePolygons() {
 	gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE /* default: gl.FILL */)
 }
 
-func (v *SimpleVertex) BindVAO() {
+func (v *SimpleVertex[T]) BindVAO() {
 	gl.BindVertexArray(v.VAO)
 }
 
-func (v *SimpleVertex) UnBindVAO() {
+func (v *SimpleVertex[T]) UnBindVAO() {
 	gl.BindVertexArray(0)
 }
 
-func (v *SimpleVertex) DrawAsTriangles() {
+func (v *SimpleVertex[T]) DrawAsTriangles() {
 	// seeing as we only have a single VAO there's no need to bind it every time,
 	// but we'll do so to keep things a bit more organized
 	v.BindVAO()
@@ -159,16 +174,16 @@ func (v *SimpleVertex) DrawAsTriangles() {
 	//v.UnBindVAO()
 }
 
-func (v *SimpleVertex) DrawAsTrianglesByArrays(first, count int32) {
+func (v *SimpleVertex[T]) DrawAsTrianglesByArrays(first, count int32) {
 	v.BindVAO()
 	v.DrawTrianglesByArrays(first, count)
 }
 
-func (v *SimpleVertex) DrawTrianglesByElements() {
+func (v *SimpleVertex[T]) DrawTrianglesByElements() {
 	gl.DrawElementsWithOffset(gl.TRIANGLES, int32(len(v.Indices)), gl.UNSIGNED_INT, 0)
 }
 
-func (v *SimpleVertex) VertexCount() int32 {
+func (v *SimpleVertex[T]) VertexCount() int32 {
 	if v.vertexCount == 0 {
 		var attrSize int32
 		for _, attr := range v.AttrSizes {
@@ -180,15 +195,15 @@ func (v *SimpleVertex) VertexCount() int32 {
 	return v.vertexCount
 }
 
-func (v *SimpleVertex) DrawTrianglesByArraysAll() {
+func (v *SimpleVertex[T]) DrawTrianglesByArraysAll() {
 	v.DrawTrianglesByArrays(0, v.VertexCount())
 }
 
-func (v *SimpleVertex) DrawTrianglesByArrays(first, count int32) {
+func (v *SimpleVertex[T]) DrawTrianglesByArrays(first, count int32) {
 	gl.DrawArrays(gl.TRIANGLES, first, count)
 }
 
-func (v *SimpleVertex) Delete() {
+func (v *SimpleVertex[T]) Delete() {
 	if v.VAO != 0 {
 		gl.DeleteVertexArrays(1, &v.VAO)
 		v.VAO = 0

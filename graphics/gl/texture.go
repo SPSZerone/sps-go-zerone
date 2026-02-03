@@ -7,7 +7,7 @@ import (
 )
 
 func CreateTextureRGBA(file string, genMipmap bool, setParams func()) (texture uint32, err error) {
-	rgba, errRGBA := spsimg.LoadAsRGBA(file, spsimg.OpFlipVertically)
+	rgba, errRGBA := spsimg.LoadWithFlipAsRGBA(file, spsimg.FlipVertically)
 	if errRGBA != nil {
 		err = errRGBA
 		return

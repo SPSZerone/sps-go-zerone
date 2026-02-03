@@ -34,3 +34,5 @@ go.work.sum
 .env
 
 test_*.go
+*/temp/*
+temp*.*

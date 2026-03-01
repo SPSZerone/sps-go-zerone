@@ -1,6 +1,7 @@
 package errgroup
 
 import (
+	"context"
 	"fmt"
 	"runtime/debug"
 
@@ -13,7 +14,7 @@ type (
 	OnRecover func(r any)
 )
 
-func SafeGo(g *errgroup.Group, fn func() error, onRecover OnRecover) {
+func SafeGo(g *errgroup.Group, ctx context.Context, fn func() error, onRecover OnRecover) {
 	g.Go(func() error {
 		defer func() {
 			if r := recover(); r != nil {
@@ -31,6 +32,11 @@ func SafeGo(g *errgroup.Group, fn func() error, onRecover OnRecover) {
 				}
 			}
 		}()
+
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+
 		return fn()
 	})
 }
